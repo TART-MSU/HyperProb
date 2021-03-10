@@ -1,0 +1,42 @@
+mdp
+
+const int n1 = 15; //should be always greater than n2
+const int n2 = 8;
+
+module thread_secret
+
+	h : [0..n1];
+        l : [0..2];
+        f1 : [0..1];
+        f2 : [0..1];
+
+
+        [alpha]  (h>0)&(l=0)  -> 1/2  : (h'=h-1) + 1/2 : (l'=2)&(f2'=1);
+        [alpha]  (h=0)&(l=0)  -> 1/2  : (l'=1)&(f1'=1)   + 1/2 : (l'=2)&(f2'=1);
+
+        [alpha] (h>0)&(f2=1) -> (h'=h-1);
+        [alpha] (h=0)&(f1=0)&(f2=1) -> (l'=1)&(f1'=1);
+        [alpha] (f1=1)&(f2=0) -> (l'=2)&(f2'=1);
+
+
+        [beta]  (h>0)&(l=0)  -> 2/3   : (h'=h-1) + 1/3 : (l'=2)&(f2'=1);
+        [beta]  (h=0)&(l=0)  -> 2/3   : (l'=1)&(f1'=1)   + 1/3 : (l'=2)&(f2'=1);
+
+
+        [termination] (f1=1)&(f2=1) -> (f1'=1)&(f2'=1);
+       // [schedule] (l=1)& (h=0)  -> 1 : (l'=1)& (h'=0) ;
+       // [schedule] (l=2)& (h=0)  -> 1 : (l'=2)& (h'=0) ;
+
+
+endmodule
+
+//init  (h=n)&(l=0) endinit
+init (l=0)&(f1=0)&(f2=0)&(h=n1)  endinit
+
+label "h1" = (h=n1)&(l=0);
+label "h2" = (h=n2)&(l=0);
+label "l_1" = l=1;
+label "l_2" = l=2;
+label "terminated_l1" = (f1=1);
+label "terminated_l2" = (f2=1);
+label "terminated" = (f1=1)&(f2=1);

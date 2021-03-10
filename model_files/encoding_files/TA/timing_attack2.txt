@@ -1,0 +1,102 @@
+builder = stormpy.ExactSparseMatrixBuilder(rows=0, columns=0, entries=0, force_dimensions=False, has_custom_row_grouping=True, row_groups=0)
+
+builder.new_row_group(0)
+builder.add_next_value(0, 2, stormpy.Rational(1)/ stormpy.Rational(2))
+builder.add_next_value(0, 3, stormpy.Rational(1)/ stormpy.Rational(2))
+builder.add_next_value(1, 3, stormpy.Rational(1)/ stormpy.Rational(2))
+builder.add_next_value(1, 4, stormpy.Rational(1)/ stormpy.Rational(2))
+
+builder.new_row_group(2)
+builder.add_next_value(2, 5, stormpy.Rational(1)/ stormpy.Rational(2))
+builder.add_next_value(2, 6, stormpy.Rational(1)/ stormpy.Rational(2))
+builder.add_next_value(3, 6, stormpy.Rational(1)/ stormpy.Rational(2))
+builder.add_next_value(3, 7, stormpy.Rational(1)/ stormpy.Rational(2))
+
+builder.new_row_group(4)
+builder.add_next_value(4, 4, stormpy.Rational(1)/ stormpy.Rational(2))
+builder.add_next_value(4, 8, stormpy.Rational(1)/ stormpy.Rational(2))
+
+builder.new_row_group(5)
+builder.add_next_value(5, 8, stormpy.Rational(1)/ stormpy.Rational(2))
+builder.add_next_value(5, 9, stormpy.Rational(1)/ stormpy.Rational(2))
+builder.add_next_value(6, 9, stormpy.Rational(1)/ stormpy.Rational(2))
+builder.add_next_value(6, 10, stormpy.Rational(1)/ stormpy.Rational(2))
+
+builder.new_row_group(7)
+builder.add_next_value(7, 10, stormpy.Rational(1)/ stormpy.Rational(2))
+builder.add_next_value(7, 11, stormpy.Rational(1)/ stormpy.Rational(2))
+
+builder.new_row_group(8)
+builder.add_next_value(8, 7, stormpy.Rational(1)/ stormpy.Rational(2))
+builder.add_next_value(8, 12, stormpy.Rational(1)/ stormpy.Rational(2))
+
+builder.new_row_group(9)
+builder.add_next_value(9, 12, stormpy.Rational(1)/ stormpy.Rational(2))
+builder.add_next_value(9, 13, stormpy.Rational(1)/ stormpy.Rational(2))
+builder.add_next_value(10, 13, stormpy.Rational(1)/ stormpy.Rational(2))
+builder.add_next_value(10, 14, stormpy.Rational(1)/ stormpy.Rational(2))
+
+builder.new_row_group(11)
+builder.add_next_value(11, 14, stormpy.Rational(1)/ stormpy.Rational(2))
+builder.add_next_value(11, 15, stormpy.Rational(1)/ stormpy.Rational(2))
+
+builder.new_row_group(12)
+builder.add_next_value(12, 10, stormpy.Rational(1)/ stormpy.Rational(2))
+builder.add_next_value(12, 16, stormpy.Rational(1)/ stormpy.Rational(2))
+
+builder.new_row_group(13)
+builder.add_next_value(13, 16, stormpy.Rational(1))
+builder.add_next_value(14, 17, stormpy.Rational(1))
+
+builder.new_row_group(15)
+builder.add_next_value(15, 17, stormpy.Rational(1)/ stormpy.Rational(2))
+builder.add_next_value(15, 18, stormpy.Rational(1)/ stormpy.Rational(2))
+
+builder.new_row_group(16)
+builder.add_next_value(16, 11, stormpy.Rational(1))
+
+builder.new_row_group(17)
+builder.add_next_value(17, 14, stormpy.Rational(1)/ stormpy.Rational(2))
+builder.add_next_value(17, 19, stormpy.Rational(1)/ stormpy.Rational(2))
+
+builder.new_row_group(18)
+builder.add_next_value(18, 19, stormpy.Rational(1))
+builder.add_next_value(19, 20, stormpy.Rational(1))
+
+builder.new_row_group(20)
+builder.add_next_value(20, 20, stormpy.Rational(1)/ stormpy.Rational(2))
+builder.add_next_value(20, 21, stormpy.Rational(1)/ stormpy.Rational(2))
+
+builder.new_row_group(21)
+builder.add_next_value(21, 15, stormpy.Rational(1))
+
+builder.new_row_group(22)
+builder.add_next_value(22, 17, stormpy.Rational(1))
+
+builder.new_row_group(23)
+builder.add_next_value(23, 22, stormpy.Rational(1))
+
+builder.new_row_group(24)
+builder.add_next_value(24, 18, stormpy.Rational(1))
+
+builder.new_row_group(25)
+builder.add_next_value(25, 20, stormpy.Rational(1))
+
+builder.new_row_group(26)
+builder.add_next_value(26, 23, stormpy.Rational(1))
+
+builder.new_row_group(27)
+builder.add_next_value(27, 21, stormpy.Rational(1))
+
+builder.new_row_group(28)
+builder.add_next_value(28, 22, stormpy.Rational(1))
+
+builder.new_row_group(29)
+builder.add_next_value(29, 23, stormpy.Rational(1))
+
+transition_matrix = builder.build()
+state_labeling = initial_mod.labeling
+components = stormpy.SparseExactModelComponents(transition_matrix=transition_matrix, state_labeling=state_labeling)
+mdp = stormpy.storage.SparseExactMdp(components)
+initial_model = mdp
+return initial_model
