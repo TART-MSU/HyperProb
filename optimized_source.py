@@ -61,16 +61,19 @@ nos_of_subformula = 0
 f_pointer = None
 
 
-def SemanticsUnboundedUntil(model, formula_duplicate, combined_list_of_states, n):
+def SemanticsUnboundedUntil(model, formula_duplicate, n):
+    global nos_of_subformula
     print("Starting until")
+    rel_quant = []
+    index_of_phi = list_of_subformula.index(formula_duplicate)
     phi1 = formula_duplicate.children[0].children[0]
     index_of_phi1 = list_of_subformula.index(phi1)
+    rel_quant.extend(Semantics(model, phi1, n))
     phi2 = formula_duplicate.children[0].children[1]
     index_of_phi2 = list_of_subformula.index(phi2)
-    result_string = 'A(' + Semantics(model, phi1, combined_list_of_states, n) + ' ' + Semantics(model, phi2,
-                                                                                                combined_list_of_states,
-                                                                                                n) + ')'
-    index_of_phi = list_of_subformula.index(formula_duplicate)
+    rel_quant.extend(Semantics(model, phi2, n))
+    r_state = [0 for ind in range(n)]
+
     dict_of_acts = dict()
     dict_of_acts_tran = dict()
     for state in model.states:
@@ -83,104 +86,159 @@ def SemanticsUnboundedUntil(model, formula_duplicate, combined_list_of_states, n
             dict_of_acts_tran[str(state.id) + ' ' + str(action.id)] = list_of_tran
         dict_of_acts[state.id] = list_of_act
 
-    for li in combined_list_of_states:
-        result_string = 'A(' + result_string + ' '
-        first_implies = 'I(holds_' + str(li[0]) + '_' + str(li[1]) + '_' + str(index_of_phi2) + ' ' + 'prob_' + str(
-            li[0]) + '_' + str(li[1]) + '_' + str(index_of_phi) + '=1)'
-        if 'prob_' + str(li[0]) + '_' + str(li[1]) + '_' + str(index_of_phi) not in list_of_z3_variables:
-            list_of_z3_variables.append('prob_' + str(li[0]) + '_' + str(li[1]) + '_' + str(index_of_phi))
-        if 'holds_' + str(li[0]) + '_' + str(li[1]) + '_' + str(index_of_phi2) not in list_of_z3_variables:
-            list_of_z3_variables.append('holds_' + str(li[0]) + '_' + str(li[1]) + '_' + str(index_of_phi2))
-        second_implies = 'I(A(N(holds_' + str(li[0]) + '_' + str(li[1]) + '_' + str(index_of_phi1) + ') N(holds_' + str(
-            li[0]) + '_' + str(li[1]) + '_' + str(
-            index_of_phi2) + ')) ' + 'prob_' + str(li[0]) + '_' + str(li[1]) + '_' + str(index_of_phi) + '=0)'
-        if 'holds_' + str(li[0]) + '_' + str(li[1]) + '_' + str(index_of_phi1) not in list_of_z3_variables:
-            list_of_z3_variables.append('holds_' + str(li[0]) + '_' + str(li[1]) + '_' + str(index_of_phi1))
-        new_prob_const = 'G(prob_' + str(li[0]) + '_' + str(li[1]) + '_' + str(index_of_phi) + ' 0)'
-        result_string += first_implies + ' ' + second_implies + ' ' + new_prob_const + ')'
-        combined_acts = list(itertools.product(dict_of_acts[li[0]], dict_of_acts[li[1]]))
+    # n = no.of quantifier, k = no. of state in the model
+    index = []
+    for j in range(0, n):
+        index.append(0)
+    i = n - 1
+    flag = False
+    while i >= 0:
+        holds1 = 'holds'
+        str_r_state = ""
+        for ind in r_state:
+            str_r_state += "_" + str(ind)
+        holds1 += str_r_state + "_" + str(index_of_phi1)
+        add_to_variable_list(holds1)
+        holds2 = 'holds'
+        holds2 += str_r_state + "_" + str(index_of_phi2)
+        add_to_variable_list(holds2)
+        prob_phi = 'prob'
+        prob_phi += str_r_state + '_' + str(index_of_phi)
+        add_to_variable_list(prob_phi)
+        new_prob_const = listOfReals[list_of_reals.index(prob_phi)] >= float(0)
+        first_implies = And(Implies(listOfBools[list_of_bools.index(holds2)],
+                                    (listOfReals[list_of_reals.index(prob_phi)] == float(1))),
+                            Implies(And(Not(listOfBools[list_of_bools.index(holds1)]),
+                                        Not(listOfBools[list_of_bools.index(holds2)])),
+                                    (listOfReals[list_of_reals.index(prob_phi)] == float(0))),
+                            new_prob_const)
+        nos_of_subformula += 3
+
+        dicts = []
+        for l in rel_quant:
+            dicts.append(dict_of_acts[r_state[l - 1]])
+        combined_acts = list(itertools.product(*dicts))
+
         for ca in combined_acts:
-            implies_precedent = 'A(holds_' + str(li[0]) + '_' + str(li[1]) + '_' + str(
-                index_of_phi1) + ' N(holds_' + str(li[0]) + '_' + str(li[1]) + '_' + str(
-                index_of_phi2) + ') A(a_' + str(li[0]) + '=' + str(ca[0]) + ' a_' + str(li[1]) + '=' + str(ca[1]) + '))'
-            if 'a_' + str(li[0]) not in list_of_z3_variables:
-                list_of_z3_variables.append('a_' + str(li[0]))
-            if 'a_' + str(li[1]) not in list_of_z3_variables:
-                list_of_z3_variables.append('a_' + str(li[1]))
+            name = 'a_' + str(r_state[rel_quant[0] - 1])
+            add_to_variable_list(name)
+            act_str = listOfInts[list_of_ints.index(name)] == int(ca[0])
+            if len(rel_quant) > 1:
+                for l in range(2, len(rel_quant) + 1):
+                    name = 'a_' + str(rel_quant[l - 1] - 1)
+                    add_to_variable_list(name)
+                    act_str = And(act_str, listOfInts[list_of_ints.index(name)] == int(ca[l - 1]))
 
-            implies_antecedent_and1 = 'E(prob_' + str(li[0]) + '_' + str(li[1]) + '_' + str(index_of_phi) + ' '
-            combined_succ = list(itertools.product(dict_of_acts_tran[str(li[0]) + " " + str(ca[0])],
-                                                   dict_of_acts_tran[str(li[1]) + " " + str(ca[1])]))
-            first = False
-            if len(combined_succ) == 1:
-                first = True
-            prod_left = 'P('
+            implies_precedent = And(listOfBools[list_of_bools.index(holds1)],
+                                    Not(listOfBools[list_of_bools.index(holds2)]), act_str)
+            nos_of_subformula += 2
+
+            dicts = []
+            g = 0
+            for l in rel_quant:
+                dicts.append(dict_of_acts_tran[str(r_state[l - 1]) + " " + str(ca[g])])
+                g += 1
+            combined_succ = list(itertools.product(*dicts))
+
+            first = True
+            prod_left = None
+            list_of_ors = []
+
             for cs in combined_succ:
-                space_in0 = cs[0].find(' ')
-                space_in1 = cs[1].find(' ')
+                f = 0
+                prob_succ = 'prob'
+                holds_succ = 'holds'
+                d_current = 'd'
+                d_succ = 'd'
+                p_first = True
+                prod_left_part = None
+                for l in range(1, n + 1):
+                    if l in rel_quant:
+                        space = cs[f].find(' ')
+                        succ_state = cs[f - 1][0:space]
+                        prob_succ += '_' + succ_state
+                        holds_succ += '_' + succ_state
+                        d_succ += '_' + succ_state
+                        if p_first:
+                            prod_left_part = RealVal(cs[f - 1][space + 1:]).as_fraction()
+                            p_first = False
+                        else:
+                            prod_left_part *= RealVal(cs[f - 1][space + 1:]).as_fraction()
+                        f += 1
+
+                    else:
+                        prob_succ += '_' + str(0)
+                        holds_succ += '_' + str(0)
+                        d_succ += '_' + str(0)
+                        if p_first:
+                            prod_left_part = RealVal(1).as_fraction()
+                            p_first = False
+                        else:
+                            prod_left_part *= RealVal(1).as_fraction()
+                    d_current += '_' + str(r_state[l - 1])
+
+                prob_succ += '_' + str(index_of_phi)
+                add_to_variable_list(prob_succ)
+                holds_succ += '_' + str(index_of_phi2)
+                add_to_variable_list(holds_succ)
+
+                d_current += '_' + str(index_of_phi2)
+                add_to_variable_list(d_current)
+                d_succ += '_' + str(index_of_phi2)
+                add_to_variable_list(d_succ)
+                prod_left_part *= listOfReals[list_of_reals.index(prob_succ)]
+
                 if first:
-                    prod_left = 'M(' + str(cs[0][space_in0 + 1:]) + ' ' + str(cs[1][space_in1 + 1:]) + ' ' + 'prob_' + \
-                                cs[0][0:space_in0] + '_' + cs[1][0:space_in1] + '_' + str(
-                        index_of_phi) + ') '
+                    prod_left = prod_left_part
+                    first = False
                 else:
-                    prod_left += 'M(' + str(cs[0][space_in0 + 1:]) + ' ' + str(cs[1][space_in1 + 1:]) + ' ' + 'prob_' + \
-                                 cs[0][0:space_in0] + '_' + cs[1][0:space_in1] + '_' + str(
-                        index_of_phi) + ') '
-                if 'prob_' + cs[0][0:space_in0] + '_' + cs[1][0:space_in1] + '_' + str(
-                        index_of_phi) not in list_of_z3_variables:
-                    list_of_z3_variables.append(
-                        'prob_' + cs[0][0:space_in0] + '_' + cs[1][0:space_in1] + '_' + str(index_of_phi))
-            if first:
-                implies_antecedent_and1 += prod_left[0:len(prod_left) - 1] + ')'
-            else:
-                implies_antecedent_and1 += prod_left[0:len(prod_left) - 1] + '))'
-            implies_antecedent_and2 = 'I(g(prob_' + str(li[0]) + '_' + str(li[1]) + '_' + str(index_of_phi) + ' 0) '
-            prod_right_or = 'V('
-            first = False
-            if len(combined_succ) == 1:
-                first = True
-            for cs in combined_succ:
-                space_in0 = cs[0].find(' ')
-                space_in1 = cs[1].find(' ')
-                if first:
-                    prod_right_or = 'V(holds_' + cs[0][0:space_in0] + '_' + cs[1][0:space_in1] + '_' + str(
-                        index_of_phi2) + ' g(d_' + str(li[0]) + '_' + str(li[1]) + '_' + str(
-                        index_of_phi2) + ' d_' + cs[0][0:space_in0] + '_' + cs[1][0:space_in1] + '_' + str(
-                        index_of_phi2) + ')) '
-                else:
-                    prod_right_or += 'V(holds_' + cs[0][0:space_in0] + '_' + cs[1][0:space_in1] + '_' + str(
-                        index_of_phi2) + ' g(d_' + str(li[0]) + '_' + str(li[1]) + '_' + str(
-                        index_of_phi2) + ' d_' + cs[0][0:space_in0] + '_' + cs[1][0:space_in1] + '_' + str(
-                        index_of_phi2) + ')) '
-                if 'holds_' + cs[0][0:space_in0] + '_' + cs[1][0:space_in1] + '_' + str(
-                        index_of_phi2) not in list_of_z3_variables:
-                    list_of_z3_variables.append(
-                        'holds_' + cs[0][0:space_in0] + '_' + cs[1][0:space_in1] + '_' + str(index_of_phi2))
-                if 'd_' + str(li[0]) + '_' + str(li[1]) + '_' + str(index_of_phi2) not in list_of_z3_variables:
-                    list_of_z3_variables.append('d_' + str(li[0]) + '_' + str(li[1]) + '_' + str(index_of_phi2))
-                if 'd_' + cs[0][0:space_in0] + '_' + cs[1][0:space_in1] + '_' + str(
-                        index_of_phi2) not in list_of_z3_variables:
-                    list_of_z3_variables.append(
-                        'd_' + cs[0][0:space_in0] + '_' + cs[1][0:space_in1] + '_' + str(index_of_phi2))
-            if first:
-                implies_antecedent_and2 += prod_right_or[0:len(prod_right_or) - 1] + ')'
-            else:
-                implies_antecedent_and2 += prod_right_or[0:len(prod_right_or) - 1] + '))'
-            implies_antecedent = 'A(' + implies_antecedent_and1 + ' ' + implies_antecedent_and2 + ')'
-            result_string = 'A(' + result_string + ' I(' + implies_precedent + ' ' + implies_antecedent + '))'
-    print("Done with until")
-    return result_string
+                    prod_left += prod_left_part
+                nos_of_subformula += 1
+
+                list_of_ors.append(Or(listOfBools[list_of_bools.index(holds_succ)],
+                                      listOfReals[list_of_reals.index(d_current)] > listOfReals[
+                                          list_of_reals.index(d_succ)]))
+
+                nos_of_subformula += 2
+
+            implies_antecedent_and1 = listOfReals[list_of_reals.index(prob_phi)] == prod_left
+            nos_of_subformula += 1
+            prod_right_or = Or([par for par in list_of_ors])
+            nos_of_subformula += 1
+            implies_antecedent_and2 = Implies(listOfReals[list_of_reals.index(prob_phi)] > 0, prod_right_or)
+            nos_of_subformula += 1
+            implies_antecedent = And(implies_antecedent_and1, implies_antecedent_and2)
+            nos_of_subformula += 1
+            s.add(And(first_implies, Implies(implies_precedent, implies_antecedent)))
+            nos_of_subformula += 1
+
+        while i >= 0 and (index[i] == (len(model.states) - 1) or (i + 1) not in rel_quant):
+            r_state[i] = 0
+            index[i] = 0
+            i = i - 1
+
+        if i >= 0:
+            index[i] = index[i] + 1
+            r_state[i] = index[i]
+
+    print("Done with future")
+    return rel_quant
 
 
-def SemanticsBoundedUntil(model, formula_duplicate, combined_list_of_states, n):
-    result_string = ''
-    phi1 = formula_duplicate.children[0]
+def SemanticsBoundedUntil(model, formula_duplicate, n):
+    global nos_of_subformula
+    print("Starting bounded until")
+    rel_quant = []
+    index_of_phi = list_of_subformula.index(formula_duplicate)
+    phi1 = formula_duplicate.children[0].children[0]
     index_of_phi1 = list_of_subformula.index(phi1)
-    phi2 = formula_duplicate.children[3]
+    rel_quant.extend(Semantics(model, phi1, n))
+    phi2 = formula_duplicate.children[0].children[1]
     index_of_phi2 = list_of_subformula.index(phi2)
+    rel_quant.extend(Semantics(model, phi2, n))
+    r_state = [0 for ind in range(n)]
     k1 = int(formula_duplicate.children[1].value)
     k2 = int(formula_duplicate.children[2].value)
-    index_of_phi = list_of_subformula.index(formula_duplicate)
     if k2 == 0:
         result_string = 'A(' + Semantics(model, phi1, combined_list_of_states, n) + ' ' + Semantics(model, phi2,
                                                                                                     combined_list_of_states,
@@ -407,8 +465,6 @@ def SemanticsNext(model, formula_duplicate, n):
 
     print("In next , starting encoding")
 
-    # implement the extra logic here instead of the one below, then check for actions of that state and do the
-    # actions thing
     # n = no.of quantifier, k = no. of state in the model
     # holdsToInt has type real to avoid added complexity of multiplying integer to real values
     index = []
@@ -515,8 +571,6 @@ def SemanticsNext(model, formula_duplicate, n):
     return rel_quant
 
 
-# most probably we can get rid of the whole combined_list_of_states
-
 def SemanticsFuture(model, formula_duplicate, n):
     global nos_of_subformula
     print("Starting future")
@@ -541,7 +595,6 @@ def SemanticsFuture(model, formula_duplicate, n):
 
     print("In future , starting line 4 of algo")
 
-    # implement the extra logic here instead of the one below, then check for actions of that state and do the
     # actions thing          n = no.of quantifier, k = no. of state in the model
     index = []
     for j in range(0, n):
@@ -630,8 +683,6 @@ def SemanticsFuture(model, formula_duplicate, n):
                 add_to_variable_list(prob_succ)
                 holds_succ += '_' + str(index_of_phi1)
                 add_to_variable_list(holds_succ)
-
-
                 d_current += '_' + str(index_of_phi1)
                 add_to_variable_list(d_current)
                 d_succ += '_' + str(index_of_phi1)
@@ -1185,6 +1236,7 @@ def Semantics(model, formula_duplicate, n):
                 r_state[i] = index[i]
         print("Done with operator")
         return rel_quant
+
 
 def Truth(model, formula_initial, combined_list_of_states, n):
     global nos_of_subformula
@@ -12443,7 +12495,7 @@ if __name__ == '__main__':
                 print("State: " + str(state.id) + ", Action= " + str(action.id) + ", tran= " + str(
                     tran.column) + ", " + str(tran.value()))
 
-    #write_model_for_exact(initial_model, subfolder_file)
+    # write_model_for_exact(initial_model, subfolder_file)
 
     ### PC
     # initial_model = build_model_manually_synthesis0(initial_model)
@@ -12455,7 +12507,7 @@ if __name__ == '__main__':
     # initial_model = build_model_manually_synthesis0_1_2_3_4_5_6(initial_model)
 
     # initial_model = build_model_manually_conformance5int(initial_model)
-    #initial_model = build_model_manually_conformance4int(initial_model)
+    # initial_model = build_model_manually_conformance4int(initial_model)
 
     ### TA
     # initial_model = build_model_manually_timing_attack2(initial_model)
