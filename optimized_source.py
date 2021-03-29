@@ -275,7 +275,8 @@ def SemanticsBoundedUntil(model, formula_duplicate, n):
             add_to_variable_list(name2)
 
             eq1 = Implies(listOfBools[list_of_bools.index(name2)], listOfReals[list_of_reals.index(name1)] == float(1))
-            eq2 = Implies(Not(listOfBools[list_of_bools.index(name2)]), listOfReals[list_of_reals.index(name1)] == float(0))
+            eq2 = Implies(Not(listOfBools[list_of_bools.index(name2)]),
+                          listOfReals[list_of_reals.index(name1)] == float(0))
             nos_of_subformula += 2
             s.add(And(eq1, eq2))
             nos_of_subformula += 1
@@ -309,10 +310,12 @@ def SemanticsBoundedUntil(model, formula_duplicate, n):
         left, k_1, k_2, right = formula_duplicate.children
         par = copy.deepcopy(k_2)
         par.value = str(int(k_2.value) - 1)  # k2.value will have changed value but it won't show up in the formula
-                                             # tree, hence it'll appear to be the same formula as formula_duplicate
-        formula_duplicate.children[2] = par  # so now formula_duplicate is basically phi1_until[0,k2-1]_phi2. Don't be confused!!
+        # tree, hence it'll appear to be the same formula as formula_duplicate
+        formula_duplicate.children[
+            2] = par  # so now formula_duplicate is basically phi1_until[0,k2-1]_phi2. Don't be confused!!
         list_of_subformula.append(formula_duplicate)
-        index_of_replaced = len(list_of_subformula) - 1  # forcefully inserting new replaced formula, will obviously be inserted at the end
+        index_of_replaced = len(
+            list_of_subformula) - 1  # forcefully inserting new replaced formula, will obviously be inserted at the end
         rel_quant.extend(SemanticsBoundedUntil(model, formula_duplicate, n))
 
         dict_of_acts = dict()
@@ -336,7 +339,7 @@ def SemanticsBoundedUntil(model, formula_duplicate, n):
         while i >= 0:
             holds1 = 'holds'
             for ind in range(0, len(r_state)):
-                if (ind + 1) == 1: #try to remove this hard-coded value later
+                if (ind + 1) == 1:  # try to remove this hard-coded value later
                     holds1 += "_" + str(r_state[ind])
                 else:
                     holds1 += "_" + str(0)
@@ -344,7 +347,7 @@ def SemanticsBoundedUntil(model, formula_duplicate, n):
             add_to_variable_list(holds1)
             holds2 = 'holds'
             for ind in range(0, len(r_state)):
-                if (ind + 1) == 2: #try to remove this hard-coded value later
+                if (ind + 1) == 2:  # try to remove this hard-coded value later
                     holds2 += "_" + str(r_state[ind])
                 else:
                     holds2 += "_" + str(0)
@@ -451,10 +454,12 @@ def SemanticsBoundedUntil(model, formula_duplicate, n):
         par2 = copy.deepcopy(k_2)
         par1.value = str(int(k_1.value) - 1)
         par2.value = str(int(k_2.value) - 1)
-        formula_duplicate.children[1] = par1  # so now formula_duplicate is basically phi1_until[0,k2-1]_phi2 Don't be confused!!
+        formula_duplicate.children[
+            1] = par1  # so now formula_duplicate is basically phi1_until[0,k2-1]_phi2 Don't be confused!!
         formula_duplicate.children[2] = par2
         list_of_subformula.append(formula_duplicate)
-        index_of_replaced = len(list_of_subformula) - 1  # forcefully inserting new replaced formula, will obviously be inserted at the end
+        index_of_replaced = len(
+            list_of_subformula) - 1  # forcefully inserting new replaced formula, will obviously be inserted at the end
         rel_quant.extend(SemanticsBoundedUntil(model, formula_duplicate, n))
 
         dict_of_acts = dict()
@@ -491,7 +496,7 @@ def SemanticsBoundedUntil(model, formula_duplicate, n):
             add_to_variable_list(prob_phi)
 
             first_implies = Implies(Not(listOfBools[list_of_bools.index(holds1)]),
-                                        (listOfReals[list_of_reals.index(prob_phi)] == float(0)))
+                                    (listOfReals[list_of_reals.index(prob_phi)] == float(0)))
             nos_of_subformula += 1
             s.add(first_implies)
 
@@ -573,7 +578,7 @@ def SemanticsBoundedUntil(model, formula_duplicate, n):
                 index[i] = index[i] + 1
                 r_state[i] = index[i]
 
-    return result_string
+    return rel_quant
 
 
 def SemanticsNext(model, formula_duplicate, n):
@@ -1616,7 +1621,7 @@ def rebuild_exact_value_model(initial_mod):
             count_action += 1
     file_str += "\ntransition_matrix = builder.build()\n"
     loc = {}
-    exec(file_str, {"stormpy":stormpy}, loc)
+    exec(file_str, {"stormpy": stormpy}, loc)
     transition_matrix = loc["transition_matrix"]
     state_labeling = initial_mod.labeling
     components = stormpy.SparseExactModelComponents(transition_matrix=transition_matrix, state_labeling=state_labeling)
@@ -1645,7 +1650,6 @@ if __name__ == '__main__':
                 tar += 1
                 print("State: " + str(state.id) + ", Action= " + str(action.id) + ", tran= " + str(
                     tran.column) + ", " + str(tran.value()))
-
 
     lab = initial_model.labeling
     for state in initial_model.states:
