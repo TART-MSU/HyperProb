@@ -1,6 +1,6 @@
 import os
 
-testfile_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "model_files")
+testfile_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "HyperOnMDP/model_files")
 
 
 def _path(folder, subfolder, file):
