@@ -48,6 +48,7 @@ turtle_grammar = """
     %import common.WS_INLINE
     %ignore WS_INLINE
 """
+
 parser = None
 list_of_subformula = []
 list_of_reals = []
@@ -62,6 +63,13 @@ f_pointer = None
 
 
 def SemanticsUnboundedUntil(model, formula_duplicate, n):
+    """
+
+    :param model: model of the MDP parsed by stormpy
+    :param formula_duplicate:
+    :param n:
+    :return:
+    """
     global nos_of_subformula
     print("Starting until")
     rel_quant = []
@@ -1631,13 +1639,23 @@ def rebuild_exact_value_model(initial_mod):
 
 if __name__ == '__main__':
     part_path = sys.argv[1]
-    folder_file = part_path.split('_', 1)
-    subfolder_file = folder_file[1].split('_', 1)
-    path = files._path(folder_file[0], subfolder_file[0], subfolder_file[1] + '.nm')
-    print(path)
+    # folder_file = part_path.split('_', 1)
+    # subfolder_file = folder_file[1].split('_', 1)
+    # path = files._path(folder_file[0], subfolder_file[0], subfolder_file[1] + '.nm')
+    # print(path)
+
+    last_occurrence = part_path.rfind('/')
+    file_name = part_path[last_occurrence + 1:]
+    if last_occurrence == -1:
+        folder_path = ''
+    else:
+        folder_path = part_path[:last_occurrence]
+    path = files._path(folder_path, file_name)
+    print("Model file is located at: " + path)
+
     initial_prism_program = stormpy.parse_prism_program(path)
     initial_model = stormpy.build_model(initial_prism_program)
-    print("No of state: " + str(len(initial_model.states)))
+    print("Total number of states: " + str(len(initial_model.states)))
     tar = 0
     ac = 0
 
@@ -1648,12 +1666,9 @@ if __name__ == '__main__':
             ac += 1
             for tran in action.transitions:
                 tar += 1
-                print("State: " + str(state.id) + ", Action= " + str(action.id) + ", tran= " + str(
-                    tran.column) + ", " + str(tran.value()))
 
-    lab = initial_model.labeling
-    for state in initial_model.states:
-        print(lab.get_labels_of_state(state.id))
+    print("Total number of transitions: " + str(tar))
+    print("Total number of actions: " + str(ac) + '\n')
 
     parser = Lark(turtle_grammar)
     formula = sys.argv[2]
@@ -1662,5 +1677,4 @@ if __name__ == '__main__':
 
     result = main_smt_encoding(initial_model, parsed_formula_initial, formula)
     print(result)
-    print("Total transitions: " + str(tar))
-    print("Total actions: " + str(ac))
+

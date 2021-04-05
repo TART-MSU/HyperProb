@@ -1,13 +1,13 @@
 import os
 
-testfile_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "HyperOnMDP/model_files")
+model_file_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)))
 
 
-def _path(folder, subfolder, file):
+def _path(folder, file):
     """
-    Internal method for simpler listing of examples.
+    Internal method for generating path of files.
     :param folder: Folder.
-    :param file: Example file.
+    :param file: File containing model description.
     :return: Complete path to example file.
     """
-    return os.path.join(testfile_dir, folder, subfolder, file)
+    return os.path.join(model_file_dir, folder, file)

@@ -36,7 +36,7 @@ The arguments that the script needs are as follows:
 
 - HyperProperty to be verified
 
-For examples on how to represent these parameters refer to this [script](docs/Experiments.txt).
+For examples on how to represent these parameters refer to this [script](benchmark_files/Experiments.txt).
 
 Authors
 -------
