@@ -23,5 +23,6 @@ setup(
     },
     package_data={},
     scripts=[
-        'scripts/source.py']
+        'scripts/source.py',
+        'files.py']
 )
