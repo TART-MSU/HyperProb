@@ -45,7 +45,7 @@ This tool is mainly developed at Michigan State University by:
 
 - Oyendrila Dobe 
 
-Prophesy is developed in close cooperation with:
+It has been developed in close cooperation with:
 - [Erika Abraham](https://ths.rwth-aachen.de/people/erika-abraham/)
 - [Ezio Bartocci](https://informatics.tuwien.ac.at/people/ezio-bartocci)
 - [Borzoo Bonakdarpour](http://www.cse.msu.edu/~borzoo/)
