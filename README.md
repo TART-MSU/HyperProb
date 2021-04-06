@@ -21,10 +21,17 @@ This script uses python 3. It is mainly dependent on :
 
 The above library has its own dependencies which need to be resolved first.
 
-Installation
-------------
+Using the tool
+--------------
 
-The easist way to use the tool is generating a container from the [docker image](https://hub.docker.com/r/oyendrila/hyper_on_mdp_tool) which comes with all the dependencies and the script pre-installed. 
+The easist way to use the tool is generating a container from the [docker image](https://hub.docker.com/r/oyendrila/hyper_on_mdp_tool) which comes with all the dependencies and the script pre-installed.
+- The dependency libraries are loacted in ```\opt``` folder and hav ebeen added to global path.
+- The tool files are located under ```\home\HyperOnMDPtool``` folder.
+- Add the model file anywhere under this folder.
+- The property has to be written when calling the script.
+- To run the tool, invoke the ```source.py``` as follows:
+  - ```python source.py file_path_for_model hyperproperty```
+  - ```file_path_for_model``` refers to the file path with respect to ```\home\HyperOnMDPtool``` as base. For example, if your file is located in ```\home\HyperOnMDPtool\models\mdp.nm```, your command would be ```python source.py models\mdp.nm hyperproperty```
 
 Getting Started
 ---------------
