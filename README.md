@@ -21,6 +21,17 @@ This script uses python 3. It is mainly dependent on :
 
 The above library has its own dependencies which need to be resolved first.
 
+Getting Started
+---------------
+
+The arguments that the script needs are as follows:
+
+- Path of the model file
+
+- HyperProperty to be verified
+
+For examples on how to represent these parameters refer to this [script](benchmark_files/Experiments.txt).
+
 Using the tool
 --------------
 
@@ -33,17 +44,6 @@ The easist way to use the tool is generating a container from the [docker image]
 - To run the tool, invoke the ```source.py``` as follows:
   - ```python source.py file_path_for_model hyperproperty```
   - ```file_path_for_model``` refers to the file path with respect to ```/home/HyperOnMDPtool``` as base. For example, if your file is located in ```/home/HyperOnMDPtool/models/mdp.nm```, your command would be ```python source.py models/mdp.nm hyperproperty```
-
-Getting Started
----------------
-
-The arguments that the script needs are as follows:
-
-- Path of the model file
-
-- HyperProperty to be verified
-
-For examples on how to represent these parameters refer to this [script](benchmark_files/Experiments.txt).
 
 Authors
 -------
