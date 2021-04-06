@@ -24,8 +24,7 @@ The above library has its own dependencies which need to be resolved first.
 Installation
 ------------
 
-Currently working on a integrated downloadable tool set. 
-The easist way to use the tool currently is generating a container from the [docker image](https://hub.docker.com/r/oyendrila/hyper_on_mdp_tool) which comes with all the dependencies and the script pre-installed. 
+The easist way to use the tool is generating a container from the [docker image](https://hub.docker.com/r/oyendrila/hyper_on_mdp_tool) which comes with all the dependencies and the script pre-installed. 
 
 Getting Started
 ---------------
