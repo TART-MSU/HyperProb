@@ -6,25 +6,25 @@ The following are the details of the experiments as mentioned in the paper:
 
 1) TA: Timing attack experiment, explained as the first case study in the paper. The following refer to the arguments used for 3 different trials with m ={2,4,6}
 
-  ---- benchmark_files/mdp/TA/timing_attack2 "AS sh . A s1 . A s2 . ~((start0(s1) & start1(s2)) & ~(P(F counter0(s1)) = P(F counter0(s2))))"
-  ---- benchmark_files/mdp/TA/timing_attack4 "AS sh . A s1 . A s2 . ~((start0(s1) & start1(s2)) & ~(P(F counter0(s1)) = P(F counter0(s2))))"
-  ---- benchmark_files/mdp/TA/timing_attack6 "AS sh . A s1 . A s2 . ~((start0(s1) & start1(s2)) & ~(P(F counter0(s1)) = P(F counter0(s2))))"
-  ---- benchmark_files/mdp/TA/timing_attack8 "AS sh . A s1 . A s2 . ~((start0(s1) & start1(s2)) & ~(P(F counter0(s1)) = P(F counter0(s2))))"
+  ---- benchmark_files/mdp/TA/timing_attack2.nm "AS sh . A s1 . A s2 . ~((start0(s1) & start1(s2)) & ~(P(F counter0(s1)) = P(F counter0(s2))))"
+  ---- benchmark_files/mdp/TA/timing_attack4.nm "AS sh . A s1 . A s2 . ~((start0(s1) & start1(s2)) & ~(P(F counter0(s1)) = P(F counter0(s2))))"
+  ---- benchmark_files/mdp/TA/timing_attack6.nm "AS sh . A s1 . A s2 . ~((start0(s1) & start1(s2)) & ~(P(F counter0(s1)) = P(F counter0(s2))))"
+  ---- benchmark_files/mdp/TA/timing_attack8.nm "AS sh . A s1 . A s2 . ~((start0(s1) & start1(s2)) & ~(P(F counter0(s1)) = P(F counter0(s2))))"
 
 2) PW: Password leakage experiment, explained as the second case study in the paper. The following refer to the arguments used for 3 different trials with m ={2,4,6}
 
-  ---- benchmark_files/mdp/PW/password_leakage2 "AS sh . A s1 . A s2 . ~((start0(s1) & start1(s2)) & ~(P(F counter0(s1)) = P(F counter0(s2))))"
-  ---- benchmark_files/mdp/PW/password_leakage4 "AS sh . A s1 . A s2 . ~((start0(s1) & start1(s2)) & ~(P(F counter0(s1)) = P(F counter0(s2))))"
-  ---- benchmark_files/mdp/PW/password_leakage6 "AS sh . A s1 . A s2 . ~((start0(s1) & start1(s2)) & ~(P(F counter0(s1)) = P(F counter0(s2))))"
-  ---- benchmark_files/mdp/PW/password_leakage8 "AS sh . A s1 . A s2 . ~((start0(s1) & start1(s2)) & ~(P(F counter0(s1)) = P(F counter0(s2))))"
+  ---- benchmark_files/mdp/PW/password_leakage2.nm "AS sh . A s1 . A s2 . ~((start0(s1) & start1(s2)) & ~(P(F counter0(s1)) = P(F counter0(s2))))"
+  ---- benchmark_files/mdp/PW/password_leakage4.nm "AS sh . A s1 . A s2 . ~((start0(s1) & start1(s2)) & ~(P(F counter0(s1)) = P(F counter0(s2))))"
+  ---- benchmark_files/mdp/PW/password_leakage6.nm "AS sh . A s1 . A s2 . ~((start0(s1) & start1(s2)) & ~(P(F counter0(s1)) = P(F counter0(s2))))"
+  ---- benchmark_files/mdp/PW/password_leakage8.nm "AS sh . A s1 . A s2 . ~((start0(s1) & start1(s2)) & ~(P(F counter0(s1)) = P(F counter0(s2))))"
 
 3) TS: Thread scheduler experiment, explained as the third case study in the paper. The following refer to the arguments used for 4 different trials with the mentioned combinations of h values.
 
-  ---- benchmark_files/mdp/TS/thread_scheduler0_1 "AS sh . A s1 . A s2 . ~((h1(s1) & h2(s2)) & ~((P(F (l_1(s1) & terminated(s1))) = P(F (l_1(s2)& terminated(s2)))) & (P(F (l_2(s1)& terminated(s1))) = P(F (l_2(s2) & terminated(s2))))))"
-  ---- benchmark_files/mdp/TS/thread_scheduler0_15 "AS sh . A s1 . A s2 . ~((h1(s1) & h2(s2)) & ~((P(F (l_1(s1) & terminated(s1))) = P(F (l_1(s2)& terminated(s2)))) & (P(F (l_2(s1)& terminated(s1))) = P(F (l_2(s2) & terminated(s2))))))"
-  ---- benchmark_files/mdp/TS/thread_scheduler4_8 "AS sh . A s1 . A s2 . ~((h1(s1) & h2(s2)) & ~((P(F (l_1(s1) & terminated(s1))) = P(F (l_1(s2)& terminated(s2)))) & (P(F (l_2(s1)& terminated(s1))) = P(F (l_2(s2) & terminated(s2))))))"
-  ---- benchmark_files/mdp/TS/thread_scheduler8_15 "AS sh . A s1 . A s2 . ~((h1(s1) & h2(s2)) & ~((P(F (l_1(s1) & terminated(s1))) = P(F (l_1(s2)& terminated(s2)))) & (P(F (l_2(s1)& terminated(s1))) = P(F (l_2(s2) & terminated(s2))))))"
-  ---- benchmark_files/mdp/TS/thread_scheduler10_20 "AS sh . A s1 . A s2 . ~((h1(s1) & h2(s2)) & ~((P(F (l_1(s1) & terminated(s1))) = P(F (l_1(s2)& terminated(s2)))) & (P(F (l_2(s1)& terminated(s1))) = P(F (l_2(s2) & terminated(s2))))))"
+  ---- benchmark_files/mdp/TS/thread_scheduler0_1.nm "AS sh . A s1 . A s2 . ~((h1(s1) & h2(s2)) & ~((P(F (l_1(s1) & terminated(s1))) = P(F (l_1(s2)& terminated(s2)))) & (P(F (l_2(s1)& terminated(s1))) = P(F (l_2(s2) & terminated(s2))))))"
+  ---- benchmark_files/mdp/TS/thread_scheduler0_15.nm "AS sh . A s1 . A s2 . ~((h1(s1) & h2(s2)) & ~((P(F (l_1(s1) & terminated(s1))) = P(F (l_1(s2)& terminated(s2)))) & (P(F (l_2(s1)& terminated(s1))) = P(F (l_2(s2) & terminated(s2))))))"
+  ---- benchmark_files/mdp/TS/thread_scheduler4_8.nm "AS sh . A s1 . A s2 . ~((h1(s1) & h2(s2)) & ~((P(F (l_1(s1) & terminated(s1))) = P(F (l_1(s2)& terminated(s2)))) & (P(F (l_2(s1)& terminated(s1))) = P(F (l_2(s2) & terminated(s2))))))"
+  ---- benchmark_files/mdp/TS/thread_scheduler8_15.nm "AS sh . A s1 . A s2 . ~((h1(s1) & h2(s2)) & ~((P(F (l_1(s1) & terminated(s1))) = P(F (l_1(s2)& terminated(s2)))) & (P(F (l_2(s1)& terminated(s1))) = P(F (l_2(s2) & terminated(s2))))))"
+  ---- benchmark_files/mdp/TS/thread_scheduler10_20.nm "AS sh . A s1 . A s2 . ~((h1(s1) & h2(s2)) & ~((P(F (l_1(s1) & terminated(s1))) = P(F (l_1(s2)& terminated(s2)))) & (P(F (l_2(s1)& terminated(s1))) = P(F (l_2(s2) & terminated(s2))))))"
 
 4) PC: Probabilistic conformance, explained as the fourth case study in the paper. The two cases include the cases where we allow all possible non-deterministic choice for state 0 of the of the first coin and allow all possible non-deterministic choice for state 0 of the of the first coin along with state 0 of the second coin.
 

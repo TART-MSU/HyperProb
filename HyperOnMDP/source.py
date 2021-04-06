@@ -63,15 +63,8 @@ f_pointer = None
 
 
 def SemanticsUnboundedUntil(model, formula_duplicate, n):
-    """
 
-    :param model: model of the MDP parsed by stormpy
-    :param formula_duplicate:
-    :param n:
-    :return:
-    """
     global nos_of_subformula
-    print("Starting until")
     rel_quant = []
     index_of_phi = list_of_subformula.index(formula_duplicate)
     phi1 = formula_duplicate.children[0].children[0]
@@ -240,13 +233,11 @@ def SemanticsUnboundedUntil(model, formula_duplicate, n):
             index[i] = index[i] + 1
             r_state[i] = index[i]
 
-    print("Done with unbounded until")
     return rel_quant
 
 
 def SemanticsBoundedUntil(model, formula_duplicate, n):
     global nos_of_subformula
-    print("Starting bounded until")
     rel_quant = []
     index_of_phi = list_of_subformula.index(formula_duplicate)
     phi1 = formula_duplicate.children[0].children[0]
@@ -591,7 +582,6 @@ def SemanticsBoundedUntil(model, formula_duplicate, n):
 
 def SemanticsNext(model, formula_duplicate, n):
     global nos_of_subformula
-    print("Starting next")
     rel_quant = []
     phi1 = formula_duplicate.children[0].children[0]
     index_of_phi1 = list_of_subformula.index(phi1)
@@ -610,8 +600,6 @@ def SemanticsNext(model, formula_duplicate, n):
                 list_of_tran.append(str(tran.column) + ' ' + str(tran.value()))
             dict_of_acts_tran[str(state.id) + ' ' + str(action.id)] = list_of_tran
         dict_of_acts[state.id] = list_of_act
-
-    print("In next , starting encoding")
 
     # n = no.of quantifier, k = no. of state in the model
     # holdsToInt has type real to avoid added complexity of multiplying integer to real values
@@ -715,13 +703,11 @@ def SemanticsNext(model, formula_duplicate, n):
             index[i] = index[i] + 1
             r_state[i] = index[i]
 
-    print("Done with next")
     return rel_quant
 
 
 def SemanticsFuture(model, formula_duplicate, n):
     global nos_of_subformula
-    print("Starting future")
     rel_quant = []
     phi1 = formula_duplicate.children[0].children[0]
     index_of_phi1 = list_of_subformula.index(phi1)
@@ -741,7 +727,6 @@ def SemanticsFuture(model, formula_duplicate, n):
             dict_of_acts_tran[str(state.id) + ' ' + str(action.id)] = list_of_tran
         dict_of_acts[state.id] = list_of_act
 
-    print("In future , starting line 4 of algo")
 
     # actions thing          n = no.of quantifier, k = no. of state in the model
     index = []
@@ -870,7 +855,6 @@ def SemanticsFuture(model, formula_duplicate, n):
             index[i] = index[i] + 1
             r_state[i] = index[i]
 
-    print("Done with future")
     return rel_quant
 
 
@@ -879,7 +863,6 @@ def Semantics(model, formula_duplicate, n):
     r_state = [0 for ind in range(n)]
     rel_quant = []
     if formula_duplicate.data == 'true':
-        print("Starting with true")
         index_of_phi = list_of_subformula.index(formula_duplicate)
         name = "holds"
         for ind in r_state:
@@ -888,7 +871,6 @@ def Semantics(model, formula_duplicate, n):
         add_to_variable_list(name)
         s.add(listOfBools[list_of_bools.index(name)])
         nos_of_subformula += 1
-        print("Done with true")
         return rel_quant
 
     elif formula_duplicate.data == 'var':  # var handles the inside varname
@@ -929,7 +911,6 @@ def Semantics(model, formula_duplicate, n):
         and_for_yes.clear()
         and_for_no.clear()
         index.clear()
-        print("Done with var " + str(ap_name))
         return rel_quant
 
     elif formula_duplicate.data == 'and_op':
@@ -1004,12 +985,9 @@ def Semantics(model, formula_duplicate, n):
             if i >= 0:
                 index[i] += 1
                 r_state[i] = index[i]
-
-        print("Done with and")
         return rel_quant
 
     elif formula_duplicate.data == 'neg_op':
-        print("Starting with neg")
         rel_quant.extend(Semantics(model, formula_duplicate.children[0], n))
         index_of_phi = list_of_subformula.index(formula_duplicate)
         index_of_phi1 = list_of_subformula.index(formula_duplicate.children[0])
@@ -1056,7 +1034,6 @@ def Semantics(model, formula_duplicate, n):
             if i >= 0:
                 index[i] += 1
                 r_state[i] = index[i]
-        print("Done with neg")
         return rel_quant
 
     elif formula_duplicate.data == 'less_prob':
@@ -1128,7 +1105,6 @@ def Semantics(model, formula_duplicate, n):
             if i >= 0:
                 index[i] += 1
                 r_state[i] = index[i]
-        print("Done with less_prob")
         return rel_quant
 
     elif formula_duplicate.data == 'greater_prob':
@@ -1200,7 +1176,6 @@ def Semantics(model, formula_duplicate, n):
             if i >= 0:
                 index[i] += 1
                 r_state[i] = index[i]
-        print("Done with greater prob")
         return rel_quant
     elif formula_duplicate.data == 'equal_prob':
         rel_quant1 = Semantics(model, formula_duplicate.children[0], n)
@@ -1271,12 +1246,10 @@ def Semantics(model, formula_duplicate, n):
             if i >= 0:
                 index[i] += 1
                 r_state[i] = index[i]
-        print("Done with equal_prob")
         return rel_quant
 
     elif formula_duplicate.data == 'calc_probability':
         child = formula_duplicate.children[0]
-        print("Starting probability")
         if child.data == 'calc_next':
             SemanticsNext(model, formula_duplicate, n)
         elif child.data == 'calc_until_unbounded':
@@ -1285,16 +1258,10 @@ def Semantics(model, formula_duplicate, n):
             SemanticsBoundedUntil(model, formula_duplicate, n)
         elif child.data == 'calc_future':
             rel_quant.extend(SemanticsFuture(model, formula_duplicate, n))
-        print("Done with probability")
         return rel_quant
-    # elif formula_duplicate.data == 'calc_until_unbounded':  # might be redundant
-    #    print("Starting until unbounded")
-    #    SemanticsUnboundedUntil(model, formula_duplicate, n)
-    # elif formula_duplicate.data == 'calc_until_bounded':
-    #    SemanticsBoundedUntil(model, formula_duplicate, n)
+
     elif formula_duplicate.data == 'const':
         c = formula_duplicate.children[0].value
-        print("Starting with constant")
         index_of_phi = list_of_subformula.index(formula_duplicate)
         name = "prob"
         for ind in r_state:
@@ -1303,7 +1270,6 @@ def Semantics(model, formula_duplicate, n):
         add_to_variable_list(name)
         s.add(listOfReals[list_of_reals.index(name)] == c)
         nos_of_subformula += 1
-        print("Done with constant")
         return rel_quant
 
     elif formula_duplicate.data in ['add_prob', 'minus_prob', 'mul_prob']:
@@ -1382,7 +1348,6 @@ def Semantics(model, formula_duplicate, n):
             if i >= 0:
                 index[i] += 1
                 r_state[i] = index[i]
-        print("Done with operator")
         return rel_quant
 
 
@@ -1402,7 +1367,6 @@ def Truth(model, formula_initial, combined_list_of_states, n):
     index_of_phi = list_of_subformula.index(formula_initial)
     list_of_holds = []
 
-    print("Starting big loop in Truth")
     for i in range(len(combined_list_of_states)):
         name = "holds_"
         for j in range(n):
@@ -1418,7 +1382,6 @@ def Truth(model, formula_initial, combined_list_of_states, n):
         quo = 0
         for j in range(limit):
             count += 1
-            # temp_list.append(list_of_holds[limit])
             if count == len(model.states) - 1:
                 index = quo * len(model.states)
                 if list_of_AV[i] == 'V':
@@ -1431,7 +1394,7 @@ def Truth(model, formula_initial, combined_list_of_states, n):
         list_of_holds_replace.clear()
     s.add(list_of_holds[0])
 
-    print("Truth done")
+    print("Encoded quantifiers...")
 
 
 def add_to_subformula_list(formula_phi):  # add as you go any new subformula part as needed
@@ -1478,43 +1441,22 @@ def add_to_variable_list(name):
         listOfInts.append(Int(name))
 
 
-def check_result(smt_end_time):
+def check_result(mdp_model):
     starting = time.process_time()
     t = s.check()
     z3time = time.process_time() - starting
-
+    li_a = None
     if t == sat:
         model = s.model()
-        li_h = dict()
-        for li in model:
-            if li.name()[0] == 'h':
-                li_h[li.name()] = model[li]
-                print(str(li.name()) + '=' + str(model[li]))
-        li_p = dict()
-        for li in model:
-            if li.name()[0] == 'p':
-                li_p[li.name()] = model[li]
-                print(str(li.name()) + '=' + str(model[li]))
-        li_a = dict()
+        li_a = [None] * len(mdp_model.states)
         for li in model:
             if li.name()[0] == 'a':
-                li_a[li.name()] = model[li]
-                print(str(li.name()) + '=' + str(model[li]))
-        li_d = dict()
-        for li in model:
-            if li.name()[0] == 'd':
-                li_d[li.name()] = model[li]
-                print(str(li.name()) + '=' + str(model[li]))
-    print(s.statistics())
-    print("Time to encode: " + str(smt_end_time))
-    print("Time required by z3: " + str(z3time))
-    print("\n")
-    print("Number of variables: " + str(len(list_of_ints) + len(list_of_reals) + len(list_of_bools)))
-    print("Number of formula checked: " + str(nos_of_subformula))
+                li_a[int(li.name()[2:])] = model[li]
     if t.r == 1:
-        return True
+        return True, li_a, s.statistics(), z3time
     elif t.r == -1:
-        return False
+        return False, li_a, s.statistics(), z3time
+
 
 
 def main_smt_encoding(model, formula_initial, formula):
@@ -1532,6 +1474,7 @@ def main_smt_encoding(model, formula_initial, formula):
         else:
             s.add(Or([par for par in list_of_eqns]))
         nos_of_subformula += 1
+    print("Encoded actions in the MDP...")
     n_of_state_quantifier = 0
     formula_duplicate = formula_initial
     while len(formula_duplicate.children) > 0 and type(formula_duplicate.children[0]) == Token:
@@ -1545,25 +1488,38 @@ def main_smt_encoding(model, formula_initial, formula):
     combined_list_of_states = list(itertools.product(list_of_states, repeat=n_of_state_quantifier))
     if formula_initial.data == 'exist_scheduler':
         add_to_subformula_list(formula_initial)
-        print("Calling Truth...")
         Truth(model, formula_initial, combined_list_of_states, n_of_state_quantifier)
-        print("Calling Semantics...")
+
         Semantics(model, formula_duplicate, n_of_state_quantifier)
+        print("Encoded non-quantified formula...")
         smt_end_time = time.process_time() - starttime
-        print("Time to encode: " + str(smt_end_time))
+
+        print("Time to encode in seconds: " + str(round(smt_end_time,2)))
         print("Checking...")
-        if check_result(smt_end_time):
-            return True
+        res, li_a, statis, z3time = check_result(model)
+        if res:
+            print("The property HOLDS!\n")
+            print("\nThe actions at the corresponding states of the witness are:")
+            for i in range(0, len(model.states)):
+                print("State " + str(i) + ' = ' + str(li_a[i]))
+            print("\n")
         else:
-            return False
+            print("The property DOES NOT hold!")
+
+        print("z3 statistics:")
+        print(statis)
+        print("\nTime to encode in seconds: " + str(round(smt_end_time, 2)))
+        print("Time required by z3 in seconds: " + str(round(z3time, 2)))
+        print("\n")
+        print("Number of variables: " + str(len(list_of_ints) + len(list_of_reals) + len(list_of_bools)))
+        print("Number of formula checked: " + str(nos_of_subformula))
 
     elif formula_initial.data == 'forall_scheduler':
         new_formula = ''
         i = 0
-
         first = True
         while i < len(formula):
-            jjj = formula[i]  # just to see what char we are accessing. Can be removed later.
+
             if formula[i] == 'E':
                 if formula[i + 1] == 'S':
                     new_formula += formula[i] + formula[i + 1]
@@ -1601,17 +1557,32 @@ def main_smt_encoding(model, formula_initial, formula):
                 n_of_state_quantifier += 1
                 formula_duplicate = formula_duplicate.children[1]
         add_to_subformula_list(new_parsed_formula)
-        print("Calling Truth...")
         Truth(model, new_parsed_formula, combined_list_of_states, n_of_state_quantifier)
-        print("Calling Semantics...")
         Semantics(model, formula_duplicate, n_of_state_quantifier)
+        print("Encoded non-quantified formula...")
         smt_end_time = time.process_time() - starttime
-        print("Time to encode: " + str(smt_end_time))
+
+        print("Time to encode in seconds: " + str(round(smt_end_time, 2)))
         print("Checking...")
-        if check_result(smt_end_time):
-            return False
+        res, li_a, statis, z3time = check_result(model)
+        if res:
+            print("The property DOES NOT hold!")
+            print("\nThe actions at the corresponding states of a counterexample are:")
+            for i in range(0, len(model.states)):
+                print("State " + str(i) + ' = ' + str(li_a[i]))
+            print("\n")
         else:
-            return True
+            print("The property HOLDS!")
+
+        print("z3 statistics:")
+        print(statis)
+        print("\nTime to encode in seconds: " + str(round(smt_end_time, 2)))
+        print("Time required by z3 in seconds: " + str(round(z3time, 2)))
+        print("\n")
+        print("Number of variables: " + str(len(list_of_ints) + len(list_of_reals) + len(list_of_bools)))
+        print("Number of formula checked: " + str(nos_of_subformula))
+
+
 
 
 def rebuild_exact_value_model(initial_mod):
@@ -1639,10 +1610,6 @@ def rebuild_exact_value_model(initial_mod):
 
 if __name__ == '__main__':
     part_path = sys.argv[1]
-    # folder_file = part_path.split('_', 1)
-    # subfolder_file = folder_file[1].split('_', 1)
-    # path = files._path(folder_file[0], subfolder_file[0], subfolder_file[1] + '.nm')
-    # print(path)
 
     last_occurrence = part_path.rfind('/')
     file_name = part_path[last_occurrence + 1:]
@@ -1675,6 +1642,6 @@ if __name__ == '__main__':
     parsed_formula_initial = parser.parse(formula)
     s = Solver()
 
-    result = main_smt_encoding(initial_model, parsed_formula_initial, formula)
-    print(result)
+    main_smt_encoding(initial_model, parsed_formula_initial, formula)
+
 
