@@ -1,1 +1,11 @@
 theme: jekyll-theme-slate
+
+title: User Manual for HyperOnMDP Tool
+author: Oyendrila Dobe
+email: oyendrila.dobe@gmail.com
+description: > # this means to ignore newlines until "baseurl:"
+ This provides a thorough user manual on how to use the tool and interpret the output.
+# social links
+github_username:  oyendrila-dobe # DO NOT include the @ character, or else the build will fail!
+
+show_excerpts: true # set to false to remove excerpts on the homepage
