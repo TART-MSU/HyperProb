@@ -11,5 +11,5 @@ github_username:  oyendrila-dobe # DO NOT include the @ character, or else the b
 show_excerpts: true # set to false to remove excerpts on the homepage
 
 header_pages:
-  - rumerica/index.md
+  - index.md
   - about.md
