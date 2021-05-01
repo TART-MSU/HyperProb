@@ -1,10 +1,10 @@
 theme: jekyll-theme-slate
 
-title: User Manual for HyperProb
+title: HyperProb
 author: Oyendrila Dobe
-email: odo eoyen@msu.edu
+email: dobeoyen@msu.edu
 description: > # this means to ignore newlines until "baseurl:"
- This provides a thorough user manual on how to use the tool and interpret the output.
+ User manual for the tool
 # social links
 github_username:  oyendrila-dobe # DO NOT include the @ character, or else the build will fail!
 
