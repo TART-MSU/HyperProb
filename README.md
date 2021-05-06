@@ -35,7 +35,7 @@ For examples on how to represent these parameters refer to this [script](benchma
 Using the tool
 --------------
 
-The easist way to use the tool is generating a container from the [docker image](https://hub.docker.com/r/oyendrila/hyper_on_mdp_tool) which comes with all the dependencies and the script pre-installed.
+The easist way to use the tool is generating a container from the [docker image](https://hub.docker.com/r/oyendrila/hyperprob) which comes with all the dependencies and the script pre-installed.
 - The docker operates on Ubuntu.
 - The dependency libraries are loacted in ```/opt``` folder and hav ebeen added to global path.
 - The tool files are located under ```/home/HyperOnMDPtool``` folder.
