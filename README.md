@@ -48,12 +48,12 @@ The easist way to use the tool is generating a container from the [docker image]
 People
 -------
   Authors:
-  - Oyendrila Dobe
-  - [Borzoo Bonakdarpour](http://www.cse.msu.edu/~borzoo/)
+  - Oyendrila Dobe, Michigan State University. 
+  - [Borzoo Bonakdarpour](http://www.cse.msu.edu/~borzoo/), Michigan State University. 
   
   Other Contributors:
-  - [Erika Abraham](https://ths.rwth-aachen.de/people/erika-abraham/)
-- [Ezio Bartocci](https://informatics.tuwien.ac.at/people/ezio-bartocci)
+  - [Erika Abraham](https://ths.rwth-aachen.de/people/erika-abraham/), RWTH Aachen.
+- [Ezio Bartocci](https://informatics.tuwien.ac.at/people/ezio-bartocci), TU-Vienna.
 
 
 
