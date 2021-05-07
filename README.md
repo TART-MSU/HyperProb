@@ -56,7 +56,7 @@ People
   - [Ezio Bartocci](https://informatics.tuwien.ac.at/people/ezio-bartocci), TU-Vienna.
 
   Acknowledgements:
-  - United States National Science Foundation ![NSF logo](nsflogo.jpeg)
+  - United States National Science Foundation ![NSF logo](nsflogo.jpeg =250x250)
   - We would like to thank [Mattias Volk](https://moves.rwth-aachen.de/people/volk/) and [Sebastian Junges](https://sjunges.github.io/sebastian-junges/) for their help with Stormpy during the tool development.
 
 
