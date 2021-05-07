@@ -45,17 +45,17 @@ The easist way to use the tool is generating a container from the [docker image]
   - ```python source.py file_path_for_model hyperproperty```
   - ```file_path_for_model``` refers to the file path with respect to ```/home/HyperOnMDPtool``` as base. For example, if your file is located in ```/home/HyperOnMDPtool/models/mdp.nm```, your command would be ```python source.py models/mdp.nm hyperproperty```
 
-Authors
+People
 -------
-
-This tool is mainly developed at Michigan State University by:
-
-- Oyendrila Dobe 
-
-It has been developed in close cooperation with:
-- [Erika Abraham](https://ths.rwth-aachen.de/people/erika-abraham/)
+  Authors:
+  - Oyendrila Dobe
+  - [Borzoo Bonakdarpour](http://www.cse.msu.edu/~borzoo/)
+  
+  Other Contributors:
+  - [Erika Abraham](https://ths.rwth-aachen.de/people/erika-abraham/)
 - [Ezio Bartocci](https://informatics.tuwien.ac.at/people/ezio-bartocci)
-- [Borzoo Bonakdarpour](http://www.cse.msu.edu/~borzoo/)
+
+
 
 We would like to thank [Mattias Volk](https://moves.rwth-aachen.de/people/volk/) and [Sebastian Junges](https://sjunges.github.io/sebastian-junges/) for their help with Stormpy during the tool development.
 
