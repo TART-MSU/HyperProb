@@ -11,7 +11,7 @@ description: What is it and how to run it
 <br> 
 The above picture (borrowed from [here](https://www.docker.com/blog/containers-replacing-virtual-machines/ "docker_vs_vm"), read the post for an elaborate explaination). The idea is that from a docker image, we can create several containers, which will run in isolation by mainly using our host operating system. Please note that docker only provides a <i>command line user interface</i> to interact with the containers.
 
-We chose this solution to deploy the tool so that the users can avoid the installation process for the dependencies, that have already been included in our docker image. As seen below to run a container with the tool, you can find the neccesary image [here on docker hub](https://hub.docker.com/r/oyendrila/hyperprob "hub"). This has been built using an existing image with the dependencies (CArL, carl-parser, pyCArL, storm, amd stormpy) created by RWTH Aachen, available [here](https://hub.docker.com/r/movesrwth/stormpy "doc_img"). 
+We chose this solution to deploy the tool so that the users can avoid the installation process for the dependencies, that have already been included in our docker image. As seen below to run a container with the tool, you can find the neccesary image [here on docker hub](https://hub.docker.com/r/oyendrila/hyperprob "hub"). This has been built using an existing image with the dependencies (CArL, carl-parser, pyCArL, storm, stormpy, and z3) created by RWTH Aachen, available [here](https://hub.docker.com/r/movesrwth/stormpy "doc_img"). 
 
 ![docker_img](../assets/images/docker.png)
 <div style="text-align: center;"> Figure: Docker workflow </div>
