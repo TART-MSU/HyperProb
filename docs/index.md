@@ -7,7 +7,7 @@ The tool essentially takes two inputs:
 1. A *Markov Decision Process* (MDP).
 2. A *hyperproperty* described in HyperPCTL.
 
-![tool_overview](assets/images/tool_overview.jpeg)
+![tool_overview](assets/images/tool_overview.jpg)
 <div style="text-align: center;"> Figure: Overview of HyperProb </div>
 <br>
 
