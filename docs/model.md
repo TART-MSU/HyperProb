@@ -9,7 +9,7 @@ For our current version of the tool, we verify properties solely over Markov Dec
 We define a MDP formally as a tuple <i>M</i> = {<span style="color:yellowgreen;"><i>S</i>, <i>Act</i>, <i>P</i>, <i>AP</i>, <i>L</i></span>}, where,
 - <span style="color:yellowgreen;">S</span> is the finite set of states.
 - <span style="color:yellowgreen;">Act</span>  is a set of actions.
-- <span style="color:yellowgreen;">P</span>  describes a transition probability function such that  <b>P : S x Act x S -> [0,1]</b>, such that for all s in S, the sum of probabilities for all transitions for each of its actions is equal to 1.
+- <span style="color:yellowgreen;">P</span>  describes a transition probability function such that  <b>P : S x Act x S → [0,1]</b>, such that for all s in S, the sum of probabilities for all transitions for each of its actions is equal to 1.
 - <span style="color:yellowgreen;">AP</span>  finite set of atomic propositions used in the system.
 - <span style="color:yellowgreen;">L</span>  is the labelling function that maps atomic propositions to states in the system.
 
@@ -47,7 +47,7 @@ We use [PRISM](https://www.prismmodelchecker.org/manual/ThePRISMLanguage/Introdu
  - Finally, we assign various labels, which are essentially chosen from the set of atomic propositions of the MDP. We further use these when specifying properties about the model.
  <br>
  <br>
-<b>Note</b>: The seperators like ':' to seperate probabilities from the state descriptors, ';' to end every line, '->' to express transition to, are extremely crucial. Missing them would cause HyperProb to fail in parsing the model.  
+<b>Note</b>: The seperators like ':' to seperate probabilities from the state descriptors, ';' to end every line, '→' to express transition to, are extremely crucial. Missing them would cause HyperProb to fail in parsing the model.  
 
 
 
