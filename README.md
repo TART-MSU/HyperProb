@@ -30,12 +30,13 @@ The arguments that the script needs are as follows:
 
 - HyperProperty to be verified
 
-For examples on how to represent these parameters refer to this [script](benchmark_files/Experiments.txt).
+For examples on how to represent these parameters refer to this [script](benchmark_files/Experiments.txt).<br>
+A detailed user manual (in progress) can be accessed at [User Manual](https://oyendrila-dobe.github.io/HyperProb/).
 
 Using the tool
 --------------
 
-The easist way to use the tool is generating a container from the [docker image](https://hub.docker.com/r/oyendrila/hyperprob) which comes with all the dependencies and the script pre-installed.
+The easiest way to use the tool is generating a container from the [docker image](https://hub.docker.com/r/oyendrila/hyperprob) which comes with all the dependencies and the script pre-installed.
 - The docker operates on Ubuntu.
 - The dependency libraries are loacted in ```/opt``` folder and hav ebeen added to global path.
 - The tool files are located under ```/home/HyperOnMDPtool``` folder.
@@ -55,8 +56,9 @@ People
   - [Erika Abraham](https://ths.rwth-aachen.de/people/erika-abraham/), RWTH Aachen.
   - [Ezio Bartocci](https://informatics.tuwien.ac.at/people/ezio-bartocci), TU-Vienna.
 
-  Acknowledgements:
-  - United States National Science Foundation 
-  - We would like to thank [Mattias Volk](https://moves.rwth-aachen.de/people/volk/) and [Sebastian Junges](https://sjunges.github.io/sebastian-junges/) for their help with Stormpy during the tool development.
+Acknowledgements
+----------------
+ - United States National Science Foundation 
+ - We would like to thank [Mattias Volk](https://moves.rwth-aachen.de/people/volk/) and [Sebastian Junges](https://sjunges.github.io/sebastian-junges/) for their help with Stormpy during the tool development.
 
 
