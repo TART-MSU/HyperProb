@@ -1251,11 +1251,11 @@ def Semantics(model, formula_duplicate, n):
     elif formula_duplicate.data == 'calc_probability':
         child = formula_duplicate.children[0]
         if child.data == 'calc_next':
-            SemanticsNext(model, formula_duplicate, n)
+            rel_quant.extend(SemanticsNext(model, formula_duplicate, n))
         elif child.data == 'calc_until_unbounded':
-            SemanticsUnboundedUntil(model, formula_duplicate, n)
+            rel_quant.extend(SemanticsUnboundedUntil(model, formula_duplicate, n))
         elif child.data == 'calc_until_bounded':
-            SemanticsBoundedUntil(model, formula_duplicate, n)
+            rel_quant.extend(SemanticsBoundedUntil(model, formula_duplicate, n))
         elif child.data == 'calc_future':
             rel_quant.extend(SemanticsFuture(model, formula_duplicate, n))
         return rel_quant
