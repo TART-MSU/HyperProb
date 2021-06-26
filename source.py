@@ -790,15 +790,15 @@ def SemanticsFuture(model, formula_duplicate, n):
                 for l in range(1, n + 1):
                     if l in rel_quant:
                         space = cs[f].find(' ')
-                        succ_state = cs[f - 1][0:space]
+                        succ_state = cs[f][0:space]
                         prob_succ += '_' + succ_state
                         holds_succ += '_' + succ_state
                         d_succ += '_' + succ_state
                         if p_first:
-                            prod_left_part = RealVal(cs[f - 1][space + 1:]).as_fraction()
+                            prod_left_part = RealVal(cs[f][space + 1:]).as_fraction()
                             p_first = False
                         else:
-                            prod_left_part *= RealVal(cs[f - 1][space + 1:]).as_fraction()
+                            prod_left_part *= RealVal(cs[f][space + 1:]).as_fraction()
                         f += 1
 
                     else:
@@ -1442,9 +1442,9 @@ def add_to_variable_list(name):
 
 
 def check_result(mdp_model):
-    starting = time.process_time()
+    starting = time.perf_counter()
     t = s.check()
-    z3time = time.process_time() - starting
+    z3time = time.perf_counter() - starting
     li_a = None
     if t == sat:
         model = s.model()
@@ -1462,7 +1462,7 @@ def check_result(mdp_model):
 def main_smt_encoding(model, formula_initial, formula):
     global nos_of_subformula
     list_of_states = []
-    starttime = time.process_time()
+    starttime = time.perf_counter()
     for state in model.states:
         list_of_eqns = []
         name = "a_" + str(state.id)  # a_1 means action for state 1
@@ -1492,7 +1492,7 @@ def main_smt_encoding(model, formula_initial, formula):
 
         Semantics(model, formula_duplicate, n_of_state_quantifier)
         print("Encoded non-quantified formula...")
-        smt_end_time = time.process_time() - starttime
+        smt_end_time = time.perf_counter() - starttime
 
         print("Time to encode in seconds: " + str(round(smt_end_time,2)))
         print("Checking...")
@@ -1560,7 +1560,7 @@ def main_smt_encoding(model, formula_initial, formula):
         Truth(model, new_parsed_formula, combined_list_of_states, n_of_state_quantifier)
         Semantics(model, formula_duplicate, n_of_state_quantifier)
         print("Encoded non-quantified formula...")
-        smt_end_time = time.process_time() - starttime
+        smt_end_time = time.perf_counter() - starttime
 
         print("Time to encode in seconds: " + str(round(smt_end_time, 2)))
         print("Checking...")
