@@ -23,8 +23,8 @@ email: dobeoyen@msu.edu
 description: >- # this means to ignore newlines until "baseurl:"
   User Manual for the tool 
 baseurl: "/HyperProb" # the subpath of your site, e.g. /blog
-url: "https://oyendrila-dobe.github.io" # the base hostname & protocol for your site, e.g. http://example.com
-github_link: "https://github.com/oyendrila-dobe/HyperProb"
+url: "https://tart-msu.github.io" # the base hostname & protocol for your site, e.g. http://example.com
+github_link: "https://tart-msu.github.io/HyperProb/"
 author: "Oyendrila Dobe"
 github_username:  oyendrila-dobe
 
