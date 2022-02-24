@@ -4,7 +4,7 @@ const int n = 1;
 
 module secret_thread1
 
-	h1  : [0..n]; 
+	    h1  : [0..n]; 
         pc1 : [0..1];
         c1  : [0..2*n];
         e1  : [0..1];

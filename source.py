@@ -875,6 +875,7 @@ def Semantics(model, formula_duplicate, n):
 
     elif formula_duplicate.data == 'var':  # var handles the inside varname
         ap_name = formula_duplicate.children[0].children[0].value
+        qwer = formula_duplicate.children[0].children[1].value[1]
         relevant_quantifier = int(formula_duplicate.children[0].children[1].value[1])
         labeling = model.labeling
         rel_quant.append(relevant_quantifier)  # n = no.of quantifier, k = no. of state in the model
@@ -1309,16 +1310,16 @@ def Semantics(model, formula_duplicate, n):
             name3 += '_' + str(index_right)
             add_to_variable_list(name3)
             if formula_duplicate.data == 'add_prob':
-                s.add(listOfReals[list_of_reals.index(name3)] == (
-                        listOfReals[list_of_reals.index(name1)] + listOfReals[list_of_reals.index(name2)]))
+                s.add(listOfReals[list_of_reals.index(name1)] == (
+                        listOfReals[list_of_reals.index(name2)] + listOfReals[list_of_reals.index(name3)]))
                 nos_of_subformula += 2
             elif formula_duplicate.data == 'minus_prob':
-                s.add(listOfReals[list_of_reals.index(name3)] == (
-                        listOfReals[list_of_reals.index(name1)] - listOfReals[list_of_reals.index(name2)]))
+                s.add(listOfReals[list_of_reals.index(name1)] == (
+                        listOfReals[list_of_reals.index(name2)] - listOfReals[list_of_reals.index(name3)]))
                 nos_of_subformula += 2
             elif formula_duplicate.data == 'mul_prob':
-                s.add(listOfReals[list_of_reals.index(name3)] == (
-                        listOfReals[list_of_reals.index(name1)] * listOfReals[list_of_reals.index(name2)]))
+                s.add(listOfReals[list_of_reals.index(name1)] == (
+                        listOfReals[list_of_reals.index(name2)] * listOfReals[list_of_reals.index(name3)]))
                 nos_of_subformula += 2
             else:
                 print("Unexpected operator. Exiting")
@@ -1475,6 +1476,7 @@ def main_smt_encoding(model, formula_initial, formula):
             s.add(Or([par for par in list_of_eqns]))
         nos_of_subformula += 1
     print("Encoded actions in the MDP...")
+    print(s)
     n_of_state_quantifier = 0
     formula_duplicate = formula_initial
     while len(formula_duplicate.children) > 0 and type(formula_duplicate.children[0]) == Token:
@@ -1564,6 +1566,7 @@ def main_smt_encoding(model, formula_initial, formula):
 
         print("Time to encode in seconds: " + str(round(smt_end_time, 2)))
         print("Checking...")
+        print(s) # write to file to get encodings
         res, li_a, statis, z3time = check_result(model)
         if res:
             print("The property DOES NOT hold!")
@@ -1619,6 +1622,7 @@ if __name__ == '__main__':
         folder_path = part_path[:last_occurrence]
     path = files._path(folder_path, file_name)
     print("Model file is located at: " + path)
+    #x = stormpy.pa
 
     initial_prism_program = stormpy.parse_prism_program(path)
     initial_model = stormpy.build_model(initial_prism_program)
@@ -1641,6 +1645,7 @@ if __name__ == '__main__':
     formula = sys.argv[2]
     parsed_formula_initial = parser.parse(formula)
     s = Solver()
+
 
     main_smt_encoding(initial_model, parsed_formula_initial, formula)
 

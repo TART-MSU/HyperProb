@@ -27,7 +27,6 @@ module thread_secret
        // [schedule] (l=1)& (h=0)  -> 1 : (l'=1)& (h'=0) ;
        // [schedule] (l=2)& (h=0)  -> 1 : (l'=2)& (h'=0) ;
 
-
 endmodule
 
 //init  (h=n)&(l=0) endinit
