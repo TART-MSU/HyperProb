@@ -46,6 +46,8 @@ The easiest way to use the tool is generating a container from the [docker image
   - ```python source.py file_path_for_model hyperproperty```
   - ```file_path_for_model``` refers to the file path with respect to ```/home/HyperOnMDPtool``` as base. For example, if your file is located in ```/home/HyperOnMDPtool/models/mdp.nm```, your command would be ```python source.py models/mdp.nm hyperproperty```
 
+Please note that the current tool deosnot support the 'OR, IMPLIES' operators in hyperproperties, please use 'AND, NOT'. Will add them soon.
+
 People
 -------
   Authors:
