@@ -2,7 +2,7 @@
 
 This package model checks probabilistic hyperproperties written in HyperPCTL ON MDPS/DTMCs.
 
-##Installation
+## Installation
 
 Begin by cloning this folder locally:
 ```
