@@ -1,0 +1,17 @@
+Metadata-Version: 2.1
+Name: hyperprob
+Version: 0.1.0
+Summary: Model checker for Probabilistic Hyperproperties
+Home-page: https://github.com/TART-MSU/HyperProb
+Author: Oyendrila Dobe
+Author-email: oyendrila.dobe@gmail.com
+Classifier: Environment :: MacOS X
+Classifier: Intended Audience :: Science/Research
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: MacOS :: MacOS X
+Classifier: Operating System :: MacOS :: MacOS X
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Topic :: Scientific/Engineering
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Requires-Python: >=3.9
+License-File: LICENSE
