@@ -1,6 +1,7 @@
 import itertools
 
-from z3 import And, Bool, Real, Int, Not, Or, Xor
+from lark import Tree
+from z3 import And, Bool, Real, Int, Not, Or, Xor, RealVal
 
 
 def extendWithoutDuplicates(list1, list2):
@@ -245,7 +246,8 @@ class SemanticsEncoder:
                 self.no_of_subformula += 1
             return relevant_quantifier
         elif hyperproperty.data == 'not':
-            relevant_quantifier = extendWithoutDuplicates(relevant_quantifier, self.encodeSemantics(hyperproperty.children[0]))
+            relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
+                                                          self.encodeSemantics(hyperproperty.children[0]))
             index_of_phi = self.list_of_subformula.index(hyperproperty)
             index_of_phi1 = self.list_of_subformula.index(hyperproperty.children[0])
 
@@ -296,10 +298,12 @@ class SemanticsEncoder:
                 name3 += '_' + str(index_of_phi2)
                 self.addToVariableList(name3)
                 and_eq = And(self.listOfBools[self.list_of_bools.index(name1)],
-                             self.listOfReals[self.list_of_reals.index(name2)] < self.listOfReals[self.list_of_reals.index(name3)])
+                             self.listOfReals[self.list_of_reals.index(name2)] < self.listOfReals[
+                                 self.list_of_reals.index(name3)])
                 self.no_of_subformula += 1
                 and_not_eq = And(Not(self.listOfBools[self.list_of_bools.index(name1)]),
-                                 self.listOfReals[self.list_of_reals.index(name2)] >= self.listOfReals[self.list_of_reals.index(name3)])
+                                 self.listOfReals[self.list_of_reals.index(name2)] >= self.listOfReals[
+                                     self.list_of_reals.index(name3)])
                 self.no_of_subformula += 1
                 self.solver.add(Or(and_eq, and_not_eq))
                 self.no_of_subformula += 1
@@ -499,10 +503,12 @@ class SemanticsEncoder:
                 name3 += '_' + str(index_of_phi2)
                 self.addToVariableList(name3)
                 and_eq = And(self.listOfBools[self.list_of_bools.index(name1)],
-                             self.listOfReals[self.list_of_reals.index(name2)] < self.listOfReals[self.list_of_reals.index(name3)])
+                             self.listOfReals[self.list_of_reals.index(name2)] < self.listOfReals[
+                                 self.list_of_reals.index(name3)])
                 self.no_of_subformula += 1
                 and_not_eq = And(Not(self.listOfBools[self.list_of_bools.index(name1)]),
-                                 self.listOfReals[self.list_of_reals.index(name2)] >= self.listOfReals[self.list_of_reals.index(name3)])
+                                 self.listOfReals[self.list_of_reals.index(name2)] >= self.listOfReals[
+                                     self.list_of_reals.index(name3)])
                 self.no_of_subformula += 1
                 self.solver.add(Or(and_eq, and_not_eq))
                 self.no_of_subformula += 1
@@ -671,6 +677,171 @@ class SemanticsEncoder:
                 self.solver.add(Or(and_eq, and_not_eq))
                 self.no_of_subformula += 1
             return relevant_quantifier
+        elif hyperproperty.data == 'probability':
+            child = hyperproperty.children[0]
+            if child.data == 'next':
+                relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
+                                                              self.encodeNextSemantics(hyperproperty,
+                                                                                       relevant_quantifier))
+            elif child.data == 'until_unbounded':
+                relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
+                                                              self.encodeUnboundedUntilSemantics(hyperproperty,
+                                                                                                 relevant_quantifier))
+            elif child.data == 'until_bounded':
+                relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
+                                                              self.encodeBoundedUntilSemantics(hyperproperty,
+                                                                                               relevant_quantifier))
+            elif child.data == 'future':
+                relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
+                                                              self.encodeFutureSemantics(hyperproperty,
+                                                                                         relevant_quantifier))
+            elif child.data == 'global':
+                relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
+                                                              self.encodeGlobalSemantics(hyperproperty,
+                                                                                         relevant_quantifier))
+            return relevant_quantifier
+        elif hyperproperty.data == 'reward':
+            child = hyperproperty.children[1]
+            if child.data == 'next':
+                relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
+                                                              self.encodeRewNextSemantics(hyperproperty))
+            elif child.data == 'until_unbounded':
+                relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
+                                                              self.encodeRewUnboundedUntilSemantics(hyperproperty))
+            elif child.data == 'until_bounded':
+                relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
+                                                              self.encodeRewBoundedUntilSemantics(hyperproperty))
+            elif child.data == 'future':
+                relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
+                                                              self.encodeRewFutureSemantics(hyperproperty))
+            elif child.data == 'global':
+                relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
+                                                              self.encodeRewGlobalSemantics(hyperproperty))
+            return relevant_quantifier
+        elif hyperproperty.data == 'constant_probability':
+            constant = RealVal(hyperproperty.children[0].value).as_fraction().limit_denominator(10000)
+            index_of_phi = self.list_of_subformula.index(hyperproperty)
+            name = "prob"
+            r_state = [0 for ind in range(self.no_of_state_quantifier)]
+            for ind in r_state:
+                name += "_" + str(ind)
+            name += '_' + str(index_of_phi)
+            self.addToVariableList(name)
+            self.solver.add(self.listOfReals[self.list_of_reals.index(name)] == constant)
+            self.no_of_subformula += 1
+            return relevant_quantifier
+        elif hyperproperty.data == 'constant_reward':
+            constant = hyperproperty.children[0].value
+            index_of_phi = self.list_of_subformula.index(hyperproperty)
+            name = "rew"
+            r_state = [0 for ind in range(self.no_of_state_quantifier)]
+            for ind in r_state:
+                name += "_" + str(ind)
+            name += '_' + str(index_of_phi)
+            self.addToVariableList(name)
+            self.solver.add(self.listOfReals[self.list_of_reals.index(name)] == constant)
+            self.no_of_subformula += 1
+            return relevant_quantifier
+
+        elif hyperproperty.data in ['add_probability', 'subtract_probability', 'multiply_probability']:
+            rel_quant1 = self.encodeSemantics(hyperproperty.children[0])
+            rel_quant2 = self.encodeSemantics(hyperproperty.children[1])
+            relevant_quantifier = extendWithoutDuplicates(rel_quant1, rel_quant2)
+            index_of_phi = self.list_of_subformula.index(hyperproperty)
+            index_left = self.list_of_subformula.index(hyperproperty.children[0])
+            index_right = self.list_of_subformula.index(hyperproperty.children[1])
+            combined_state_list = self.generateComposedStates(relevant_quantifier)
+            for r_state in combined_state_list:
+                name1 = 'prob'
+                for ind in r_state:
+                    name1 += "_" + str(ind)
+                name1 += '_' + str(index_of_phi)
+                self.addToVariableList(name1)
+                name2 = 'prob'
+                for ind in range(0, len(r_state)):
+                    if (ind + 1) in rel_quant1:
+                        name2 += "_" + str(r_state[ind])
+                    else:
+                        name2 += "_" + str(0)
+                name2 += '_' + str(index_left)
+                self.addToVariableList(name2)
+                name3 = 'prob'
+                for ind in range(0, len(r_state)):
+                    if (ind + 1) in rel_quant2:
+                        name3 += "_" + str(r_state[ind])
+                    else:
+                        name3 += "_" + str(0)
+                name3 += '_' + str(index_right)
+                self.addToVariableList(name3)
+                if hyperproperty.data == 'add_probability':
+                    self.solver.add(self.listOfReals[self.list_of_reals.index(name1)] == (
+                            self.listOfReals[self.list_of_reals.index(name2)] + self.listOfReals[
+                        self.list_of_reals.index(name3)]))
+                    self.no_of_subformula += 2
+                elif hyperproperty.data == 'subtract_probability':
+                    self.solver.add(self.listOfReals[self.list_of_reals.index(name1)] == (
+                            self.listOfReals[self.list_of_reals.index(name2)] - self.listOfReals[
+                        self.list_of_reals.index(name3)]))
+                    self.no_of_subformula += 2
+                elif hyperproperty.data == 'multiply_probability':
+                    self.solver.add(self.listOfReals[self.list_of_reals.index(name1)] == (
+                            self.listOfReals[self.list_of_reals.index(name2)] * self.listOfReals[
+                        self.list_of_reals.index(name3)]))
+                    self.no_of_subformula += 2
+                else:
+                    print("Unexpected operator. Exiting")
+                    return -1
+            return relevant_quantifier
+
+        elif hyperproperty.data in ['add_reward', 'subtract_reward', 'multiply_reward']:
+            rel_quant1 = self.encodeSemantics(hyperproperty.children[0])
+            rel_quant2 = self.encodeSemantics(hyperproperty.children[1])
+            relevant_quantifier = extendWithoutDuplicates(rel_quant1, rel_quant2)
+            index_of_phi = self.list_of_subformula.index(hyperproperty)
+            index_left = self.list_of_subformula.index(hyperproperty.children[0])
+            index_right = self.list_of_subformula.index(hyperproperty.children[1])
+            combined_state_list = self.generateComposedStates(relevant_quantifier)
+            for r_state in combined_state_list:
+                name1 = 'rew'
+                for ind in r_state:
+                    name1 += "_" + str(ind)
+                name1 += '_' + str(index_of_phi)
+                self.addToVariableList(name1)
+                name2 = 'rew'
+                for ind in range(0, len(r_state)):
+                    if (ind + 1) in rel_quant1:
+                        name2 += "_" + str(r_state[ind])
+                    else:
+                        name2 += "_" + str(0)
+                name2 += '_' + str(index_left)
+                self.addToVariableList(name2)
+                name3 = 'rew'
+                for ind in range(0, len(r_state)):
+                    if (ind + 1) in rel_quant2:
+                        name3 += "_" + str(r_state[ind])
+                    else:
+                        name3 += "_" + str(0)
+                name3 += '_' + str(index_right)
+                self.addToVariableList(name3)
+                if hyperproperty.data == 'add_reward':
+                    self.solver.add(self.listOfReals[self.list_of_reals.index(name1)] == (
+                            self.listOfReals[self.list_of_reals.index(name2)] + self.listOfReals[
+                        self.list_of_reals.index(name3)]))
+                    self.no_of_subformula += 2
+                elif hyperproperty.data == 'subtract_reward':
+                    self.solver.add(self.listOfReals[self.list_of_reals.index(name1)] == (
+                            self.listOfReals[self.list_of_reals.index(name2)] - self.listOfReals[
+                        self.list_of_reals.index(name3)]))
+                    self.no_of_subformula += 2
+                elif hyperproperty.data == 'multiply_reward':
+                    self.solver.add(self.listOfReals[self.list_of_reals.index(name1)] == (
+                            self.listOfReals[self.list_of_reals.index(name2)] * self.listOfReals[
+                        self.list_of_reals.index(name3)]))
+                    self.no_of_subformula += 2
+                else:
+                    print("Unexpected operator. Exiting")
+                    return -1
+            return relevant_quantifier
         else:
             self.encodeSemantics(hyperproperty.children[0])
 
@@ -698,3 +869,33 @@ class SemanticsEncoder:
             else:
                 stored_list.append([0])
         return list(itertools.product(*stored_list))
+
+    def encodeNextSemantics(self, hyperproperty, relevant_quantifier):
+        pass
+
+    def encodeUnboundedUntilSemantics(self, hyperproperty, relevant_quantifier):
+        pass
+
+    def encodeBoundedUntilSemantics(self, hyperproperty, relevant_quantifier):
+        pass
+
+    def encodeFutureSemantics(self, hyperproperty, relevant_quantifier):
+        pass
+
+    def encodeGlobalSemantics(self, hyperproperty, relevant_quantifier):
+        pass
+
+    def encodeRewNextSemantics(self, hyperproperty):
+        pass
+
+    def encodeRewUnboundedUntilSemantics(self, hyperproperty):
+        pass
+
+    def encodeRewBoundedUntilSemantics(self, hyperproperty):
+        pass
+
+    def encodeRewFutureSemantics(self, hyperproperty):
+        pass
+
+    def encodeRewGlobalSemantics(self, hyperproperty):
+        pass
