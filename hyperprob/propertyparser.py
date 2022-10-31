@@ -19,7 +19,7 @@ class Property:
                             | "(" formula "&" formula ")"-> and
                             | "(" formula "|" formula ")"-> or
                             | "(" formula "->" formula ")"-> implies
-                            | "(" formula "<->" formula ")"-> equivalent
+                            | "(" formula "<->" formula ")"-> biconditional
                             | "~" formula -> not
                             | "true" -> true
                             | "(" p "<" p ")" -> less_probability
