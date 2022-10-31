@@ -1,6 +1,6 @@
 import itertools
 
-from z3 import And, Bool, Real, Int, Not, Or
+from z3 import And, Bool, Real, Int, Not, Or, Xor
 
 
 def extendWithoutDuplicates(list1, list2):
@@ -244,7 +244,433 @@ class SemanticsEncoder:
                 self.solver.add(Or(first_and, second_and))
                 self.no_of_subformula += 1
             return relevant_quantifier
-        # implement not
+        elif hyperproperty.data == 'not':
+            relevant_quantifier = extendWithoutDuplicates(relevant_quantifier, self.encodeSemantics(hyperproperty.children[0]))
+            index_of_phi = self.list_of_subformula.index(hyperproperty)
+            index_of_phi1 = self.list_of_subformula.index(hyperproperty.children[0])
+
+            combined_state_list = self.generateComposedStates(relevant_quantifier)
+            for r_state in combined_state_list:
+                name1 = 'holds'
+                for ind in r_state:
+                    name1 += "_" + str(ind)
+                name1 += '_' + str(index_of_phi)
+                self.addToVariableList(name1)
+                name2 = 'holds'
+                for ind in r_state:
+                    name2 += "_" + str(ind)
+                name2 += '_' + str(index_of_phi1)
+                self.addToVariableList(name2)
+                self.solver.add(Xor(self.listOfBools[self.list_of_bools.index(name1)],
+                                    self.listOfBools[self.list_of_bools.index(name2)]))
+                self.no_of_subformula += 1
+            return relevant_quantifier
+        elif hyperproperty.data == 'less_probability':
+            rel_quant1 = self.encodeSemantics(hyperproperty.children[0])
+            rel_quant2 = self.encodeSemantics(hyperproperty.children[1])
+            relevant_quantifier = extendWithoutDuplicates(rel_quant1, rel_quant2)
+            index_of_phi = self.list_of_subformula.index(hyperproperty)
+            index_of_phi1 = self.list_of_subformula.index(hyperproperty.children[0])
+            index_of_phi2 = self.list_of_subformula.index(hyperproperty.children[1])
+            combined_state_list = self.generateComposedStates(relevant_quantifier)
+            for r_state in combined_state_list:
+                name1 = 'holds'
+                for ind in r_state:
+                    name1 += "_" + str(ind)
+                name1 += '_' + str(index_of_phi)
+                self.addToVariableList(name1)
+                name2 = 'holds'
+                for ind in range(0, len(r_state)):
+                    if (ind + 1) in rel_quant1:
+                        name2 += "_" + str(r_state[ind])
+                    else:
+                        name2 += "_" + str(0)
+                name2 += '_' + str(index_of_phi1)
+                self.addToVariableList(name2)
+                name3 = 'holds'
+                for ind in range(0, len(r_state)):
+                    if (ind + 1) in rel_quant2:
+                        name3 += "_" + str(r_state[ind])
+                    else:
+                        name3 += "_" + str(0)
+                name3 += '_' + str(index_of_phi2)
+                self.addToVariableList(name3)
+                and_eq = And(self.listOfBools[self.list_of_bools.index(name1)],
+                             self.listOfReals[self.list_of_reals.index(name2)] < self.listOfReals[self.list_of_reals.index(name3)])
+                self.no_of_subformula += 1
+                and_not_eq = And(Not(self.listOfBools[self.list_of_bools.index(name1)]),
+                                 self.listOfReals[self.list_of_reals.index(name2)] >= self.listOfReals[self.list_of_reals.index(name3)])
+                self.no_of_subformula += 1
+                self.solver.add(Or(and_eq, and_not_eq))
+                self.no_of_subformula += 1
+            return relevant_quantifier
+        elif hyperproperty.data == 'equal_probability':
+            rel_quant1 = self.encodeSemantics(hyperproperty.children[0])
+            rel_quant2 = self.encodeSemantics(hyperproperty.children[1])
+            relevant_quantifier = extendWithoutDuplicates(rel_quant1, rel_quant2)
+            index_of_phi = self.list_of_subformula.index(hyperproperty)
+            index_of_phi1 = self.list_of_subformula.index(hyperproperty.children[0])
+            index_of_phi2 = self.list_of_subformula.index(hyperproperty.children[1])
+            combined_state_list = self.generateComposedStates(relevant_quantifier)
+            for r_state in combined_state_list:
+                name1 = 'holds'
+                for ind in r_state:
+                    name1 += "_" + str(ind)
+                name1 += '_' + str(index_of_phi)
+                self.addToVariableList(name1)
+                name2 = 'holds'
+                for ind in range(0, len(r_state)):
+                    if (ind + 1) in rel_quant1:
+                        name2 += "_" + str(r_state[ind])
+                    else:
+                        name2 += "_" + str(0)
+                name2 += '_' + str(index_of_phi1)
+                self.addToVariableList(name2)
+                name3 = 'holds'
+                for ind in range(0, len(r_state)):
+                    if (ind + 1) in rel_quant2:
+                        name3 += "_" + str(r_state[ind])
+                    else:
+                        name3 += "_" + str(0)
+                name3 += '_' + str(index_of_phi2)
+                self.addToVariableList(name3)
+                and_eq = And(self.listOfBools[self.list_of_bools.index(name1)],
+                             self.listOfReals[self.list_of_reals.index(name2)] == self.listOfReals[
+                                 self.list_of_reals.index(name3)])
+                self.no_of_subformula += 1
+                and_not_eq = And(Not(self.listOfBools[self.list_of_bools.index(name1)]),
+                                 self.listOfReals[self.list_of_reals.index(name2)] != self.listOfReals[
+                                     self.list_of_reals.index(name3)])
+                self.no_of_subformula += 1
+                self.solver.add(Or(and_eq, and_not_eq))
+                self.no_of_subformula += 1
+            return relevant_quantifier
+        elif hyperproperty.data == 'greater_probability':
+            rel_quant1 = self.encodeSemantics(hyperproperty.children[0])
+            rel_quant2 = self.encodeSemantics(hyperproperty.children[1])
+            relevant_quantifier = extendWithoutDuplicates(rel_quant1, rel_quant2)
+            index_of_phi = self.list_of_subformula.index(hyperproperty)
+            index_of_phi1 = self.list_of_subformula.index(hyperproperty.children[0])
+            index_of_phi2 = self.list_of_subformula.index(hyperproperty.children[1])
+            combined_state_list = self.generateComposedStates(relevant_quantifier)
+            for r_state in combined_state_list:
+                name1 = 'holds'
+                for ind in r_state:
+                    name1 += "_" + str(ind)
+                name1 += '_' + str(index_of_phi)
+                self.addToVariableList(name1)
+                name2 = 'holds'
+                for ind in range(0, len(r_state)):
+                    if (ind + 1) in rel_quant1:
+                        name2 += "_" + str(r_state[ind])
+                    else:
+                        name2 += "_" + str(0)
+                name2 += '_' + str(index_of_phi1)
+                self.addToVariableList(name2)
+                name3 = 'holds'
+                for ind in range(0, len(r_state)):
+                    if (ind + 1) in rel_quant2:
+                        name3 += "_" + str(r_state[ind])
+                    else:
+                        name3 += "_" + str(0)
+                name3 += '_' + str(index_of_phi2)
+                self.addToVariableList(name3)
+                and_eq = And(self.listOfBools[self.list_of_bools.index(name1)],
+                             self.listOfReals[self.list_of_reals.index(name2)] > self.listOfReals[
+                                 self.list_of_reals.index(name3)])
+                self.no_of_subformula += 1
+                and_not_eq = And(Not(self.listOfBools[self.list_of_bools.index(name1)]),
+                                 self.listOfReals[self.list_of_reals.index(name2)] <= self.listOfReals[
+                                     self.list_of_reals.index(name3)])
+                self.no_of_subformula += 1
+                self.solver.add(Or(and_eq, and_not_eq))
+                self.no_of_subformula += 1
+            return relevant_quantifier
+        elif hyperproperty.data == 'greater_and_equal_probability':
+            rel_quant1 = self.encodeSemantics(hyperproperty.children[0])
+            rel_quant2 = self.encodeSemantics(hyperproperty.children[1])
+            relevant_quantifier = extendWithoutDuplicates(rel_quant1, rel_quant2)
+            index_of_phi = self.list_of_subformula.index(hyperproperty)
+            index_of_phi1 = self.list_of_subformula.index(hyperproperty.children[0])
+            index_of_phi2 = self.list_of_subformula.index(hyperproperty.children[1])
+            combined_state_list = self.generateComposedStates(relevant_quantifier)
+            for r_state in combined_state_list:
+                name1 = 'holds'
+                for ind in r_state:
+                    name1 += "_" + str(ind)
+                name1 += '_' + str(index_of_phi)
+                self.addToVariableList(name1)
+                name2 = 'holds'
+                for ind in range(0, len(r_state)):
+                    if (ind + 1) in rel_quant1:
+                        name2 += "_" + str(r_state[ind])
+                    else:
+                        name2 += "_" + str(0)
+                name2 += '_' + str(index_of_phi1)
+                self.addToVariableList(name2)
+                name3 = 'holds'
+                for ind in range(0, len(r_state)):
+                    if (ind + 1) in rel_quant2:
+                        name3 += "_" + str(r_state[ind])
+                    else:
+                        name3 += "_" + str(0)
+                name3 += '_' + str(index_of_phi2)
+                self.addToVariableList(name3)
+                and_eq = And(self.listOfBools[self.list_of_bools.index(name1)],
+                             self.listOfReals[self.list_of_reals.index(name2)] >= self.listOfReals[
+                                 self.list_of_reals.index(name3)])
+                self.no_of_subformula += 1
+                and_not_eq = And(Not(self.listOfBools[self.list_of_bools.index(name1)]),
+                                 self.listOfReals[self.list_of_reals.index(name2)] < self.listOfReals[
+                                     self.list_of_reals.index(name3)])
+                self.no_of_subformula += 1
+                self.solver.add(Or(and_eq, and_not_eq))
+                self.no_of_subformula += 1
+            return relevant_quantifier
+        elif hyperproperty.data == 'less_and_equal_probability':
+            rel_quant1 = self.encodeSemantics(hyperproperty.children[0])
+            rel_quant2 = self.encodeSemantics(hyperproperty.children[1])
+            relevant_quantifier = extendWithoutDuplicates(rel_quant1, rel_quant2)
+            index_of_phi = self.list_of_subformula.index(hyperproperty)
+            index_of_phi1 = self.list_of_subformula.index(hyperproperty.children[0])
+            index_of_phi2 = self.list_of_subformula.index(hyperproperty.children[1])
+            combined_state_list = self.generateComposedStates(relevant_quantifier)
+            for r_state in combined_state_list:
+                name1 = 'holds'
+                for ind in r_state:
+                    name1 += "_" + str(ind)
+                name1 += '_' + str(index_of_phi)
+                self.addToVariableList(name1)
+                name2 = 'holds'
+                for ind in range(0, len(r_state)):
+                    if (ind + 1) in rel_quant1:
+                        name2 += "_" + str(r_state[ind])
+                    else:
+                        name2 += "_" + str(0)
+                name2 += '_' + str(index_of_phi1)
+                self.addToVariableList(name2)
+                name3 = 'holds'
+                for ind in range(0, len(r_state)):
+                    if (ind + 1) in rel_quant2:
+                        name3 += "_" + str(r_state[ind])
+                    else:
+                        name3 += "_" + str(0)
+                name3 += '_' + str(index_of_phi2)
+                self.addToVariableList(name3)
+                and_eq = And(self.listOfBools[self.list_of_bools.index(name1)],
+                             self.listOfReals[self.list_of_reals.index(name2)] <= self.listOfReals[
+                                 self.list_of_reals.index(name3)])
+                self.no_of_subformula += 1
+                and_not_eq = And(Not(self.listOfBools[self.list_of_bools.index(name1)]),
+                                 self.listOfReals[self.list_of_reals.index(name2)] > self.listOfReals[
+                                     self.list_of_reals.index(name3)])
+                self.no_of_subformula += 1
+                self.solver.add(Or(and_eq, and_not_eq))
+                self.no_of_subformula += 1
+            return relevant_quantifier
+        elif hyperproperty.data == 'less_reward':
+            rel_quant1 = self.encodeSemantics(hyperproperty.children[0])
+            rel_quant2 = self.encodeSemantics(hyperproperty.children[1])
+            relevant_quantifier = extendWithoutDuplicates(rel_quant1, rel_quant2)
+            index_of_phi = self.list_of_subformula.index(hyperproperty)
+            index_of_phi1 = self.list_of_subformula.index(hyperproperty.children[0])
+            index_of_phi2 = self.list_of_subformula.index(hyperproperty.children[1])
+            combined_state_list = self.generateComposedStates(relevant_quantifier)
+            for r_state in combined_state_list:
+                name1 = 'holds'
+                for ind in r_state:
+                    name1 += "_" + str(ind)
+                name1 += '_' + str(index_of_phi)
+                self.addToVariableList(name1)
+                name2 = 'rew'
+                for ind in range(0, len(r_state)):
+                    if (ind + 1) in rel_quant1:
+                        name2 += "_" + str(r_state[ind])
+                    else:
+                        name2 += "_" + str(0)
+                name2 += '_' + str(index_of_phi1)
+                self.addToVariableList(name2)
+                name3 = 'rew'
+                for ind in range(0, len(r_state)):
+                    if (ind + 1) in rel_quant2:
+                        name3 += "_" + str(r_state[ind])
+                    else:
+                        name3 += "_" + str(0)
+                name3 += '_' + str(index_of_phi2)
+                self.addToVariableList(name3)
+                and_eq = And(self.listOfBools[self.list_of_bools.index(name1)],
+                             self.listOfReals[self.list_of_reals.index(name2)] < self.listOfReals[self.list_of_reals.index(name3)])
+                self.no_of_subformula += 1
+                and_not_eq = And(Not(self.listOfBools[self.list_of_bools.index(name1)]),
+                                 self.listOfReals[self.list_of_reals.index(name2)] >= self.listOfReals[self.list_of_reals.index(name3)])
+                self.no_of_subformula += 1
+                self.solver.add(Or(and_eq, and_not_eq))
+                self.no_of_subformula += 1
+            return relevant_quantifier
+        elif hyperproperty.data == 'equal_reward':
+            rel_quant1 = self.encodeSemantics(hyperproperty.children[0])
+            rel_quant2 = self.encodeSemantics(hyperproperty.children[1])
+            relevant_quantifier = extendWithoutDuplicates(rel_quant1, rel_quant2)
+            index_of_phi = self.list_of_subformula.index(hyperproperty)
+            index_of_phi1 = self.list_of_subformula.index(hyperproperty.children[0])
+            index_of_phi2 = self.list_of_subformula.index(hyperproperty.children[1])
+            combined_state_list = self.generateComposedStates(relevant_quantifier)
+            for r_state in combined_state_list:
+                name1 = 'holds'
+                for ind in r_state:
+                    name1 += "_" + str(ind)
+                name1 += '_' + str(index_of_phi)
+                self.addToVariableList(name1)
+                name2 = 'rew'
+                for ind in range(0, len(r_state)):
+                    if (ind + 1) in rel_quant1:
+                        name2 += "_" + str(r_state[ind])
+                    else:
+                        name2 += "_" + str(0)
+                name2 += '_' + str(index_of_phi1)
+                self.addToVariableList(name2)
+                name3 = 'rew'
+                for ind in range(0, len(r_state)):
+                    if (ind + 1) in rel_quant2:
+                        name3 += "_" + str(r_state[ind])
+                    else:
+                        name3 += "_" + str(0)
+                name3 += '_' + str(index_of_phi2)
+                self.addToVariableList(name3)
+                and_eq = And(self.listOfBools[self.list_of_bools.index(name1)],
+                             self.listOfReals[self.list_of_reals.index(name2)] == self.listOfReals[
+                                 self.list_of_reals.index(name3)])
+                self.no_of_subformula += 1
+                and_not_eq = And(Not(self.listOfBools[self.list_of_bools.index(name1)]),
+                                 self.listOfReals[self.list_of_reals.index(name2)] != self.listOfReals[
+                                     self.list_of_reals.index(name3)])
+                self.no_of_subformula += 1
+                self.solver.add(Or(and_eq, and_not_eq))
+                self.no_of_subformula += 1
+            return relevant_quantifier
+        elif hyperproperty.data == 'greater_reward':
+            rel_quant1 = self.encodeSemantics(hyperproperty.children[0])
+            rel_quant2 = self.encodeSemantics(hyperproperty.children[1])
+            relevant_quantifier = extendWithoutDuplicates(rel_quant1, rel_quant2)
+            index_of_phi = self.list_of_subformula.index(hyperproperty)
+            index_of_phi1 = self.list_of_subformula.index(hyperproperty.children[0])
+            index_of_phi2 = self.list_of_subformula.index(hyperproperty.children[1])
+            combined_state_list = self.generateComposedStates(relevant_quantifier)
+            for r_state in combined_state_list:
+                name1 = 'holds'
+                for ind in r_state:
+                    name1 += "_" + str(ind)
+                name1 += '_' + str(index_of_phi)
+                self.addToVariableList(name1)
+                name2 = 'rew'
+                for ind in range(0, len(r_state)):
+                    if (ind + 1) in rel_quant1:
+                        name2 += "_" + str(r_state[ind])
+                    else:
+                        name2 += "_" + str(0)
+                name2 += '_' + str(index_of_phi1)
+                self.addToVariableList(name2)
+                name3 = 'rew'
+                for ind in range(0, len(r_state)):
+                    if (ind + 1) in rel_quant2:
+                        name3 += "_" + str(r_state[ind])
+                    else:
+                        name3 += "_" + str(0)
+                name3 += '_' + str(index_of_phi2)
+                self.addToVariableList(name3)
+                and_eq = And(self.listOfBools[self.list_of_bools.index(name1)],
+                             self.listOfReals[self.list_of_reals.index(name2)] > self.listOfReals[
+                                 self.list_of_reals.index(name3)])
+                self.no_of_subformula += 1
+                and_not_eq = And(Not(self.listOfBools[self.list_of_bools.index(name1)]),
+                                 self.listOfReals[self.list_of_reals.index(name2)] <= self.listOfReals[
+                                     self.list_of_reals.index(name3)])
+                self.no_of_subformula += 1
+                self.solver.add(Or(and_eq, and_not_eq))
+                self.no_of_subformula += 1
+            return relevant_quantifier
+        elif hyperproperty.data == 'greater_and_equal_reward':
+            rel_quant1 = self.encodeSemantics(hyperproperty.children[0])
+            rel_quant2 = self.encodeSemantics(hyperproperty.children[1])
+            relevant_quantifier = extendWithoutDuplicates(rel_quant1, rel_quant2)
+            index_of_phi = self.list_of_subformula.index(hyperproperty)
+            index_of_phi1 = self.list_of_subformula.index(hyperproperty.children[0])
+            index_of_phi2 = self.list_of_subformula.index(hyperproperty.children[1])
+            combined_state_list = self.generateComposedStates(relevant_quantifier)
+            for r_state in combined_state_list:
+                name1 = 'holds'
+                for ind in r_state:
+                    name1 += "_" + str(ind)
+                name1 += '_' + str(index_of_phi)
+                self.addToVariableList(name1)
+                name2 = 'rew'
+                for ind in range(0, len(r_state)):
+                    if (ind + 1) in rel_quant1:
+                        name2 += "_" + str(r_state[ind])
+                    else:
+                        name2 += "_" + str(0)
+                name2 += '_' + str(index_of_phi1)
+                self.addToVariableList(name2)
+                name3 = 'rew'
+                for ind in range(0, len(r_state)):
+                    if (ind + 1) in rel_quant2:
+                        name3 += "_" + str(r_state[ind])
+                    else:
+                        name3 += "_" + str(0)
+                name3 += '_' + str(index_of_phi2)
+                self.addToVariableList(name3)
+                and_eq = And(self.listOfBools[self.list_of_bools.index(name1)],
+                             self.listOfReals[self.list_of_reals.index(name2)] >= self.listOfReals[
+                                 self.list_of_reals.index(name3)])
+                self.no_of_subformula += 1
+                and_not_eq = And(Not(self.listOfBools[self.list_of_bools.index(name1)]),
+                                 self.listOfReals[self.list_of_reals.index(name2)] < self.listOfReals[
+                                     self.list_of_reals.index(name3)])
+                self.no_of_subformula += 1
+                self.solver.add(Or(and_eq, and_not_eq))
+                self.no_of_subformula += 1
+            return relevant_quantifier
+        elif hyperproperty.data == 'less_and_equal_reward':
+            rel_quant1 = self.encodeSemantics(hyperproperty.children[0])
+            rel_quant2 = self.encodeSemantics(hyperproperty.children[1])
+            relevant_quantifier = extendWithoutDuplicates(rel_quant1, rel_quant2)
+            index_of_phi = self.list_of_subformula.index(hyperproperty)
+            index_of_phi1 = self.list_of_subformula.index(hyperproperty.children[0])
+            index_of_phi2 = self.list_of_subformula.index(hyperproperty.children[1])
+            combined_state_list = self.generateComposedStates(relevant_quantifier)
+            for r_state in combined_state_list:
+                name1 = 'holds'
+                for ind in r_state:
+                    name1 += "_" + str(ind)
+                name1 += '_' + str(index_of_phi)
+                self.addToVariableList(name1)
+                name2 = 'rew'
+                for ind in range(0, len(r_state)):
+                    if (ind + 1) in rel_quant1:
+                        name2 += "_" + str(r_state[ind])
+                    else:
+                        name2 += "_" + str(0)
+                name2 += '_' + str(index_of_phi1)
+                self.addToVariableList(name2)
+                name3 = 'rew'
+                for ind in range(0, len(r_state)):
+                    if (ind + 1) in rel_quant2:
+                        name3 += "_" + str(r_state[ind])
+                    else:
+                        name3 += "_" + str(0)
+                name3 += '_' + str(index_of_phi2)
+                self.addToVariableList(name3)
+                and_eq = And(self.listOfBools[self.list_of_bools.index(name1)],
+                             self.listOfReals[self.list_of_reals.index(name2)] <= self.listOfReals[
+                                 self.list_of_reals.index(name3)])
+                self.no_of_subformula += 1
+                and_not_eq = And(Not(self.listOfBools[self.list_of_bools.index(name1)]),
+                                 self.listOfReals[self.list_of_reals.index(name2)] > self.listOfReals[
+                                     self.list_of_reals.index(name3)])
+                self.no_of_subformula += 1
+                self.solver.add(Or(and_eq, and_not_eq))
+                self.no_of_subformula += 1
+            return relevant_quantifier
         else:
             self.encodeSemantics(hyperproperty.children[0])
 
