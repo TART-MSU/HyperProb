@@ -1,7 +1,7 @@
 import itertools
 
 from lark import Tree
-from z3 import And, Bool, Real, Int, Not, Or, Xor, RealVal
+from z3 import And, Bool, Real, Int, Not, Or, Xor, RealVal, Implies
 
 
 def extendWithoutDuplicates(list1, list2):
@@ -870,8 +870,114 @@ class SemanticsEncoder:
                 stored_list.append([0])
         return list(itertools.product(*stored_list))
 
-    def encodeNextSemantics(self, hyperproperty, relevant_quantifier):
-        pass
+    def encodeNextSemantics(self, hyperproperty, prev_relevant_quantifier):
+        phi1 = hyperproperty.children[0].children[0]
+        index_of_phi1 = self.list_of_subformula.index(phi1)
+        index_of_phi = self.list_of_subformula.index(hyperproperty)
+        relevant_quantifier = self.encodeSemantics(phi1, prev_relevant_quantifier)
+        combined_state_list = self.generateComposedStates(relevant_quantifier)
+
+        '''
+        dict_of_acts = dict()
+        dict_of_acts_tran = dict()
+        for state in model.states:
+            list_of_act = []
+            for action in state.actions:
+                list_of_tran = []
+                list_of_act.append(action.id)
+                for tran in action.transitions:
+                    list_of_tran.append(str(tran.column) + ' ' + str(tran.value()))
+                dict_of_acts_tran[str(state.id) + ' ' + str(action.id)] = list_of_tran
+            dict_of_acts[state.id] = list_of_act
+        '''
+
+        for r_state in combined_state_list:
+            holds1 = 'holds'
+            str_r_state = ""
+            for ind in r_state:
+                str_r_state += "_" + str(ind)
+            holds1 += str_r_state + "_" + str(index_of_phi1)
+            self.addToVariableList(holds1)
+            holdsToInt1 = 'holdsToInt' + str_r_state + "_" + str(index_of_phi1)
+            self.addToVariableList(holdsToInt1)
+            prob_phi = 'prob' + str_r_state + "_" + str(index_of_phi)
+            self.addToVariableList(prob_phi)
+            first_and = Or(
+                And(self.listOfReals[self.list_of_reals.index(holdsToInt1)] == float(1),
+                    self.listOfBools[self.list_of_bools.index(holds1)]),
+                And(self.listOfReals[self.list_of_reals.index(holdsToInt1)] == float(0),
+                    Not(self.listOfBools[self.list_of_bools.index(holds1)])))
+            self.no_of_subformula += 3
+            self.solver.add(first_and)
+            dicts = []
+            for l in relevant_quantifier:
+                dicts.append(self.model.dict_of_acts[r_state[l - 1]])
+            combined_acts = list(itertools.product(*dicts))
+
+            for ca in combined_acts:
+                name = 'a_' + str(r_state[relevant_quantifier[0] - 1])
+                self.addToVariableList(name)
+                act_str = self.listOfInts[self.list_of_ints.index(name)] == int(ca[0])
+                if len(relevant_quantifier) > 1:
+                    for l in range(1, len(relevant_quantifier)):
+                        name = 'a_' + str(relevant_quantifier[l] - 1)
+                        self.addToVariableList(name)
+                        act_str = And(act_str, self.listOfInts[self.list_of_ints.index(name)] == int(ca[l]))
+
+                implies_precedent = act_str
+                self.no_of_subformula += 1
+
+                dicts = []
+                g = 0
+                for l in relevant_quantifier:
+                    dicts.append(self.model.dict_of_acts_tran[str(r_state[l]) + " " + str(ca[g])])
+                    g += 1
+                combined_succ = list(itertools.product(*dicts))
+
+                first = True
+                prod_left = None
+
+                for cs in combined_succ:
+                    f = 0
+                    holdsToInt_succ = 'holdsToInt'
+                    p_first = True
+                    prod_left_part = None
+                    for l in range(1, self.no_of_state_quantifier + 1):
+                        if l in relevant_quantifier:
+                            space = cs[f].find(' ')
+                            succ_state = cs[f][0:space]
+                            holdsToInt_succ += '_' + succ_state
+                            if p_first:
+                                prod_left_part = RealVal(cs[f][space + 1:]).as_fraction()
+                                p_first = False
+                            else:
+                                prod_left_part *= RealVal(cs[f][space + 1:]).as_fraction()
+                            f += 1
+
+                        else:
+                            holdsToInt_succ += '_' + str(0)
+                            if p_first:
+                                prod_left_part = RealVal(1).as_fraction()
+                                p_first = False
+                            else:
+                                prod_left_part *= RealVal(1).as_fraction()
+
+                    holdsToInt_succ += '_' + str(index_of_phi1)
+                    self.addToVariableList(holdsToInt_succ)
+                    prod_left_part *= self.listOfReals[self.list_of_reals.index(holdsToInt_succ)]
+
+                    if first:
+                        prod_left = prod_left_part
+                        first = False
+                    else:
+                        prod_left += prod_left_part
+                    self.no_of_subformula += 1
+
+                implies_antecedent_and = self.listOfReals[self.list_of_reals.index(prob_phi)] == prod_left
+                self.no_of_subformula += 1
+                self.solver.add(Implies(implies_precedent, implies_antecedent_and))
+                self.no_of_subformula += 1
+        return relevant_quantifier
 
     def encodeUnboundedUntilSemantics(self, hyperproperty, relevant_quantifier):
         pass
