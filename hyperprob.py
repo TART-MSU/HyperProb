@@ -18,8 +18,12 @@ def main():
             hyperproperty = Property(input_args.hyperString)
             hyperproperty.parseProperty(False)
             model = Model(input_args.modelPath)
+            if input_args.stutterLength:
+                stutterLength = int(input_args.stutterLength)
+            else:
+                stutterLength = 1
             model.parseModel(True)
-            modelchecker = ModelChecker(model, hyperproperty)
+            modelchecker = ModelChecker(model, hyperproperty, stutterLength)
             modelchecker.modelCheck()
         print("\n")
     except Exception as err:

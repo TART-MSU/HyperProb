@@ -171,14 +171,33 @@ def editFormula(formula_inp):
 def findNumberOfStateQuantifier(hyperproperty):
     formula_duplicate = hyperproperty
     no_of_quantifier = 0
-    while len(formula_duplicate.children) > 0 and type(formula_duplicate.children[0]) == Token:
+    while len(formula_duplicate.children) > 0:
         if formula_duplicate.data in ['exist_scheduler', 'forall_scheduler']:
             formula_duplicate = formula_duplicate.children[1]
         elif formula_duplicate.data in ['exist_state', 'forall_state']:
             no_of_quantifier += 1
             formula_duplicate = formula_duplicate.children[1]
+        else:
+            break
     return formula_duplicate, no_of_quantifier
 
+
+def findNumberOfStutterQuantifier(hyperproperty):
+    formula_duplicate = hyperproperty
+    no_of_quantifier = 0
+    while len(formula_duplicate.children) > 0 and type(formula_duplicate.children[0]) == Token:
+        if formula_duplicate.data in ['exist_scheduler', 'forall_scheduler', 'exist_state', 'forall_state' ]:
+            formula_duplicate = formula_duplicate.children[1]
+        elif formula_duplicate.data in ['forall_stutter', 'exist_stutter']:
+            no_of_quantifier += 1
+            formula_duplicate = formula_duplicate.children[2]
+    return formula_duplicate, no_of_quantifier
+
+
+def checkQuantifiersMatch():
+    # TODO: check if every state quantifier has at least one matching stutter quantifier. If not, raise error.
+    # extra TODO: add handling for missing stutter quantifiers (for all state, no stuttering)
+    pass
 
 def negateForallProperty(parsed_property):
     temp_traversed_property = parsed_property

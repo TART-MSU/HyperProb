@@ -11,10 +11,11 @@ from hyperprob.sementicencoder import SemanticsEncoder
 
 
 class ModelChecker:
-    def __init__(self, model, hyperproperty):
+    def __init__(self, model, hyperproperty, lengthOfStutter):
         self.model = model
         self.initial_hyperproperty = hyperproperty  # object of property class
         self.solver = Solver()
+        self.stutterLength = lengthOfStutter  # default value 1 (no stutter)
         self.list_of_subformula = []
         self.list_of_reals = []
         self.listOfReals = []
@@ -24,18 +25,22 @@ class ModelChecker:
         self.listOfInts = []
         self.no_of_subformula = 0
         self.no_of_state_quantifier = 0
+        self.no_of_stutter_quantifier = 0
 
     def modelCheck(self):
         non_quantified_property, self.no_of_state_quantifier = propertyparser.findNumberOfStateQuantifier(
             copy.deepcopy(self.initial_hyperproperty.parsed_property))
+        non_quantified_property,  self.no_of_stutter_quantifier = propertyparser.findNumberOfStutterQuantifier(non_quantified_property.children[0])
+        non_quantified_property = non_quantified_property.children[0]
         start_time = time.perf_counter()
         self.encodeActions()
+        self.encodeStuttering()
         combined_list_of_states = list(
             itertools.product(self.model.getListOfStates(), repeat=self.no_of_state_quantifier))
 
         if self.initial_hyperproperty.parsed_property.data == 'exist_scheduler':
             self.addToSubformulaList(non_quantified_property)
-            self.encodeStateQuantifiers(combined_list_of_states)
+            self.encodeStateAndStutterQuantifiers(combined_list_of_states)
             common.colourinfo("Encoded quantifiers", False)
             semanticEncoder = SemanticsEncoder(self.model, self.solver,
                                                self.list_of_subformula, self.list_of_bools, self.listOfBools,
@@ -67,12 +72,26 @@ class ModelChecker:
             self.addToVariableList(name)
             for action in state.actions:
                 list_of_eqns.append(self.listOfInts[self.list_of_ints.index(name)] == int(action.id))
-            if len(list_of_eqns) == 1:
-                self.solver.add(list_of_eqns[0])
-            else:
-                self.solver.add(Or([par for par in list_of_eqns]))
+            self.solver.add(Or([par for par in list_of_eqns]))
             self.no_of_subformula += 1
         common.colourinfo("Encoded actions in the MDP...")
+
+    def encodeStuttering(self):
+        list_over_quantifiers = []
+        for loop in range(0, self.no_of_stutter_quantifier):
+            list_over_states = []
+            for state in self.model.parsed_model.states:
+                list_of_equations = []
+                for stutter_length in range(0, self.stutterLength):
+                    # t_1_3 means stutter duration for state 3 and stutter quantifier 1
+                    name = "t_" + str(loop) + "_" + str(state.id)
+                    self.addToVariableList(name)
+                    list_of_equations.append(self.listOfInts[self.list_of_ints.index(name)] == stutter_length)
+                list_over_states.append(Or([par for par in list_of_equations]))
+                self.no_of_subformula += 1
+            list_over_quantifiers.append(And([par for par in list_over_states]))
+        self.solver.add(And([par for par in list_over_quantifiers]))
+        common.colourinfo("Encoded stutter actions in the MDP...")
 
     def addToVariableList(self, name):
         if name[0] == 'h' and not name.startswith('holdsToInt') and name not in self.list_of_bools:
@@ -81,7 +100,7 @@ class ModelChecker:
         elif (name[0] in ['p', 'd', 'r'] or name.startswith('holdsToInt')) and name not in self.list_of_reals:
             self.list_of_reals.append(name)
             self.listOfReals.append(Real(name))
-        elif name[0] == 'a' and name not in self.list_of_ints:
+        elif name[0] in ['a', 't'] and name not in self.list_of_ints:
             self.list_of_ints.append(name)
             self.listOfInts.append(Int(name))
 
@@ -129,7 +148,7 @@ class ModelChecker:
             right_child = formula_phi.children[3]
             self.addToSubformulaList(right_child)
 
-    def encodeStateQuantifiers(self, combined_list_of_states):
+    def encodeStateAndStutterQuantifiers(self, combined_list_of_states):
         list_of_AV = []  # will have the OR, AND according to the quantifier in that index in the formula
         changed_hyperproperty = self.initial_hyperproperty.parsed_property
         while len(changed_hyperproperty.children) > 0 and type(changed_hyperproperty.children[0]) == Token:
