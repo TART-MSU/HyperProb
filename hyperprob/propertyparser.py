@@ -10,12 +10,19 @@ class Property:
 
     def parseGrammar(self):
         turtle_grammar = """
-                        start:    "AS" NAME "." formula -> forall_scheduler
-                            | "ES" NAME "." formula -> exist_scheduler
-
-                        formula:  "A" NAME "." formula -> forall_state  
-                            | "E" NAME "." formula -> exist_state
-                            | proposition "(" withstate ")"  -> atomic_proposition
+                        start:    "AS" NAME "." quantifiedformulastate -> forall_scheduler
+                            | "ES" NAME "." quantifiedformulastate -> exist_scheduler
+                            
+                        quantifiedformulastate:  "A" NAME "." quantifiedformulastate -> forall_state  
+                            | "E" NAME "." quantifiedformulastate -> exist_state
+                            | quantifiedformulastutter
+                            | formula
+                            
+                        quantifiedformulastutter:  "AT" NAME "(" with ")" "." quantifiedformulastutter -> forall_stutter  
+                            | "ET" NAME "(" with ")" "." quantifiedformulastutter -> exist_stutter
+                            | formula
+                        
+                        formula: proposition "(" with ")"  -> atomic_proposition
                             | "(" formula "&" formula ")"-> and
                             | "(" formula "|" formula ")"-> or
                             | "(" formula "->" formula ")"-> implies
@@ -52,7 +59,7 @@ class Property:
                             | "(G" formula ")" -> global
 
                         proposition: NAME 
-                        withstate: NAME 
+                        with: NAME
 
                         %import common.CNAME -> NAME
                         %import common.NUMBER ->NUM
@@ -60,6 +67,8 @@ class Property:
                         %ignore WS_INLINE
                     """
         self.parsed_grammar = Lark(turtle_grammar)
+
+        # "ES sh . A s1 . A s2 . AT t1 (s1). ET t2. ET t3. ((start0(s1) & start1(s2)) -> (P (X end(s1)) = P (X end(s2))))"
 
     def parseProperty(self, print_property):
         try:

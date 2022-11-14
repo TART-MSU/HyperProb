@@ -267,6 +267,47 @@ class SemanticsEncoder:
                                     self.listOfBools[self.list_of_bools.index(name2)]))
                 self.no_of_subformula += 1
             return relevant_quantifier
+        elif hyperproperty.data == 'probability':
+            child = hyperproperty.children[0]
+            if child.data == 'next':
+                relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
+                                                              self.encodeNextSemantics(hyperproperty,
+                                                                                       relevant_quantifier))
+            elif child.data == 'until_unbounded':
+                relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
+                                                              self.encodeUnboundedUntilSemantics(hyperproperty,
+                                                                                                 relevant_quantifier))
+            elif child.data == 'until_bounded':
+                relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
+                                                              self.encodeBoundedUntilSemantics(hyperproperty,
+                                                                                               relevant_quantifier))
+            elif child.data == 'future':
+                relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
+                                                              self.encodeFutureSemantics(hyperproperty,
+                                                                                         relevant_quantifier))
+            elif child.data == 'global':
+                relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
+                                                              self.encodeGlobalSemantics(hyperproperty,
+                                                                                         relevant_quantifier))
+            return relevant_quantifier
+        elif hyperproperty.data == 'reward':
+            child = hyperproperty.children[1]
+            if child.data == 'next':
+                relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
+                                                              self.encodeRewNextSemantics(hyperproperty))
+            elif child.data == 'until_unbounded':
+                relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
+                                                              self.encodeRewUnboundedUntilSemantics(hyperproperty))
+            elif child.data == 'until_bounded':
+                relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
+                                                              self.encodeRewBoundedUntilSemantics(hyperproperty))
+            elif child.data == 'future':
+                relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
+                                                              self.encodeRewFutureSemantics(hyperproperty))
+            elif child.data == 'global':
+                relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
+                                                              self.encodeRewGlobalSemantics(hyperproperty))
+            return relevant_quantifier
         elif hyperproperty.data == 'less_probability':
             rel_quant1 = self.encodeSemantics(hyperproperty.children[0])
             rel_quant2 = self.encodeSemantics(hyperproperty.children[1])
@@ -677,47 +718,6 @@ class SemanticsEncoder:
                 self.solver.add(Or(and_eq, and_not_eq))
                 self.no_of_subformula += 1
             return relevant_quantifier
-        elif hyperproperty.data == 'probability':
-            child = hyperproperty.children[0]
-            if child.data == 'next':
-                relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
-                                                              self.encodeNextSemantics(hyperproperty,
-                                                                                       relevant_quantifier))
-            elif child.data == 'until_unbounded':
-                relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
-                                                              self.encodeUnboundedUntilSemantics(hyperproperty,
-                                                                                                 relevant_quantifier))
-            elif child.data == 'until_bounded':
-                relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
-                                                              self.encodeBoundedUntilSemantics(hyperproperty,
-                                                                                               relevant_quantifier))
-            elif child.data == 'future':
-                relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
-                                                              self.encodeFutureSemantics(hyperproperty,
-                                                                                         relevant_quantifier))
-            elif child.data == 'global':
-                relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
-                                                              self.encodeGlobalSemantics(hyperproperty,
-                                                                                         relevant_quantifier))
-            return relevant_quantifier
-        elif hyperproperty.data == 'reward':
-            child = hyperproperty.children[1]
-            if child.data == 'next':
-                relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
-                                                              self.encodeRewNextSemantics(hyperproperty))
-            elif child.data == 'until_unbounded':
-                relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
-                                                              self.encodeRewUnboundedUntilSemantics(hyperproperty))
-            elif child.data == 'until_bounded':
-                relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
-                                                              self.encodeRewBoundedUntilSemantics(hyperproperty))
-            elif child.data == 'future':
-                relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
-                                                              self.encodeRewFutureSemantics(hyperproperty))
-            elif child.data == 'global':
-                relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
-                                                              self.encodeRewGlobalSemantics(hyperproperty))
-            return relevant_quantifier
         elif hyperproperty.data == 'constant_probability':
             constant = RealVal(hyperproperty.children[0].value).as_fraction().limit_denominator(10000)
             index_of_phi = self.list_of_subformula.index(hyperproperty)
@@ -876,20 +876,6 @@ class SemanticsEncoder:
         index_of_phi = self.list_of_subformula.index(hyperproperty)
         relevant_quantifier = self.encodeSemantics(phi1, prev_relevant_quantifier)
         combined_state_list = self.generateComposedStates(relevant_quantifier)
-
-        '''
-        dict_of_acts = dict()
-        dict_of_acts_tran = dict()
-        for state in model.states:
-            list_of_act = []
-            for action in state.actions:
-                list_of_tran = []
-                list_of_act.append(action.id)
-                for tran in action.transitions:
-                    list_of_tran.append(str(tran.column) + ' ' + str(tran.value()))
-                dict_of_acts_tran[str(state.id) + ' ' + str(action.id)] = list_of_tran
-            dict_of_acts[state.id] = list_of_act
-        '''
 
         for r_state in combined_state_list:
             holds1 = 'holds'
