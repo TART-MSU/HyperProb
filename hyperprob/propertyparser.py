@@ -15,11 +15,6 @@ class Property:
                             
                         quantifiedformulastate:  "A" NAME "." quantifiedformulastate -> forall_state  
                             | "E" NAME "." quantifiedformulastate -> exist_state
-                            | quantifiedformulastutter
-                            | formula
-                            
-                        quantifiedformulastutter:  "AT" NAME "(" with ")" "." quantifiedformulastutter -> forall_stutter  
-                            | "ET" NAME "(" with ")" "." quantifiedformulastutter -> exist_stutter
                             | formula
                         
                         formula: proposition "(" with ")"  -> atomic_proposition
@@ -67,8 +62,6 @@ class Property:
                         %ignore WS_INLINE
                     """
         self.parsed_grammar = Lark(turtle_grammar)
-
-        # "ES sh . A s1 . A s2 . AT t1 (s1). ET t2. ET t3. ((start0(s1) & start1(s2)) -> (P (X end(s1)) = P (X end(s2))))"
 
     def parseProperty(self, print_property):
         try:
@@ -182,23 +175,6 @@ def findNumberOfStateQuantifier(hyperproperty):
     return formula_duplicate, no_of_quantifier
 
 
-def findNumberOfStutterQuantifier(hyperproperty):
-    formula_duplicate = hyperproperty
-    no_of_quantifier = 0
-    while len(formula_duplicate.children) > 0 and type(formula_duplicate.children[0]) == Token:
-        if formula_duplicate.data in ['exist_scheduler', 'forall_scheduler', 'exist_state', 'forall_state' ]:
-            formula_duplicate = formula_duplicate.children[1]
-        elif formula_duplicate.data in ['forall_stutter', 'exist_stutter']:
-            no_of_quantifier += 1
-            formula_duplicate = formula_duplicate.children[2]
-    return formula_duplicate, no_of_quantifier
-
-
-def checkQuantifiersMatch():
-    # TODO: check if every state quantifier has at least one matching stutter quantifier. If not, raise error.
-    # extra TODO: add handling for missing stutter quantifiers (for all state, no stuttering)
-    pass
-
 def negateForallProperty(parsed_property):
     temp_traversed_property = parsed_property
     while len(temp_traversed_property.children) > 0 and type(temp_traversed_property.children[0]) == Token:
@@ -208,18 +184,16 @@ def negateForallProperty(parsed_property):
             temp_traversed_property.data = 'forall_state'
         elif temp_traversed_property.data == 'forall_state':
             temp_traversed_property.data = 'exist_state'
-        elif temp_traversed_property.data == 'not':
-            pass
-        if temp_traversed_property.children[1].data in ['exist_state', 'forall_state']:
-            temp_traversed_property = temp_traversed_property.children[1]
-        else:
+        temp_traversed_property = temp_traversed_property.children[1]
+        if temp_traversed_property.data == 'quantifiedformulastate':
             break
-    if temp_traversed_property.children[1].data == 'not':
-        temp_traversed_property.children[1] = temp_traversed_property.children[1].children[0]
+    if temp_traversed_property.children[0].data == 'not':
+        temp_traversed_property.children[0] = temp_traversed_property.children[0].children[0]
     else:
-        temp_traversed_property.children[1] = Tree('not', [temp_traversed_property.children[1]])
+        temp_traversed_property.children[0] = Tree('not', [temp_traversed_property.children[0]])
 
-    while len(temp_traversed_property.children) > 0 and type(temp_traversed_property.children[0]) == Token:
-        if temp_traversed_property.data in ['exist_scheduler', 'forall_scheduler', 'exist_state', 'forall_state']:
-            temp_traversed_property = temp_traversed_property.children[1]
-    return temp_traversed_property
+    # while len(temp_traversed_property.children) > 0 and type(temp_traversed_property.children[0]) == Token:
+    #     if temp_traversed_property.data in ['exist_scheduler', 'forall_scheduler', 'exist_state', 'forall_state']:
+    #         temp_traversed_property = temp_traversed_property.children[1]
+
+    return temp_traversed_property.children[0]

@@ -11,11 +11,10 @@ from hyperprob.sementicencoder import SemanticsEncoder
 
 
 class ModelChecker:
-    def __init__(self, model, hyperproperty, lengthOfStutter):
+    def __init__(self, model, hyperproperty):
         self.model = model
         self.initial_hyperproperty = hyperproperty  # object of property class
         self.solver = Solver()
-        self.stutterLength = lengthOfStutter  # default value 1 (no stutter)
         self.list_of_subformula = []
         self.list_of_reals = []
         self.listOfReals = []
@@ -25,23 +24,20 @@ class ModelChecker:
         self.listOfInts = []
         self.no_of_subformula = 0
         self.no_of_state_quantifier = 0
-        self.no_of_stutter_quantifier = 0
 
     def modelCheck(self):
         non_quantified_property, self.no_of_state_quantifier = propertyparser.findNumberOfStateQuantifier(
             copy.deepcopy(self.initial_hyperproperty.parsed_property))
-        non_quantified_property,  self.no_of_stutter_quantifier = propertyparser.findNumberOfStutterQuantifier(non_quantified_property.children[0])
         non_quantified_property = non_quantified_property.children[0]
         start_time = time.perf_counter()
         self.encodeActions()
-        self.encodeStuttering()
         combined_list_of_states = list(
             itertools.product(self.model.getListOfStates(), repeat=self.no_of_state_quantifier))
 
         if self.initial_hyperproperty.parsed_property.data == 'exist_scheduler':
             self.addToSubformulaList(non_quantified_property)
-            self.encodeStateAndStutterQuantifiers(combined_list_of_states)
-            common.colourinfo("Encoded quantifiers", False)
+            self.encodeStateQuantifiers(combined_list_of_states)
+            common.colourinfo("Encoded state quantifiers", False)
             semanticEncoder = SemanticsEncoder(self.model, self.solver,
                                                self.list_of_subformula, self.list_of_bools, self.listOfBools,
                                                self.list_of_ints, self.listOfInts,
@@ -55,7 +51,7 @@ class ModelChecker:
             negated_non_quantified_property = propertyparser.negateForallProperty(self.initial_hyperproperty.parsed_property)
             self.addToSubformulaList(negated_non_quantified_property)
             self.encodeStateQuantifiers(combined_list_of_states)
-            common.colourinfo("Encoded quantifiers", False)
+            common.colourinfo("Encoded state quantifiers", False)
             semanticEncoder = SemanticsEncoder(self.model, self.solver,
                                                self.list_of_subformula, self.list_of_bools, self.listOfBools,
                                                self.list_of_ints, self.listOfInts,
@@ -76,23 +72,6 @@ class ModelChecker:
             self.no_of_subformula += 1
         common.colourinfo("Encoded actions in the MDP...")
 
-    def encodeStuttering(self):
-        list_over_quantifiers = []
-        for loop in range(0, self.no_of_stutter_quantifier):
-            list_over_states = []
-            for state in self.model.parsed_model.states:
-                list_of_equations = []
-                for stutter_length in range(0, self.stutterLength):
-                    # t_1_3 means stutter duration for state 3 and stutter quantifier 1
-                    name = "t_" + str(loop) + "_" + str(state.id)
-                    self.addToVariableList(name)
-                    list_of_equations.append(self.listOfInts[self.list_of_ints.index(name)] == stutter_length)
-                list_over_states.append(Or([par for par in list_of_equations]))
-                self.no_of_subformula += 1
-            list_over_quantifiers.append(And([par for par in list_over_states]))
-        self.solver.add(And([par for par in list_over_quantifiers]))
-        common.colourinfo("Encoded stutter actions in the MDP...")
-
     def addToVariableList(self, name):
         if name[0] == 'h' and not name.startswith('holdsToInt') and name not in self.list_of_bools:
             self.list_of_bools.append(name)
@@ -100,7 +79,7 @@ class ModelChecker:
         elif (name[0] in ['p', 'd', 'r'] or name.startswith('holdsToInt')) and name not in self.list_of_reals:
             self.list_of_reals.append(name)
             self.listOfReals.append(Real(name))
-        elif name[0] in ['a', 't'] and name not in self.list_of_ints:
+        elif name[0] in ['a'] and name not in self.list_of_ints:
             self.list_of_ints.append(name)
             self.listOfInts.append(Int(name))
 
@@ -108,7 +87,7 @@ class ModelChecker:
         if formula_phi.data in ['exist_scheduler', 'forall_scheduler', 'exist_state', 'forall_state']:
             formula_phi = formula_phi.children[1]
             self.addToSubformulaList(formula_phi)
-        elif formula_phi.data in ['and', 'or', 'implies', 'equivalent',
+        elif formula_phi.data in ['and', 'or', 'implies', 'biconditional', 'equivalent',
                                   'less_probability', 'equal_probability', 'greater_probability',
                                   'greater_and_equal_probability', 'less_and_equal_probability',
                                   'less_reward', 'equal_reward', 'greater_reward', 'greater_and_equal_reward',
@@ -148,10 +127,10 @@ class ModelChecker:
             right_child = formula_phi.children[3]
             self.addToSubformulaList(right_child)
 
-    def encodeStateAndStutterQuantifiers(self, combined_list_of_states):
+    def encodeStateQuantifiers(self, combined_list_of_states):
         list_of_AV = []  # will have the OR, AND according to the quantifier in that index in the formula
         changed_hyperproperty = self.initial_hyperproperty.parsed_property
-        while len(changed_hyperproperty.children) > 0 and type(changed_hyperproperty.children[0]) == Token:
+        while len(changed_hyperproperty.children) > 0:
             if changed_hyperproperty.data in ['exist_scheduler', 'forall_scheduler']:
                 changed_hyperproperty = changed_hyperproperty.children[1]
             elif changed_hyperproperty.data == 'exist_state':
@@ -160,7 +139,9 @@ class ModelChecker:
             elif changed_hyperproperty.data == 'forall_state':
                 list_of_AV.append('A')
                 changed_hyperproperty = changed_hyperproperty.children[1]
-        index_of_phi = self.list_of_subformula.index(changed_hyperproperty)
+            elif changed_hyperproperty.data == 'quantifiedformulastate':
+                break
+        index_of_phi = self.list_of_subformula.index(changed_hyperproperty.children[0])
         list_of_holds = []
 
         for i in range(len(combined_list_of_states)):
