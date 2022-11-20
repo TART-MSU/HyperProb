@@ -2,7 +2,7 @@ import copy
 import time
 import itertools
 
-from lark import Tree, Token
+from lark import Tree
 from z3 import Solver, Bool, Real, Int, Or, sat, And
 
 from hyperprob.utility import common
