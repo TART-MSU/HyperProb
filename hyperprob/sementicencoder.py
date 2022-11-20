@@ -294,19 +294,24 @@ class SemanticsEncoder:
             child = hyperproperty.children[1]
             if child.data == 'next':
                 relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
-                                                              self.encodeRewNextSemantics(hyperproperty))
+                                                              self.encodeRewNextSemantics(hyperproperty,
+                                                                                          relevant_quantifier))
             elif child.data == 'until_unbounded':
                 relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
-                                                              self.encodeRewUnboundedUntilSemantics(hyperproperty))
+                                                              self.encodeRewUnboundedUntilSemantics(hyperproperty,
+                                                                                                    relevant_quantifier))
             elif child.data == 'until_bounded':
                 relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
-                                                              self.encodeRewBoundedUntilSemantics(hyperproperty))
+                                                              self.encodeRewBoundedUntilSemantics(hyperproperty,
+                                                                                                  relevant_quantifier))
             elif child.data == 'future':
                 relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
-                                                              self.encodeRewFutureSemantics(hyperproperty))
+                                                              self.encodeRewFutureSemantics(hyperproperty,
+                                                                                            relevant_quantifier))
             elif child.data == 'global':
                 relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
-                                                              self.encodeRewGlobalSemantics(hyperproperty))
+                                                              self.encodeRewGlobalSemantics(hyperproperty,
+                                                                                            relevant_quantifier))
             return relevant_quantifier
         elif hyperproperty.data == 'less_probability':
             rel_quant1 = self.encodeSemantics(hyperproperty.children[0])
@@ -322,7 +327,7 @@ class SemanticsEncoder:
                     name1 += "_" + str(ind)
                 name1 += '_' + str(index_of_phi)
                 self.addToVariableList(name1)
-                name2 = 'holds'
+                name2 = 'prob'
                 for ind in range(0, len(r_state)):
                     if (ind + 1) in rel_quant1:
                         name2 += "_" + str(r_state[ind])
@@ -330,7 +335,7 @@ class SemanticsEncoder:
                         name2 += "_" + str(0)
                 name2 += '_' + str(index_of_phi1)
                 self.addToVariableList(name2)
-                name3 = 'holds'
+                name3 = 'prob'
                 for ind in range(0, len(r_state)):
                     if (ind + 1) in rel_quant2:
                         name3 += "_" + str(r_state[ind])
@@ -363,7 +368,7 @@ class SemanticsEncoder:
                     name1 += "_" + str(ind)
                 name1 += '_' + str(index_of_phi)
                 self.addToVariableList(name1)
-                name2 = 'holds'
+                name2 = 'prob'
                 for ind in range(0, len(r_state)):
                     if (ind + 1) in rel_quant1:
                         name2 += "_" + str(r_state[ind])
@@ -371,7 +376,7 @@ class SemanticsEncoder:
                         name2 += "_" + str(0)
                 name2 += '_' + str(index_of_phi1)
                 self.addToVariableList(name2)
-                name3 = 'holds'
+                name3 = 'prob'
                 for ind in range(0, len(r_state)):
                     if (ind + 1) in rel_quant2:
                         name3 += "_" + str(r_state[ind])
@@ -404,7 +409,7 @@ class SemanticsEncoder:
                     name1 += "_" + str(ind)
                 name1 += '_' + str(index_of_phi)
                 self.addToVariableList(name1)
-                name2 = 'holds'
+                name2 = 'prob'
                 for ind in range(0, len(r_state)):
                     if (ind + 1) in rel_quant1:
                         name2 += "_" + str(r_state[ind])
@@ -412,7 +417,7 @@ class SemanticsEncoder:
                         name2 += "_" + str(0)
                 name2 += '_' + str(index_of_phi1)
                 self.addToVariableList(name2)
-                name3 = 'holds'
+                name3 = 'prob'
                 for ind in range(0, len(r_state)):
                     if (ind + 1) in rel_quant2:
                         name3 += "_" + str(r_state[ind])
@@ -445,7 +450,7 @@ class SemanticsEncoder:
                     name1 += "_" + str(ind)
                 name1 += '_' + str(index_of_phi)
                 self.addToVariableList(name1)
-                name2 = 'holds'
+                name2 = 'prob'
                 for ind in range(0, len(r_state)):
                     if (ind + 1) in rel_quant1:
                         name2 += "_" + str(r_state[ind])
@@ -453,7 +458,7 @@ class SemanticsEncoder:
                         name2 += "_" + str(0)
                 name2 += '_' + str(index_of_phi1)
                 self.addToVariableList(name2)
-                name3 = 'holds'
+                name3 = 'prob'
                 for ind in range(0, len(r_state)):
                     if (ind + 1) in rel_quant2:
                         name3 += "_" + str(r_state[ind])
@@ -486,7 +491,7 @@ class SemanticsEncoder:
                     name1 += "_" + str(ind)
                 name1 += '_' + str(index_of_phi)
                 self.addToVariableList(name1)
-                name2 = 'holds'
+                name2 = 'prob'
                 for ind in range(0, len(r_state)):
                     if (ind + 1) in rel_quant1:
                         name2 += "_" + str(r_state[ind])
@@ -494,7 +499,7 @@ class SemanticsEncoder:
                         name2 += "_" + str(0)
                 name2 += '_' + str(index_of_phi1)
                 self.addToVariableList(name2)
-                name3 = 'holds'
+                name3 = 'prob'
                 for ind in range(0, len(r_state)):
                     if (ind + 1) in rel_quant2:
                         name3 += "_" + str(r_state[ind])
@@ -908,7 +913,7 @@ class SemanticsEncoder:
                     for l in range(1, len(relevant_quantifier)):
                         name = 'a_' + str(relevant_quantifier[l] - 1)
                         self.addToVariableList(name)
-                        act_str = And(act_str, self.listOfInts[self.list_of_ints.index(name)] == int(ca[l]))
+                        act_str = And(act_str, self.listOfInts[self.list_of_ints.index(name)] == int(ca[l-1]))
 
                 implies_precedent = act_str
                 self.no_of_subformula += 1
@@ -916,7 +921,7 @@ class SemanticsEncoder:
                 dicts = []
                 g = 0
                 for l in relevant_quantifier:
-                    dicts.append(self.model.dict_of_acts_tran[str(r_state[l]) + " " + str(ca[g])])
+                    dicts.append(self.model.dict_of_acts_tran[str(r_state[l-1]) + " " + str(ca[g])])
                     g += 1
                 combined_succ = list(itertools.product(*dicts))
 
@@ -966,7 +971,147 @@ class SemanticsEncoder:
         return relevant_quantifier
 
     def encodeUnboundedUntilSemantics(self, hyperproperty, relevant_quantifier):
-        pass
+        index_of_phi = self.list_of_subformula.index(hyperproperty)
+        phi1 = hyperproperty.children[0].children[0]
+        index_of_phi1 = self.list_of_subformula.index(phi1)
+        rel_quant1 = self.encodeSemantics(phi1, relevant_quantifier)
+        relevant_quantifier = extendWithoutDuplicates(rel_quant1, relevant_quantifier)
+        phi2 = hyperproperty.children[0].children[1]
+        index_of_phi2 = self.list_of_subformula.index(phi2)
+        rel_quant2 = self.encodeSemantics(phi2, relevant_quantifier)
+        relevant_quantifier = extendWithoutDuplicates(rel_quant2, relevant_quantifier)
+        combined_state_list = self.generateComposedStates(relevant_quantifier)
+
+        for r_state in combined_state_list:
+            holds1 = 'holds'
+            for ind in range(0, len(r_state)):
+                if (ind + 1) in rel_quant1:
+                    holds1 += "_" + str(r_state[ind])
+                else:
+                    holds1 += "_" + str(0)
+            holds1 += "_" + str(index_of_phi1)
+            self.addToVariableList(holds1)
+            holds2 = 'holds'
+            for ind in range(0, len(r_state)):
+                if (ind + 1) in rel_quant2:
+                    holds2 += "_" + str(r_state[ind])
+                else:
+                    holds2 += "_" + str(0)
+            holds2 += "_" + str(index_of_phi2)
+            self.addToVariableList(holds2)
+            prob_phi = 'prob'
+            for ind in r_state:
+                prob_phi += "_" + str(ind)
+            prob_phi += '_' + str(index_of_phi)
+            self.addToVariableList(prob_phi)
+            new_prob_const = self.listOfReals[self.list_of_reals.index(prob_phi)] >= float(0)
+            first_implies = And(Implies(self.listOfBools[self.list_of_bools.index(holds2)],
+                                        (self.listOfReals[self.list_of_reals.index(prob_phi)] == float(1))),
+                                Implies(And(Not(self.listOfBools[self.list_of_bools.index(holds1)]),
+                                            Not(self.listOfBools[self.list_of_bools.index(holds2)])),
+                                        (self.listOfReals[self.list_of_reals.index(prob_phi)] == float(0))),
+                                new_prob_const)
+            self.no_of_subformula += 3
+
+            dicts = []
+            for l in relevant_quantifier:
+                dicts.append(self.model.dict_of_acts[r_state[l - 1]])
+            combined_acts = list(itertools.product(*dicts))
+
+            for ca in combined_acts:
+                name = 'a_' + str(r_state[relevant_quantifier[0] - 1])
+                self.addToVariableList(name)
+                act_str = self.listOfInts[self.list_of_ints.index(name)] == int(ca[0])
+                if len(relevant_quantifier) > 1:
+                    for l in range(2, len(relevant_quantifier) + 1):
+                        name = 'a_' + str(relevant_quantifier[l - 1] - 1)
+                        self.addToVariableList(name)
+                        act_str = And(act_str, self.listOfInts[self.list_of_ints.index(name)] == int(ca[l - 1]))
+
+                implies_precedent = And(self.listOfBools[self.list_of_bools.index(holds1)],
+                                        Not(self.listOfBools[self.list_of_bools.index(holds2)]), act_str)
+                self.no_of_subformula += 2
+
+                dicts = []
+                g = 0
+                for l in relevant_quantifier:
+                    dicts.append(self.model.dict_of_acts_tran[str(r_state[l - 1]) + " " + str(ca[g])])
+                    g += 1
+                combined_succ = list(itertools.product(*dicts))
+
+                first = True
+                prod_left = None
+                list_of_ors = []
+
+                for cs in combined_succ:
+                    f = 0
+                    prob_succ = 'prob'
+                    holds_succ = 'holds'
+                    d_current = 'd'
+                    d_succ = 'd'
+                    p_first = True
+                    prod_left_part = None
+                    for l in range(1, self.no_of_state_quantifier + 1):
+                        if l in relevant_quantifier:
+                            space = cs[f].find(' ')
+                            succ_state = cs[f][0:space]
+                            prob_succ += '_' + succ_state
+                            holds_succ += '_' + succ_state
+                            d_succ += '_' + succ_state
+                            if p_first:
+                                prod_left_part = RealVal(cs[f][space + 1:]).as_fraction()
+                                p_first = False
+                            else:
+                                prod_left_part *= RealVal(cs[f][space + 1:]).as_fraction()
+                            f += 1
+
+                        else:
+                            prob_succ += '_' + str(0)
+                            holds_succ += '_' + str(0)
+                            d_succ += '_' + str(0)
+                            if p_first:
+                                prod_left_part = RealVal(1).as_fraction()
+                                p_first = False
+                            else:
+                                prod_left_part *= RealVal(1).as_fraction()
+                        d_current += '_' + str(r_state[l - 1])
+
+                    prob_succ += '_' + str(index_of_phi)
+                    self.addToVariableList(prob_succ)
+                    holds_succ += '_' + str(index_of_phi2)
+                    self.addToVariableList(holds_succ)
+
+                    d_current += '_' + str(index_of_phi2)
+                    self.addToVariableList(d_current)
+                    d_succ += '_' + str(index_of_phi2)
+                    self.addToVariableList(d_succ)
+                    prod_left_part *= self.listOfReals[self.list_of_reals.index(prob_succ)]
+
+                    if first:
+                        prod_left = prod_left_part
+                        first = False
+                    else:
+                        prod_left += prod_left_part
+                    self.no_of_subformula += 1
+
+                    list_of_ors.append(Or(self.listOfBools[self.list_of_bools.index(holds_succ)],
+                                          self.listOfReals[self.list_of_reals.index(d_current)] > self.listOfReals[
+                                              self.list_of_reals.index(d_succ)]))
+
+                    self.no_of_subformula += 2
+
+                implies_antecedent_and1 = self.listOfReals[self.list_of_reals.index(prob_phi)] == prod_left
+                self.no_of_subformula += 1
+                prod_right_or = Or([par for par in list_of_ors])
+                self.no_of_subformula += 1
+                implies_antecedent_and2 = Implies(self.listOfReals[self.list_of_reals.index(prob_phi)] > 0, prod_right_or)
+                self.no_of_subformula += 1
+                implies_antecedent = And(implies_antecedent_and1, implies_antecedent_and2)
+                self.no_of_subformula += 1
+                self.solver.add(And(first_implies, Implies(implies_precedent, implies_antecedent)))
+                self.no_of_subformula += 1
+
+        return relevant_quantifier
 
     def encodeBoundedUntilSemantics(self, hyperproperty, relevant_quantifier):
         pass
@@ -977,8 +1122,99 @@ class SemanticsEncoder:
     def encodeGlobalSemantics(self, hyperproperty, relevant_quantifier):
         pass
 
-    def encodeRewNextSemantics(self, hyperproperty):
-        pass
+    def encodeRewNextSemantics(self, hyperproperty, prev_relevant_quantifier):
+        reward_model = self.model.parsed_model.reward_models.get(list(self.model.parsed_model.reward_models.keys())[0]).state_rewards
+        rel_quant = int(hyperproperty.children[0].value[1])
+        # prev_relevant_quantifier = extendWithoutDuplicates(prev_relevant_quantifier, [rel_quant])
+        child = hyperproperty.children[1]
+        # phi1 = hyperproperty.children[1].children[0]
+        prob_formula = Tree('probability', [child])
+        index_of_phi1 = self.list_of_subformula.index(child)
+        index_of_phi = self.list_of_subformula.index(hyperproperty)
+        index_of_phi_prob = self.list_of_subformula.index(prob_formula)
+        relevant_quantifier = self.encodeNextSemantics(prob_formula, [rel_quant])
+        combined_state_list = self.generateComposedStates(relevant_quantifier)
+
+        # holdsToInt has type real to avoid added complexity of multiplying integer to real values
+        for r_state in combined_state_list:
+            str_r_state = ""
+            for ind in r_state:
+                str_r_state += "_" + str(ind)
+            prob_phi = 'prob' + str_r_state + "_" + str(index_of_phi_prob)
+            self.addToVariableList(prob_phi)
+            rew_phi = 'rew' + str_r_state + "_" + str(index_of_phi)
+            self.addToVariableList(rew_phi)
+            first_implies = Implies(Not(self.listOfReals[self.list_of_reals.index(prob_phi)] == float(1)),
+                                    self.listOfReals[self.list_of_reals.index(rew_phi)] == float(-9999))
+            self.no_of_subformula += 3
+            self.solver.add(first_implies)
+            dicts = []
+            for l in relevant_quantifier:
+                dicts.append(self.model.dict_of_acts[r_state[l - 1]])
+            combined_acts = list(itertools.product(*dicts))
+
+            for ca in combined_acts:
+                name = 'a_' + str(r_state[relevant_quantifier[0] - 1])
+                self.addToVariableList(name)
+                act_str = self.listOfInts[self.list_of_ints.index(name)] == int(ca[0])
+                if len(relevant_quantifier) > 1:
+                    for l in range(2, len(relevant_quantifier) + 1):
+                        name = 'a_' + str(relevant_quantifier[l - 1] - 1)
+                        self.addToVariableList(name)
+                        act_str = And(act_str, self.listOfInts[self.list_of_ints.index(name)] == int(ca[l - 1]))
+
+                implies_precedent = And(self.listOfReals[self.list_of_reals.index(prob_phi)] == float(1), act_str)
+                self.no_of_subformula += 1
+
+                dicts = []
+                g = 0
+                for l in relevant_quantifier:
+                    dicts.append(self.model.dict_of_acts_tran[str(r_state[l - 1]) + " " + str(ca[g])])
+                    g += 1
+                combined_succ = list(itertools.product(*dicts))
+                first = True
+                prod_left = None
+                for cs in combined_succ:
+                    f = 0
+                    rew_succ = 'rew'
+                    p_first = True
+                    prod_left_part = None
+                    for l in range(1, self.no_of_state_quantifier + 1):
+                        if l in relevant_quantifier:
+                            space = cs[f].find(' ')
+                            succ_state = cs[f][0:space]
+                            rew_succ += '_' + succ_state
+                            if p_first:
+                                prod_left_part = RealVal(cs[f][space + 1:]).as_fraction()
+                                p_first = False
+                            else:
+                                prod_left_part *= RealVal(cs[f][space + 1:]).as_fraction()
+                            f += 1
+                        else:
+                            rew_succ += '_' + str(0)
+                            if p_first:
+                                prod_left_part = RealVal(1).as_fraction()
+                                p_first = False
+                            else:
+                                prod_left_part *= RealVal(1).as_fraction()
+
+                    rew_succ += '_' + str(index_of_phi1)
+                    self.addToVariableList(rew_succ)
+                    prod_left_part *= self.listOfReals[self.list_of_reals.index(rew_succ)]
+
+                    if first:
+                        prod_left = prod_left_part
+                        first = False
+                    else:
+                        prod_left += prod_left_part
+                    self.no_of_subformula += 1
+
+                implies_antecedent_and = self.listOfReals[self.list_of_reals.index(rew_phi)] == (
+                        float(reward_model[r_state[rel_quant - 1]]) + prod_left)
+                self.no_of_subformula += 1
+                self.solver.add(Implies(implies_precedent, implies_antecedent_and))
+                self.no_of_subformula += 1
+        return relevant_quantifier
 
     def encodeRewUnboundedUntilSemantics(self, hyperproperty):
         pass

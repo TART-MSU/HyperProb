@@ -87,7 +87,7 @@ class ModelChecker:
         if formula_phi.data in ['exist_scheduler', 'forall_scheduler', 'exist_state', 'forall_state']:
             formula_phi = formula_phi.children[1]
             self.addToSubformulaList(formula_phi)
-        elif formula_phi.data in ['and', 'or', 'implies', 'biconditional', 'equivalent',
+        elif formula_phi.data in ['and', 'or', 'implies', 'biconditional',
                                   'less_probability', 'equal_probability', 'greater_probability',
                                   'greater_and_equal_probability', 'less_and_equal_probability',
                                   'less_reward', 'equal_reward', 'greater_reward', 'greater_and_equal_reward',
