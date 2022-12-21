@@ -22,7 +22,7 @@ class Property:
                             | "(" formula "|" formula ")"-> or
                             | "(" formula "->" formula ")"-> implies
                             | "(" formula "<->" formula ")"-> biconditional
-                            | "~(" formula ")" -> not
+                            | "~" formula -> not
                             | "true" -> true
                             | "(" p "<" p ")" -> less_probability
                             | "(" p "=" p ")" -> equal_probability

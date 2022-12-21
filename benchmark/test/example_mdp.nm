@@ -1,0 +1,38 @@
+// MDP for testing if fairness holds for all sets of traces of this MDP.
+
+// This is the mdp input into HyperProb to be evaluated with hyperproperties
+
+// This model should be evaluated as unfair as there is an explicit bias against minorities where their college 
+// rank is increased and puts them at a disadvantage of getting hired.
+
+mdp
+
+module M 
+	
+	h : [0..1]; // high input (minority, non-minority respectively)
+	l : [0..2]; // low output (0, hired, not-hired respectively)
+	x : [0..4] init 0; // intermediate states   
+	
+	[] (h=0)&(l=0)&(x=0) ->	0.0899 : (x'=1) + 0.9101 : (x'=2); // High input of being a minority, transition using a compound probability of yExp - ColRank > 0
+	[] (h=1)&(l=0)&(x=0) ->	0.1855 : (x'=3) + 0.8145 : (x'=4); // High input of being a non-minority, transition using a compound probability of yExp - ColRank > -5
+	
+	[] (x=1)|(x=3) -> 1 : (l'=1); // expRank > 0, transition to low output for being hired
+	[] (x=2)|(x=4) -> 1 : (l'=2); // expRank >-5, transition to low output for being hired
+	
+	[] (l!=0) -> true; // loop at low output
+	
+	
+endmodule
+
+label "minority" = h=0;
+label "non_minority" = h=1;
+
+label "ERgt0_minority" = x=1;
+label "ERlte0_minority" = x=2;
+
+label "ERgtneg5_non_minority" = x=3;
+label "ERlteneg5_non_minority" = x=4;
+
+label "hired" = l=1;
+label "not_hired" = l=2;
+	

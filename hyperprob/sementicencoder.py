@@ -55,8 +55,8 @@ class SemanticsEncoder:
             labeling = self.model.parsed_model.labeling
             if proposition_relevant_quantifier not in relevant_quantifier:
                 relevant_quantifier.append(proposition_relevant_quantifier)
-            and_for_yes = set()
-            and_for_no = set()
+            and_for_yes = []
+            and_for_no = []
             list_of_state_with_ap = []
 
             index_of_phi = self.list_of_subformula.index(hyperproperty)
@@ -71,10 +71,10 @@ class SemanticsEncoder:
                 name += '_' + str(index_of_phi)
                 self.addToVariableList(name)
                 if r_state[proposition_relevant_quantifier - 1] in list_of_state_with_ap:
-                    and_for_yes.add(self.listOfBools[self.list_of_bools.index(name)])
+                    and_for_yes.append(self.listOfBools[self.list_of_bools.index(name)])
                 else:
-                    and_for_no.add(Not(self.listOfBools[self.list_of_bools.index(name)]))
-            self.solver.add(And(And([par for par in list(and_for_yes)]), And([par for par in list(and_for_no)])))
+                    and_for_no.append(Not(self.listOfBools[self.list_of_bools.index(name)]))
+            self.solver.add(And(And(and_for_yes), And(and_for_no)))
             self.no_of_subformula += 3
             and_for_yes.clear()
             and_for_no.clear()
@@ -950,7 +950,7 @@ class SemanticsEncoder:
     def genSuccessors(self, r_state, ca, relevant_quantifier):
         dicts = []
         for l in range(len(relevant_quantifier)):
-            succ = (self.model.dict_of_acts_tran[str(r_state[l]) + " " + str(ca[l])])
+            succ = (self.model.dict_of_acts_tran[str(r_state[relevant_quantifier[l]-1]) + " " + str(ca[l])])
             list_of_all_succ = []
             for s in succ:
                 space = s.find(' ')
@@ -1313,7 +1313,7 @@ class SemanticsEncoder:
             new_prob_const_1 = self.listOfReals[self.list_of_reals.index(prob_phi)] <= float(1)
             first_implies = And(Implies(self.listOfBools[self.list_of_bools.index(holds1)],
                                         (self.listOfReals[self.list_of_reals.index(prob_phi)] == float(1))),
-                                new_prob_const_0, new_prob_const_1)
+                                new_prob_const_0)
             self.no_of_subformula += 1
 
             dicts = []
@@ -1327,7 +1327,7 @@ class SemanticsEncoder:
                     name = 'a_' + str(r_state[relevant_quantifier[l] - 1])
                     self.addToVariableList(name)
                     act_str.append(self.listOfInts[self.list_of_ints.index(name)] == int(ca[l]))
-                implies_precedent = And(self.listOfBools[self.list_of_bools.index(holds1)],
+                implies_precedent = And(Not(self.listOfBools[self.list_of_bools.index(holds1)]),
                                         And(act_str))
                 self.no_of_subformula += 2
 

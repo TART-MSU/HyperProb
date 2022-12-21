@@ -1,0 +1,44 @@
+mdp
+
+// 3 | x x x x x
+// 2 | x   x   x
+// 1 | x   x   x
+// 0 | x   x   x
+// y ____________
+//   x 0 1 2 3 4
+
+// walls in the maze
+formula u = y<3;
+formula r = y=3 & x<4;
+formula d = y>0 & (x=0 | x=2 | x=4);
+formula l = y=3 & x>0;
+
+// updates of coordinates (if possible)
+formula yu = u ? (y+1) : y;
+formula xr = r ? (x+1) : x;
+formula yd = d ? (y-1) : y;
+formula xl = l ? (x-1) : x;
+
+// trap state
+formula bad = (x=0&y=2) | (x=4&y=2);
+
+// specification of the maze
+// for every choice, there is still some small probability of not actually going where desired
+module maze
+    x : [0..4];
+    y : [0..3];
+    // moving around the maze (all combinations)
+    [up]       !bad  -> 0.8: (y'=yu) + 0.08: (x'=xr) + 0.08: (x'=xl) + 0.04: (y'=yd);
+    [right]    !bad  -> 0.8: (x'=xr) + 0.08: (y'=yu) + 0.08: (y'=yd) + 0.04: (x'=xl);
+    [down]     !bad  -> 0.8: (y'=yd) + 0.08: (x'=xr) + 0.08: (x'=xl) + 0.04: (y'=yu);
+    [left]     !bad  -> 0.8: (x'=xl) + 0.08: (y'=yu) + 0.08: (y'=yd) + 0.04: (x'=xr);
+endmodule
+
+// we have two initial states
+init (x=4&y=0 | x=2&y=0) endinit
+
+// goal of the robot
+label "target" = (x=2)&(y=0);
+label "start0" = (x=4)&(y=0);
+label "start1" = (x=2)&(y=0);
+label "bad" = (x=0&y=2) | (x=4&y=2);

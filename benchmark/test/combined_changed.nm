@@ -1,0 +1,80 @@
+mdp
+
+module par
+	// Returns the SUM of the values received when scanning all processes
+	p : [-8..10];
+	p_check : [-8..10];
+	c_p : [0..1];
+
+	f : [0..1]; // f=0 collect, f=1 no-collect
+
+	// Local State
+	s_p : [0..2];
+
+	// Collect
+	[] s_p=0 & f=0 -> (s_p'=1) & (p_check'=q+r); // SCAN_p()
+
+	// Verify double collect has occurred
+	[] q+r=p_check & s_p=1 & p_check!=0 & f=0 -> (s_p'=2) & (p'=q+r) & (c_p'=1);
+	[] s_p=1 & (q+r!=p_check | p_check=0) & f=0 -> (p_check'=q+r);
+	
+
+	// No-Collect
+	[] s_p=0 & f=1 -> (s_p'=1) & (p'=q+r) & (f'=1); // SCAN_p()
+	[] s_p=1 & f=1 -> (s_p'=1) & (c_p'=1) & (f'=1);
+
+endmodule
+
+module qar
+	// Performs two UPDATE operations
+	q : [0..2];
+	c_q : [0..1];
+
+	// Local State
+	s_q : [0..2];
+
+	// Collect
+	[] s_q=0-> (s_q'=1) & (q'=2); // UPDATE_q(2)
+	[] s_q=1-> (s_q'=2) & (q'=0) & (c_q'=1); // UPDATE_q(0)
+
+	// No-Collect
+	//[] s_q=0 & f=1 -> (s_q'=1) & (q'=2); // UPDATE_q(2)
+	//[] s_q=1 & f=1 -> (s_q'=2) & (q'=0) & (c_q'=1); // UPDATE_q(0)
+endmodule
+
+module rar
+	// Performs UPDATE operations and a uniform-random lookup
+	r : [-8..8];
+	c : [-1..1];
+	c_r : [0..1];
+
+	// Local State
+	s_r : [0..3];
+
+	// Collect
+	[] s_r=0-> (s_r'=1) & (r'=6); // UPDATE_r(6)
+	[] s_r=1-> 0.5 : (c'=-1) & (s_r'=2) + 0.5 : (c'=1) & (s_r'=2); // Coin Flip
+	[] s_r=2-> (s_r'=3) & (r'=8*c) & (c_r'=1); // UPDATE_r(8*c)
+
+	// No-Collect
+	//[] s_r=0 & f=1 -> (s_r'=1) & (r'=6); // UPDATE_r(6)
+	//[] s_r=1 & f=1 -> 0.5 : (c'=-1) & (s_r'=2) + 0.5 : (c'=1) & (s_r'=2); // Coin Flip
+	//[] s_r=2 & f=1 -> (s_r'=3) & (r'=8*c) & (c_r'=1); // UPDATE_r(8*c)
+endmodule
+
+init (p=0) & (p_check=0) & (c_p=0) & (s_p=0) & (q=0) & (c_q=0) & (s_q=0) & (r=0) & (c_r=0) & (s_r=0) & (c=0) endinit
+label "eight_collect" = c_p=1 & c_q=1 & c_r=1 & f=0 & p=8;
+label "neg_eight_collect" = c_p=1 & c_q=1 & c_r=1 & f=0 & p=-8;
+label "neg_six_collect" = c_p=1 & c_q=1 & c_r=1 & f=0 & p=-6;
+label "zero_collect" = c_p=1 & c_q=1 & c_r=1 & f=0 & p=0;
+label "two_collect" = c_p=1 & c_q=1 & c_r=1 & f=0 & p=2;
+label "ten_collect" = c_p=1 & c_q=1 & c_r=1 & f=0 & p=10;
+label "six_collect" = c_p=1 & c_q=1 & c_r=1 & f=0 & p=6;
+
+label "eight_nocollect" = c_p=1 & c_q=1 & c_r=1 & f=1 & p=8;
+label "neg_eight_nocollect" = c_p=1 & c_q=1 & c_r=1 & f=1 & p=-8;
+label "neg_six_nocollect" = c_p=1 & c_q=1 & c_r=1 & f=1 & p=-6;
+label "zero_nocollect" = c_p=1 & c_q=1 & c_r=1 & f=1 & p=0;
+label "two_nocollect" = c_p=1 & c_q=1 & c_r=1 & f=1 & p=2;
+label "ten_nocollect" = c_p=1 & c_q=1 & c_r=1 & f=1 & p=10;
+label "six_nocollect" = c_p=1 & c_q=1 & c_r=1 & f=1 & p=6;

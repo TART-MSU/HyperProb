@@ -2,6 +2,7 @@ import copy
 import time
 import itertools
 
+import z3
 from lark import Tree
 from z3 import Solver, Bool, Real, Int, Or, sat, And
 
@@ -68,7 +69,7 @@ class ModelChecker:
             self.addToVariableList(name)
             for action in state.actions:
                 list_of_eqns.append(self.listOfInts[self.list_of_ints.index(name)] == int(action.id))
-            self.solver.add(Or([par for par in list_of_eqns]))
+            self.solver.add(Or(list_of_eqns))
             self.no_of_subformula += 1
         common.colourinfo("Encoded actions in the MDP...")
 
@@ -182,6 +183,10 @@ class ModelChecker:
         list_of_actions = None
         if truth == sat:
             z3model = self.solver.model()
+            f = open("model.txt", "w")
+            [f.write(str(x)+"=" + str(z3model[x]) + "\n") for x in z3model]
+            #f.write(str(z3model))
+            f.close()
             list_of_actions = [None] * len(self.model.getListOfStates())
             for li in z3model:
                 if li.name()[0] == 'a':
