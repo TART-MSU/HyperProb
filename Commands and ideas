@@ -1,7 +1,0 @@
-PyPI has certain required meta-data that the setup.py should provide. To quickly check if your project has this data use:
-Run python setup.py check in HyperProbV2 folder. It will create hyperprob.egg-info directory (not important)
-
-python setup.py sdist creates a dist/ directory containing a compressed archive of the package. This file is your source distribution.
-
-For colouring text, adding attrs=['reverse'] to the colourtext method coloured command, it will show as highlight insteda of text colour.
-

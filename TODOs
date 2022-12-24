@@ -1,4 +1,0 @@
-- fix how to set version number as same in both __init__ and setup.py
-- print grammar on documentation
-- catch error from stormpy(about prism when the model file is wrong, we currently print duplicate errors) and prevent it from showing up
-- fix counting of subformulas
