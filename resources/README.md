@@ -6,4 +6,4 @@
 - Run `./build_carl_parser.sh` to build carl-parser. This will take sometime mostly in the Antlr building phase.
 - Run `./build_pycarl.sh master release` to build pycarl. 
 - Next we build storm with `./build_storm.sh 1.6.3 release binaries`. You may run into a problem with cudd. Follow [this issue](https://github.com/moves-rwth/storm/issues/104) resolution on their Github.
-- For stormpy, run `./build_stormpy.sh 1.6.3 release absolute_path_to_build_directory_in_storm
+- For stormpy, run `./build_stormpy.sh 1.6.3 release absolute_path_to_build_directory_in_storm`

@@ -183,10 +183,6 @@ class ModelChecker:
         list_of_actions = None
         if truth == sat:
             z3model = self.solver.model()
-            f = open("model.txt", "w")
-            [f.write(str(x)+"=" + str(z3model[x]) + "\n") for x in z3model]
-            #f.write(str(z3model))
-            f.close()
             list_of_actions = [None] * len(self.model.getListOfStates())
             for li in z3model:
                 if li.name()[0] == 'a':
