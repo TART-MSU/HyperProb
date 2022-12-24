@@ -2,7 +2,6 @@ import copy
 import time
 import itertools
 
-import z3
 from lark import Tree
 from z3 import Solver, Bool, Real, Int, Or, sat, And
 
