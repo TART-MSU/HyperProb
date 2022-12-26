@@ -51,7 +51,7 @@ Using the tool
 People
 -------
   Authors:
-  - Oyendrila Dobe, Michigan State University. 
+  - [Oyendrila Dobe](https://oyendrila-dobe.github.io/), Michigan State University. 
   - [Borzoo Bonakdarpour](http://www.cse.msu.edu/~borzoo/), Michigan State University. 
   
   Other Contributors:
