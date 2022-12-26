@@ -60,12 +60,14 @@ Let us consider the hyperproperty above:
 "ES sh . A s1 . A s2 .((hg0(s1) & hle0(s2)) -> ~(P(F le1(s1)) = P(F le1(s2))))"
 ```
 - We currently support a single scheduler quantifier and a single model.
-  - Here, `sh` is the name of the scheduler quantifier variable, and it can have any name whatsoever.
+  - Here, `sh`, the scheduler quantifier variable can have any name whatsoever.
   - We can use `ES` to find the existence of a scheduler and `AS` to check for all schedulers.
 - We have specific naming convention used for state variables.
-  - Here `s1`,`s2` are the state variable names, and they have been associated with our atomic propositions, e.g., `hg0(s1)`. 
+  - Here `s1`,`s2`, the state variable names, have been associated with our atomic propositions, e.g., `hg0(s1)`. 
   - The name does not matter here, but the numbering of the state quantifiers should start from 1.
   - We can use `E` to specify existence of an initial state  and `A` to specify for all possible initials states.
+- We can use HyperProb to verify DTMCs.
+  - We can specify the hyperproperty in a similar manner and keep the scheduler variable as `ES sh` as we have only one scheduler.
 
 For examples on how to represent these parameters refer to [this script](benchmark_files/Experiments.txt).
 
