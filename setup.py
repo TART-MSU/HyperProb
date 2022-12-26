@@ -18,7 +18,7 @@ setup(
         'lark-parser~=0.12.0',
         'z3-solver~=4.11.2.0'
     ],
-    python_requires='>=3.9',
+    python_requires='>=3.8.2',
 
     classifiers=[
         'Environment :: MacOS X',
