@@ -6,6 +6,7 @@ hyperprob/inputparser.py
 hyperprob/modelchecker.py
 hyperprob/modelparser.py
 hyperprob/propertyparser.py
+hyperprob/sementicencoder.py
 hyperprob.egg-info/PKG-INFO
 hyperprob.egg-info/SOURCES.txt
 hyperprob.egg-info/dependency_links.txt
@@ -13,3 +14,4 @@ hyperprob.egg-info/requires.txt
 hyperprob.egg-info/top_level.txt
 hyperprob/utility/__init__.py
 hyperprob/utility/common.py
+hyperprob/utility/printDTMC.py

@@ -51,7 +51,6 @@ class Property:
                             | "(" formula "U" formula ")"-> until_unbounded
                             | "(" formula "U["NUM "," NUM"]" formula ")"-> until_bounded
                             | "(F" formula ")" -> future
-                            | "(G" formula ")" -> global
 
                         proposition: NAME 
                         with: NAME

@@ -290,9 +290,10 @@ class SemanticsEncoder:
                                                               self.encodeFutureSemantics(hyperproperty,
                                                                                          relevant_quantifier))
             elif child.data == 'global':
-                relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
-                                                              self.encodeGlobalSemantics(hyperproperty,
-                                                                                         relevant_quantifier))
+                pass
+                #relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
+                                                              #self.encodeGlobalSemantics(hyperproperty,
+                                                                                         #relevant_quantifier))
             return relevant_quantifier
         elif hyperproperty.data == 'reward':
             child = hyperproperty.children[1]
@@ -950,7 +951,7 @@ class SemanticsEncoder:
     def genSuccessors(self, r_state, ca, relevant_quantifier):
         dicts = []
         for l in range(len(relevant_quantifier)):
-            succ = (self.model.dict_of_acts_tran[str(r_state[relevant_quantifier[l]-1]) + " " + str(ca[l])])
+            succ = (self.model.dict_of_acts_tran[str(r_state[relevant_quantifier[l] - 1]) + " " + str(ca[l])])
             list_of_all_succ = []
             for s in succ:
                 space = s.find(' ')
@@ -959,14 +960,14 @@ class SemanticsEncoder:
             dicts.append(list_of_all_succ)
         return list(itertools.product(*dicts))
 
-    def encodeUnboundedUntilSemantics(self, hyperproperty, relevant_quantifier=None):
-        if relevant_quantifier is None:
-            relevant_quantifier = []
+    def encodeUnboundedUntilSemantics(self, hyperproperty, prev_relevant_quantifier=None):
+        if prev_relevant_quantifier is None:
+            prev_relevant_quantifier = []
         index_of_phi = self.list_of_subformula.index(hyperproperty)
         phi1 = hyperproperty.children[0].children[0]
         index_of_phi1 = self.list_of_subformula.index(phi1)
         rel_quant1 = self.encodeSemantics(phi1)
-        relevant_quantifier = extendWithoutDuplicates(rel_quant1, relevant_quantifier)
+        relevant_quantifier = extendWithoutDuplicates(rel_quant1, prev_relevant_quantifier)
         phi2 = hyperproperty.children[0].children[1]
         index_of_phi2 = self.list_of_subformula.index(phi2)
         rel_quant2 = self.encodeSemantics(phi2)
@@ -1076,8 +1077,8 @@ class SemanticsEncoder:
 
         return relevant_quantifier
 
-    def encodeBoundedUntilSemantics(self, hyperproperty, relevant_quantifier=None):
-        if relevant_quantifier is None:
+    def encodeBoundedUntilSemantics(self, hyperproperty, prev_relevant_quantifier=None):
+        if prev_relevant_quantifier is None:
             relevant_quantifier = []
         k1 = int(hyperproperty.children[0].children[1].value)
         k2 = int(hyperproperty.children[0].children[2].value)
@@ -1091,7 +1092,7 @@ class SemanticsEncoder:
 
         if k2 == 0:
             rel_quant1 = self.encodeSemantics(phi1)
-            relevant_quantifier = extendWithoutDuplicates(relevant_quantifier, rel_quant1)
+            relevant_quantifier = extendWithoutDuplicates(prev_relevant_quantifier, rel_quant1)
             rel_quant2 = self.encodeSemantics(phi2)
             relevant_quantifier = extendWithoutDuplicates(relevant_quantifier, rel_quant2)
             combined_state_list = self.generateComposedStates(relevant_quantifier)
@@ -1130,7 +1131,7 @@ class SemanticsEncoder:
             index_of_replaced = len(
                 self.list_of_subformula) - 1  # forcefully inserting new replaced formula, will obviously be inserted at the end
             rel_quant = self.encodeBoundedUntilSemantics(hyperproperty)
-            relevant_quantifier = extendWithoutDuplicates(relevant_quantifier, rel_quant)
+            relevant_quantifier = extendWithoutDuplicates(prev_relevant_quantifier, rel_quant)
             combined_state_list = self.generateComposedStates(relevant_quantifier)
             rel_quant1 = int(str(hyperproperty.children[0].children[0].children[1].children[0])[1:])
             rel_quant2 = int(str(hyperproperty.children[0].children[3].children[1].children[0])[1:])
@@ -1222,7 +1223,7 @@ class SemanticsEncoder:
             index_of_replaced = len(
                 self.list_of_subformula) - 1  # forcefully inserting new replaced formula, will obviously be inserted at the end
             rel_quant = self.encodeBoundedUntilSemantics(hyperproperty)
-            relevant_quantifier = extendWithoutDuplicates(relevant_quantifier, rel_quant)
+            relevant_quantifier = extendWithoutDuplicates(prev_relevant_quantifier, rel_quant)
             combined_state_list = self.generateComposedStates(relevant_quantifier)
             rel_quant1 = int(str(hyperproperty.children[0].children[0].children[1].children[0])[1:])
 
@@ -1289,14 +1290,14 @@ class SemanticsEncoder:
                     self.no_of_subformula += 1
         return relevant_quantifier
 
-    def encodeFutureSemantics(self, hyperproperty, relevant_quantifier=None):
-        if relevant_quantifier is None:
-            relevant_quantifier = []
+    def encodeFutureSemantics(self, hyperproperty, prev_relevant_quantifier=None):
+        if prev_relevant_quantifier is None:
+            prev_relevant_quantifier = []
         phi1 = hyperproperty.children[0].children[0]
         index_of_phi1 = self.list_of_subformula.index(phi1)
         index_of_phi = self.list_of_subformula.index(hyperproperty)
         rel_quant = self.encodeSemantics(phi1)
-        relevant_quantifier = extendWithoutDuplicates(relevant_quantifier, rel_quant)
+        relevant_quantifier = extendWithoutDuplicates(prev_relevant_quantifier, rel_quant)
         combined_state_list = self.generateComposedStates(relevant_quantifier)
 
         for r_state in combined_state_list:
@@ -1386,14 +1387,16 @@ class SemanticsEncoder:
                 self.no_of_subformula += 1
         return relevant_quantifier
 
-    def encodeGlobalSemantics(self, hyperproperty, relevant_quantifier=None):
-        if relevant_quantifier is None:
-            relevant_quantifier = []
+    def encodeGlobalSemantics(self, hyperproperty, prev_relevant_quantifier=None):
+        pass
+        '''
+        if prev_relevant_quantifier is None:
+            prev_relevant_quantifier = []
         phi1 = hyperproperty.children[0].children[0]
         index_of_phi1 = self.list_of_subformula.index(phi1)
         index_of_phi = self.list_of_subformula.index(hyperproperty)
         rel_quant = self.encodeSemantics(phi1)
-        relevant_quantifier = extendWithoutDuplicates(relevant_quantifier, rel_quant)
+        relevant_quantifier = extendWithoutDuplicates(prev_relevant_quantifier, rel_quant)
         combined_state_list = self.generateComposedStates(relevant_quantifier)
 
         for r_state in combined_state_list:
@@ -1482,6 +1485,7 @@ class SemanticsEncoder:
                 self.solver.add(And(first_implies, Implies(implies_precedent, implies_antecedent)))
                 self.no_of_subformula += 1
         return relevant_quantifier
+        '''
 
     def encodeRewNextSemantics(self, hyperproperty, prev_relevant_quantifier=None):
         if prev_relevant_quantifier is None:
@@ -1489,14 +1493,14 @@ class SemanticsEncoder:
         reward_model = self.model.parsed_model.reward_models.get(
             list(self.model.parsed_model.reward_models.keys())[0]).state_rewards
         rel_quant = int(hyperproperty.children[0].value[1])
-        # prev_relevant_quantifier = extendWithoutDuplicates(prev_relevant_quantifier, [rel_quant])
+        relevant_quantifier = extendWithoutDuplicates(prev_relevant_quantifier, [rel_quant])
         child = hyperproperty.children[1]
         # phi1 = hyperproperty.children[1].children[0]
         prob_formula = Tree('probability', [child])
         index_of_phi1 = self.list_of_subformula.index(child)
         index_of_phi = self.list_of_subformula.index(hyperproperty)
         index_of_phi_prob = self.list_of_subformula.index(prob_formula)
-        relevant_quantifier = self.encodeNextSemantics(prob_formula, [rel_quant])
+        relevant_quantifier = self.encodeNextSemantics(prob_formula, relevant_quantifier)
         combined_state_list = self.generateComposedStates(relevant_quantifier)
 
         for r_state in combined_state_list:
@@ -1554,9 +1558,9 @@ class SemanticsEncoder:
                 self.no_of_subformula += 1
         return relevant_quantifier
 
-    def encodeRewUnboundedUntilSemantics(self, hyperproperty, relevant_quantifier=None):
-        if relevant_quantifier is None:
-            relevant_quantifier = []
+    def encodeRewUnboundedUntilSemantics(self, hyperproperty, prev_relevant_quantifier=None):
+        if prev_relevant_quantifier is None:
+            prev_relevant_quantifier = []
         reward_model = self.model.parsed_model.reward_models.get(
             list(self.model.parsed_model.reward_models.keys())[0]).state_rewards
         rel_quant = int(hyperproperty.children[0].value[1])
@@ -1568,8 +1572,8 @@ class SemanticsEncoder:
         index_of_phi2 = self.list_of_subformula.index(phi2)
         rel_quant1 = self.encodeUnboundedUntilSemantics(prob_formula, [rel_quant])
         rel_quant2 = self.encodeSemantics(phi2)
-        relevant_quantifier = extendWithoutDuplicates(extendWithoutDuplicates(rel_quant2, relevant_quantifier),
-                                                      rel_quant1)
+        relevant_quantifier = extendWithoutDuplicates(extendWithoutDuplicates(extendWithoutDuplicates(rel_quant2, [rel_quant]),
+                                                      rel_quant1), prev_relevant_quantifier)
         combined_state_list = self.generateComposedStates(relevant_quantifier)
 
         for r_state in combined_state_list:
@@ -1641,9 +1645,9 @@ class SemanticsEncoder:
 
         return relevant_quantifier
 
-    def encodeRewBoundedUntilSemantics(self, hyperproperty, relevant_quantifier=None):
-        if relevant_quantifier is None:
-            relevant_quantifier = []
+    def encodeRewBoundedUntilSemantics(self, hyperproperty, prev_relevant_quantifier=None):
+        if prev_relevant_quantifier is None:
+            prev_relevant_quantifier = []
         k1 = int(hyperproperty.children[0].children[1].value)
         k2 = int(hyperproperty.children[0].children[2].value)
         # TODO: change to return rel_quant1, rel_quant2 in both the other two cases.
@@ -1662,7 +1666,7 @@ class SemanticsEncoder:
 
         if k2 == 0:
             rel_quant2 = self.encodeSemantics(phi2)
-            relevant_quantifier = extendWithoutDuplicates(relevant_quantifier, rel_quant2)
+            relevant_quantifier = extendWithoutDuplicates(extendWithoutDuplicates([rel_quant], rel_quant2), prev_relevant_quantifier)
             combined_state_list = self.generateComposedStates(relevant_quantifier)
 
             for r_state in combined_state_list:
@@ -1699,8 +1703,8 @@ class SemanticsEncoder:
             self.list_of_subformula.append(hyperproperty)
             index_of_replaced = len(
                 self.list_of_subformula) - 1  # forcefully inserting new replaced formula, will obviously be inserted at the end
-            rel_quant = self.encodeRewBoundedUntilSemantics(hyperproperty)
-            relevant_quantifier = extendWithoutDuplicates(relevant_quantifier, rel_quant)
+            relevant_quantifier = self.encodeRewBoundedUntilSemantics(hyperproperty, [rel_quant])
+            relevant_quantifier = extendWithoutDuplicates(prev_relevant_quantifier, relevant_quantifier)
             combined_state_list = self.generateComposedStates(relevant_quantifier)
             rel_quant1 = int(str(hyperproperty.children[0].children[0].children[1].children[0])[1:])
             rel_quant2 = int(str(hyperproperty.children[0].children[3].children[1].children[0])[1:])
@@ -1727,10 +1731,10 @@ class SemanticsEncoder:
 
                 first_implies = And(Implies(self.listOfBools[self.list_of_bools.index(holds2)],
                                             (self.listOfReals[self.list_of_reals.index(rew_phi)] == float(
-                                                reward_model.get_state_reward(r_state[relevant_quantifier - 1])))),
+                                                reward_model.get_state_reward(r_state[rel_quant - 1])))),
                                     Implies(Not(self.listOfReals[self.list_of_reals.index(prob_phi)] == float(1)),
                                             (self.listOfReals[self.list_of_reals.index(rew_phi)] == float(
-                                                reward_model.get_state_reward(r_state[relevant_quantifier - 1])))))
+                                                reward_model.get_state_reward(r_state[rel_quant - 1])))))
                 self.no_of_subformula += 3
                 self.solver.add(first_implies)
 
@@ -1772,7 +1776,7 @@ class SemanticsEncoder:
 
                     implies_antecedent_and = self.listOfReals[self.list_of_reals.index(rew_phi)] == (
                             float(reward_model.get_state_reward(r_state[
-                                                                    relevant_quantifier - 1])) + sum_left)
+                                                                    rel_quant - 1])) + sum_left)
                     self.no_of_subformula += 1
                     self.solver.add(Implies(implies_precedent, implies_antecedent_and))
                     self.no_of_subformula += 1
@@ -1789,8 +1793,8 @@ class SemanticsEncoder:
             self.list_of_subformula.append(hyperproperty)
             index_of_replaced = len(
                 self.list_of_subformula) - 1  # forcefully inserting new replaced formula, will obviously be inserted at the end
-            rel_quant = self.encodeRewBoundedUntilSemantics(hyperproperty)
-            relevant_quantifier = extendWithoutDuplicates(relevant_quantifier, rel_quant)
+            relevant_quantifier = self.encodeRewBoundedUntilSemantics(hyperproperty, [rel_quant])
+            relevant_quantifier = extendWithoutDuplicates(prev_relevant_quantifier, relevant_quantifier)
             combined_state_list = self.generateComposedStates(relevant_quantifier)
             rel_quant1 = int(str(hyperproperty.children[0].children[0].children[1].children[0])[1:])
 
@@ -1850,15 +1854,15 @@ class SemanticsEncoder:
 
                     implies_antecedent_and = self.listOfReals[self.list_of_reals.index(rew_phi)] == (
                             float(reward_model.get_state_reward(r_state[
-                                                                    relevant_quantifier - 1])) + sum_left)
+                                                                    rel_quant - 1])) + sum_left)
                     self.no_of_subformula += 1
                     self.solver.add(Implies(implies_precedent, implies_antecedent_and))
                     self.no_of_subformula += 1
         return relevant_quantifier
 
-    def encodeRewFutureSemantics(self, hyperproperty, relevant_quantifier=None):
-        if relevant_quantifier is None:
-            relevant_quantifier = []
+    def encodeRewFutureSemantics(self, hyperproperty, prev_relevant_quantifier=None):
+        if prev_relevant_quantifier is None:
+            prev_relevant_quantifier = []
         reward_model = self.model.parsed_model.reward_models.get(
             list(self.model.parsed_model.reward_models.keys())[0]).state_rewards
         rel_quant = int(hyperproperty.children[0].value[1])
@@ -1868,8 +1872,8 @@ class SemanticsEncoder:
         index_of_phi1 = self.list_of_subformula.index(phi1)
         index_of_phi = self.list_of_subformula.index(hyperproperty)
         index_of_phi_prob = self.list_of_subformula.index(prob_formula)
-        rel_quant = self.encodeFutureSemantics(prob_formula, [rel_quant])
-        relevant_quantifier = extendWithoutDuplicates(relevant_quantifier, rel_quant)
+        relevant_quantifier = self.encodeFutureSemantics(prob_formula, [rel_quant])
+        relevant_quantifier = extendWithoutDuplicates(prev_relevant_quantifier, relevant_quantifier)
         combined_state_list = self.generateComposedStates(relevant_quantifier)
 
         for r_state in combined_state_list:
@@ -1888,7 +1892,7 @@ class SemanticsEncoder:
 
             first_implies = And(Implies(self.listOfBools[self.list_of_bools.index(holds1)],
                                         (self.listOfReals[self.list_of_reals.index(rew_phi)] == float(
-                                            reward_model[r_state[relevant_quantifier - 1]]))),
+                                            reward_model[r_state[rel_quant - 1]]))),
                                 Implies(Not(self.listOfReals[self.list_of_reals.index(prob_phi)] == float(1)),
                                         self.listOfReals[self.list_of_reals.index(rew_phi)] == float(-9999999)))
             # float(fpPlusInfinity()  # How do we handle the case where prob != 1? TBD
@@ -1932,7 +1936,7 @@ class SemanticsEncoder:
                     self.no_of_subformula += 1
 
                 implies_antecedent = self.listOfReals[self.list_of_reals.index(rew_phi)] == (
-                        float(reward_model[r_state[relevant_quantifier - 1]]) + sum_left)
+                        float(reward_model[r_state[rel_quant - 1]]) + sum_left)
                 self.no_of_subformula += 1
                 sav = And(first_implies, Implies(implies_precedent, implies_antecedent))
                 self.solver.add(sav)
