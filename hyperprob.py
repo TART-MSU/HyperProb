@@ -3,6 +3,7 @@ from hyperprob.utility import common
 from hyperprob.propertyparser import Property
 from hyperprob.modelparser import Model
 from hyperprob.modelchecker import ModelChecker
+import traceback
 
 
 def main():
@@ -23,7 +24,7 @@ def main():
             modelchecker.modelCheck()
         print("\n")
     except Exception as err:
-        common.colourerror("Unexpected error encountered: " + str(err))
+        common.colourerror("Unexpected error encountered: " + str(err) + "\n" + str(traceback.print_exc()))
 
 
 if __name__ == "__main__":

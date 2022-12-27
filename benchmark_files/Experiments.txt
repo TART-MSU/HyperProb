@@ -4,21 +4,31 @@ by printing the action taken at each state of the mdp to give a dtmc.
 
 The following are the details of the experiments as mentioned in the paper:
 
-1) TA: Timing attack experiment, explained as the first case study in the paper. The following refer to the arguments used for 3 different trials with m ={2,4,6}
+1) TA: Timing attack experiment, explained as the first case study in the paper. The following refer to the arguments used for 4 different trials with m ={2,4,6,8}
 
    python hyperprob.py -modelPath benchmark_files/mdp/TA/timing_attack2.nm -hyperString "AS sh . A s1 . A s2 . ((start0(s1) & start1(s2)) -> (P(F counter0(s1)) = P(F counter0(s2))))"
    python hyperprob.py -modelPath benchmark_files/mdp/TA/timing_attack4.nm -hyperString "AS sh . A s1 . A s2 . ((start0(s1) & start1(s2)) -> (P(F counter0(s1)) = P(F counter0(s2))))"
    python hyperprob.py -modelPath benchmark_files/mdp/TA/timing_attack6.nm -hyperString "AS sh . A s1 . A s2 . ((start0(s1) & start1(s2)) -> (P(F counter0(s1)) = P(F counter0(s2))))"
    python hyperprob.py -modelPath benchmark_files/mdp/TA/timing_attack8.nm -hyperString "AS sh . A s1 . A s2 . ((start0(s1) & start1(s2)) -> (P(F counter0(s1)) = P(F counter0(s2))))"
 
-2) PW: Password leakage experiment, explained as the second case study in the paper. The following refer to the arguments used for 3 different trials with m ={2,4,6}
+
+2) TA: Timing attack experiment with reward operators. The following refer to the arguments used for 4 different trials with m ={2,4,6,8}
+
+   python source.py benchmark_files/mdp/TA/timing_attack_rewards2.nm "AS sh . A s1 . A s2 . ~((start0(s1) & start1(s2)) & ~(R s1 (F end(s1)) = R s2 (F end(s2))))"
+   python source.py benchmark_files/mdp/TA/timing_attack_rewards4.nm "AS sh . A s1 . A s2 . ~((start0(s1) & start1(s2)) & ~(R s1 (F end(s1)) = R s2 (F end(s2))))"
+   python source.py benchmark_files/mdp/TA/timing_attack_rewards6.nm "AS sh . A s1 . A s2 . ~((start0(s1) & start1(s2)) & ~(R s1 (F end(s1)) = R s2 (F end(s2))))"
+   python source.py benchmark_files/mdp/TA/timing_attack_rewards8.nm "AS sh . A s1 . A s2 . ~((start0(s1) & start1(s2)) & ~(R s1 (F end(s1)) = R s2 (F end(s2))))"
+
+
+3) PW: Password leakage experiment, explained as the second case study in the paper. The following refer to the arguments used for 3 different trials with m ={2,4,6,8}
 
    python hyperprob.py -modelPath benchmark_files/mdp/PW/password_leakage2.nm -hyperString "AS sh . A s1 . A s2 . ((start0(s1) & start1(s2)) -> (P(F counter0(s1)) = P(F counter0(s2))))"
    python hyperprob.py -modelPath benchmark_files/mdp/PW/password_leakage4.nm -hyperString "AS sh . A s1 . A s2 . ((start0(s1) & start1(s2)) -> (P(F counter0(s1)) = P(F counter0(s2))))"
    python hyperprob.py -modelPath benchmark_files/mdp/PW/password_leakage6.nm -hyperString "AS sh . A s1 . A s2 . ((start0(s1) & start1(s2)) -> (P(F counter0(s1)) = P(F counter0(s2))))"
    python hyperprob.py -modelPath benchmark_files/mdp/PW/password_leakage8.nm -hyperString "AS sh . A s1 . A s2 . ((start0(s1) & start1(s2)) -> (P(F counter0(s1)) = P(F counter0(s2))))"
 
-3) TS: Thread scheduler experiment, explained as the third case study in the paper. The following refer to the arguments used for 4 different trials with the mentioned combinations of h values.
+
+4) TS: Thread scheduler experiment, explained as the third case study in the paper. The following refer to the arguments used for 4 different trials with the mentioned combinations of h values.
 
    python hyperprob.py -modelPath benchmark_files/mdp/TS/thread_scheduler0_1.nm -hyperString "AS sh . A s1 . A s2 . ((h1(s1) & h2(s2)) -> ((P(F (l_1(s1) & terminated(s1))) = P(F (l_1(s2)& terminated(s2)))) & (P(F (l_2(s1)& terminated(s1))) = P(F (l_2(s2) & terminated(s2))))))"
    python hyperprob.py -modelPath benchmark_files/mdp/TS/thread_scheduler0_15.nm -hyperString "AS sh . A s1 . A s2 . ((h1(s1) & h2(s2)) -> ((P(F (l_1(s1) & terminated(s1))) = P(F (l_1(s2)& terminated(s2)))) & (P(F (l_2(s1)& terminated(s1))) = P(F (l_2(s2) & terminated(s2))))))"
@@ -26,7 +36,8 @@ The following are the details of the experiments as mentioned in the paper:
    python hyperprob.py -modelPath benchmark_files/mdp/TS/thread_scheduler8_15.nm -hyperString "AS sh . A s1 . A s2 . ((h1(s1) & h2(s2)) -> ((P(F (l_1(s1) & terminated(s1))) = P(F (l_1(s2)& terminated(s2)))) & (P(F (l_2(s1)& terminated(s1))) = P(F (l_2(s2) & terminated(s2))))))"
    python hyperprob.py -modelPath benchmark_files/mdp/TS/thread_scheduler10_20.nm -hyperString "AS sh . A s1 . A s2 . ((h1(s1) & h2(s2)) -> ((P(F (l_1(s1) & terminated(s1))) = P(F (l_1(s2)& terminated(s2)))) & (P(F (l_2(s1)& terminated(s1))) = P(F (l_2(s2) & terminated(s2))))))"
 
-4) PC: Probabilistic conformance, explained as the fourth case study in the paper. The two cases include the cases where we allow all possible non-deterministic choice for state 0 of the of the first coin and allow all possible non-deterministic choice for state 0 of the of the first coin along with state 0 of the second coin.
+
+5) PC: Probabilistic conformance, explained as the fourth case study in the paper. The two cases include the cases where we allow all possible non-deterministic choice for state 0 of the of the first coin and allow all possible non-deterministic choice for state 0 of the of the first coin along with state 0 of the second coin.
 
    python hyperprob.py -modelPath benchmark_files/mdp/PC/synthesis0.nm -hyperString "ES sh . E s1 . E s2 . (start1(s1) & (start2(s2) & ((P(F die1(s1)) = P(F die1(s2))) & ((P(F die2(s1)) = P(F die2(s2))) & ((P(F die3(s1)) = P(F die3(s2))) & ((P(F die4(s1)) = P(F die4(s2))) & ((P(F die5(s1)) = P(F die5(s2))) & (P(F die6(s1)) = P(F die6(s2))) ) ) ) ) ) ))"
    python hyperprob.py -modelPath benchmark_files/mdp/PC/synthesis0_1.nm -hyperString "ES sh . E s1 . E s2 . (start1(s1) & (start2(s2) & ((P(F die1(s1)) = P(F die1(s2))) & ((P(F die2(s1)) = P(F die2(s2))) & ((P(F die3(s1)) = P(F die3(s2))) & ((P(F die4(s1)) = P(F die4(s2))) & ((P(F die5(s1)) = P(F die5(s2))) & (P(F die6(s1)) = P(F die6(s2))) ) ) ) ) ) ))"
@@ -35,3 +46,18 @@ The following are the details of the experiments as mentioned in the paper:
    python hyperprob.py -modelPath benchmark_files/mdp/PC/synthesis0_1_2_3_4.nm -hyperString "ES sh . E s1 . E s2 . (start1(s1) & (start2(s2) & ((P(F die1(s1)) = P(F die1(s2))) & ((P(F die2(s1)) = P(F die2(s2))) & ((P(F die3(s1)) = P(F die3(s2))) & ((P(F die4(s1)) = P(F die4(s2))) & ((P(F die5(s1)) = P(F die5(s2))) & (P(F die6(s1)) = P(F die6(s2))) ) ) ) ) ) ))"
    python hyperprob.py -modelPath benchmark_files/mdp/PC/synthesis0_1_2_3_4_5.nm -hyperString "ES sh . E s1 . E s2 . (start1(s1) & (start2(s2) & ((P(F die1(s1)) = P(F die1(s2))) & ((P(F die2(s1)) = P(F die2(s2))) & ((P(F die3(s1)) = P(F die3(s2))) & ((P(F die4(s1)) = P(F die4(s2))) & ((P(F die5(s1)) = P(F die5(s2))) & (P(F die6(s1)) = P(F die6(s2))) ) ) ) ) ) ))"
    python hyperprob.py -modelPath benchmark_files/mdp/PC/synthesis0_1_2_3_4_5_6.nm -hyperString "ES sh . E s1 . E s2 . (start1(s1) & (start2(s2) & ((P(F die1(s1)) = P(F die1(s2))) & ((P(F die2(s1)) = P(F die2(s2))) & ((P(F die3(s1)) = P(F die3(s2))) & ((P(F die4(s1)) = P(F die4(s2))) & ((P(F die5(s1)) = P(F die5(s2))) & (P(F die6(s1)) = P(F die6(s2))) ) ) ) ) ) ))"
+
+
+6) PC: Probabilistic conformance with rewards operators where we limit the number of coin tosses allowed. The cases include the cases where we allow all possible non-deterministic choice for state 0 of the of the first coin and allow all possible non-deterministic choice for state 0 of the of the first coin along with state 0 of the second coin.
+
+   python source.py benchmark_files/mdp/PC/synthesis_rewards0.nm "ES sh . A s1 . E s2 . ~(start1(s1) & ~( start2(s2) & ((P(F die1(s1)) = P(F die1(s2))) & ((P(F die2(s1)) = P(F die2(s2))) & ((P(F die3(s1)) = P(F die3(s2))) & ((P(F die4(s1)) = P(F die4(s2))) & ((P(F die5(s1)) = P(F die5(s2))) & ((P(F die6(s1)) = P(F die6(s2))) & (R s2 (F final(s2)) < 4) ) ) ) ) ) ) ) )"
+   python source.py benchmark_files/mdp/PC/synthesis_rewards0_1.nm "ES sh . A s1 . E s2 . ~(start1(s1) & ~( start2(s2) & ((P(F die1(s1)) = P(F die1(s2))) & ((P(F die2(s1)) = P(F die2(s2))) & ((P(F die3(s1)) = P(F die3(s2))) & ((P(F die4(s1)) = P(F die4(s2))) & ((P(F die5(s1)) = P(F die5(s2))) & ((P(F die6(s1)) = P(F die6(s2))) & (R s2 (F final(s2)) < 4) ) ) ) ) ) ) ) )"
+   python source.py benchmark_files/mdp/PC/synthesis_rewards0_1_2.nm "ES sh . A s1 . E s2 . ~(start1(s1) & ~( start2(s2) & ((P(F die1(s1)) = P(F die1(s2))) & ((P(F die2(s1)) = P(F die2(s2))) & ((P(F die3(s1)) = P(F die3(s2))) & ((P(F die4(s1)) = P(F die4(s2))) & ((P(F die5(s1)) = P(F die5(s2))) & ((P(F die6(s1)) = P(F die6(s2))) & (R s2 (F final(s2)) < 4) ) ) ) ) ) ) ) )"
+   python source.py benchmark_files/mdp/PC/synthesis_rewards0_1_2_3.nm "ES sh . A s1 . E s2 . ~(start1(s1) & ~( start2(s2) & ((P(F die1(s1)) = P(F die1(s2))) & ((P(F die2(s1)) = P(F die2(s2))) & ((P(F die3(s1)) = P(F die3(s2))) & ((P(F die4(s1)) = P(F die4(s2))) & ((P(F die5(s1)) = P(F die5(s2))) & ((P(F die6(s1)) = P(F die6(s2))) & (R s2 (F final(s2)) < 4) ) ) ) ) ) ) ) )"
+   python source.py benchmark_files/mdp/PC/synthesis_rewards0_1_2_3_4.nm "ES sh . A s1 . E s2 . ~(start1(s1) & ~( start2(s2) & ((P(F die1(s1)) = P(F die1(s2))) & ((P(F die2(s1)) = P(F die2(s2))) & ((P(F die3(s1)) = P(F die3(s2))) & ((P(F die4(s1)) = P(F die4(s2))) & ((P(F die5(s1)) = P(F die5(s2))) & ((P(F die6(s1)) = P(F die6(s2))) & (R s2 (F final(s2)) < 4) ) ) ) ) ) ) ) )"
+   python source.py benchmark_files/mdp/PC/synthesis_rewards0_1_2_3_4_5.nm "ES sh . A s1 . E s2 . ~(start1(s1) & ~( start2(s2) & ((P(F die1(s1)) = P(F die1(s2))) & ((P(F die2(s1)) = P(F die2(s2))) & ((P(F die3(s1)) = P(F die3(s2))) & ((P(F die4(s1)) = P(F die4(s2))) & ((P(F die5(s1)) = P(F die5(s2))) & ((P(F die6(s1)) = P(F die6(s2))) & (R s2 (F final(s2)) < 4) ) ) ) ) ) ) ) )"
+   python source.py benchmark_files/mdp/PC/synthesis_rewards0_1_2_3_4_5_6.nm "ES sh . A s1 . E s2 . ~(start1(s1) & ~( start2(s2) & ((P(F die1(s1)) = P(F die1(s2))) & ((P(F die2(s1)) = P(F die2(s2))) & ((P(F die3(s1)) = P(F die3(s2))) & ((P(F die4(s1)) = P(F die4(s2))) & ((P(F die5(s1)) = P(F die5(s2))) & ((P(F die6(s1)) = P(F die6(s2))) & (R s2 (F final(s2)) < 4) ) ) ) ) ) ) ) )"
+
+
+
+

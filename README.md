@@ -20,15 +20,23 @@ The above libraries has its own dependencies which might need to be resolved fir
 
 ## Installation
 
-Begin by cloning this folder locally:
-```
-git clone https://github.com/TART-MSU/HyperProb
-cd HyperProb
-```
+- ### Pull from Github 
+  Begin by cloning this folder locally:
+  ```
+  git clone https://github.com/TART-MSU/HyperProb
+  cd HyperProb
+  ```
 
-To install HyperProb (and its python dependencies) run:
+  To install HyperProb (and its python dependencies) run:
 `pip install .` from the `HyperProb` folder.
 
+- ### Run on Docker
+  Begin by pulling the image and then running a container:
+  ```
+  docker build -t yourusername/hyperprob . 
+  docker run -it yourusername/hyperprob /bin/bash
+  ```
+  You should be able to run HyperProb commands from the current directory.
 
 ## Getting Started
 

@@ -1,0 +1,39 @@
+mdp
+
+const int n = 1;
+
+module secret_thread1
+
+	h1  : [0..n]; 
+        pc1 : [0..1];
+        e1  : [0..1];
+        a1  : [0..1];
+
+        []  (h1>0)&(pc1=0)&(a1=0)        -> (h1'=h1-1)&(pc1'=1);
+        []  (h1>0)&(pc1=0)&(a1=0)        -> (h1'=h1-1)&(pc1'=0);
+        []  (pc1=1)&(a1=0)               -> (pc1'=0);
+        []  (h1=0)&(pc1=0)&(e1=0)&(a1=0) -> (e1' =1);
+        []  (e1=1)&(a1=0)                -> true;
+
+
+        []  (h1>0)&(pc1=0)&(a1=1)        -> (h1'=h1-1)&(pc1'=1);
+        []  (h1>0)&(pc1=0)&(a1=1)        -> (h1'=h1-1)&(pc1'=0);
+        []  (pc1=1)&(a1=1)               -> (pc1'=0);
+        []  (h1=0)&(pc1=0)&(e1=0)&(a1=1) -> (e1' =1);
+        []  (e1=1)&(a1=1)                -> true;
+
+
+endmodule
+
+//module secret_thread2 = secret_thread1 [h1=h2, pc1=pc2, e1=e2 ] endmodule
+
+init  (e1=0)&(h1=n)&(pc1=0)  endinit
+
+label "start0" = (e1=0)&(h1=n)&(pc1=0)&(a1=0);
+label "start1" = (e1=0)&(h1=n)&(pc1=0)&(a1=1);
+
+label "end" = (e1=1);
+
+rewards
+    true : 1;
+endrewards
