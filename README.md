@@ -30,7 +30,7 @@ The above libraries has its own dependencies which might need to be resolved fir
   To install HyperProb (and its python dependencies) run:
 `pip install .` from the `HyperProb` folder.
 
-- ### Run on Docker
+- ### Run on [Docker](https://www.docker.com/get-started/)
   Begin by pulling the image and then running a container:
   ```
   docker build -t yourusername/hyperprob . 
