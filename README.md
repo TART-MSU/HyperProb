@@ -83,10 +83,11 @@ For examples on how to represent these parameters refer to [this script](benchma
 ## People
 
 ### Authors:
-  - [Oyendrila Dobe](https://oyendrila-dobe.github.io/), Michigan State University. 
+  - [Oyendrila Dobe](https://oyendrila-dobe.github.io/), Michigan State University.  
   - [Borzoo Bonakdarpour](http://www.cse.msu.edu/~borzoo/), Michigan State University. 
   
 ### Other Contributors:
+  - Lukas Wilke, RWTH Aachen.
   - [Erika Abraham](https://ths.rwth-aachen.de/people/erika-abraham/), RWTH Aachen.
   - [Ezio Bartocci](https://informatics.tuwien.ac.at/people/ezio-bartocci), TU-Vienna.
 
