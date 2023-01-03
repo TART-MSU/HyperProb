@@ -7,57 +7,101 @@ The following are the details of the experiments as mentioned in the paper:
 1) TA: Timing attack experiment, explained as the first case study in the paper. The following refer to the arguments used for 4 different trials with m ={2,4,6,8}
 
    python hyperprob.py -modelPath benchmark_files/mdp/TA/timing_attack2.nm -hyperString "AS sh . A s1 . A s2 . ((start0(s1) & start1(s2)) -> (P(F counter0(s1)) = P(F counter0(s2))))"
+
    python hyperprob.py -modelPath benchmark_files/mdp/TA/timing_attack4.nm -hyperString "AS sh . A s1 . A s2 . ((start0(s1) & start1(s2)) -> (P(F counter0(s1)) = P(F counter0(s2))))"
+
    python hyperprob.py -modelPath benchmark_files/mdp/TA/timing_attack6.nm -hyperString "AS sh . A s1 . A s2 . ((start0(s1) & start1(s2)) -> (P(F counter0(s1)) = P(F counter0(s2))))"
+
    python hyperprob.py -modelPath benchmark_files/mdp/TA/timing_attack8.nm -hyperString "AS sh . A s1 . A s2 . ((start0(s1) & start1(s2)) -> (P(F counter0(s1)) = P(F counter0(s2))))"
 
 
 2) TA: Timing attack experiment with reward operators. The following refer to the arguments used for 4 different trials with m ={2,4,6,8}
 
    python hyperprob.py -modelPath benchmark_files/mdp/TA/timing_attack_rewards2.nm -hyperString "AS sh . A s1 . A s2 . ((start0(s1) & start1(s2)) -> (R s1 (F end(s1)) = R s2 (F end(s2))))"
+
    python hyperprob.py -modelPath benchmark_files/mdp/TA/timing_attack_rewards4.nm -hyperString "AS sh . A s1 . A s2 . ((start0(s1) & start1(s2)) -> (R s1 (F end(s1)) = R s2 (F end(s2))))"
+
    python hyperprob.py -modelPath benchmark_files/mdp/TA/timing_attack_rewards6.nm -hyperString "AS sh . A s1 . A s2 . ((start0(s1) & start1(s2)) -> (R s1 (F end(s1)) = R s2 (F end(s2))))"
-  python hyperprob.py -modelPath benchmark_files/mdp/TA/timing_attack_rewards8.nm -hyperString "AS sh . A s1 . A s2 . ((start0(s1) & start1(s2)) -> (R s1 (F end(s1)) = R s2 (F end(s2))))"
+
+   python hyperprob.py -modelPath benchmark_files/mdp/TA/timing_attack_rewards8.nm -hyperString "AS sh . A s1 . A s2 . ((start0(s1) & start1(s2)) -> (R s1 (F end(s1)) = R s2 (F end(s2))))"
 
 
 3) PW: Password leakage experiment, explained as the second case study in the paper. The following refer to the arguments used for 3 different trials with m ={2,4,6,8}
 
    python hyperprob.py -modelPath benchmark_files/mdp/PW/password_leakage2.nm -hyperString "AS sh . A s1 . A s2 . ((start0(s1) & start1(s2)) -> (P(F counter0(s1)) = P(F counter0(s2))))"
+
    python hyperprob.py -modelPath benchmark_files/mdp/PW/password_leakage4.nm -hyperString "AS sh . A s1 . A s2 . ((start0(s1) & start1(s2)) -> (P(F counter0(s1)) = P(F counter0(s2))))"
+
    python hyperprob.py -modelPath benchmark_files/mdp/PW/password_leakage6.nm -hyperString "AS sh . A s1 . A s2 . ((start0(s1) & start1(s2)) -> (P(F counter0(s1)) = P(F counter0(s2))))"
+
    python hyperprob.py -modelPath benchmark_files/mdp/PW/password_leakage8.nm -hyperString "AS sh . A s1 . A s2 . ((start0(s1) & start1(s2)) -> (P(F counter0(s1)) = P(F counter0(s2))))"
 
 
 4) TS: Thread scheduler experiment, explained as the third case study in the paper. The following refer to the arguments used for 4 different trials with the mentioned combinations of h values.
 
    python hyperprob.py -modelPath benchmark_files/mdp/TS/thread_scheduler0_1.nm -hyperString "AS sh . A s1 . A s2 . ((h1(s1) & h2(s2)) -> ((P(F (l_1(s1) & terminated(s1))) = P(F (l_1(s2)& terminated(s2)))) & (P(F (l_2(s1)& terminated(s1))) = P(F (l_2(s2) & terminated(s2))))))"
+
    python hyperprob.py -modelPath benchmark_files/mdp/TS/thread_scheduler0_15.nm -hyperString "AS sh . A s1 . A s2 . ((h1(s1) & h2(s2)) -> ((P(F (l_1(s1) & terminated(s1))) = P(F (l_1(s2)& terminated(s2)))) & (P(F (l_2(s1)& terminated(s1))) = P(F (l_2(s2) & terminated(s2))))))"
+
    python hyperprob.py -modelPath benchmark_files/mdp/TS/thread_scheduler4_8.nm -hyperString "AS sh . A s1 . A s2 . ((h1(s1) & h2(s2)) -> ((P(F (l_1(s1) & terminated(s1))) = P(F (l_1(s2)& terminated(s2)))) & (P(F (l_2(s1)& terminated(s1))) = P(F (l_2(s2) & terminated(s2))))))"
+
    python hyperprob.py -modelPath benchmark_files/mdp/TS/thread_scheduler8_15.nm -hyperString "AS sh . A s1 . A s2 . ((h1(s1) & h2(s2)) -> ((P(F (l_1(s1) & terminated(s1))) = P(F (l_1(s2)& terminated(s2)))) & (P(F (l_2(s1)& terminated(s1))) = P(F (l_2(s2) & terminated(s2))))))"
+
    python hyperprob.py -modelPath benchmark_files/mdp/TS/thread_scheduler10_20.nm -hyperString "AS sh . A s1 . A s2 . ((h1(s1) & h2(s2)) -> ((P(F (l_1(s1) & terminated(s1))) = P(F (l_1(s2)& terminated(s2)))) & (P(F (l_2(s1)& terminated(s1))) = P(F (l_2(s2) & terminated(s2))))))"
 
 
 5) PC: Probabilistic conformance, explained as the fourth case study in the paper. The two cases include the cases where we allow all possible non-deterministic choice for state 0 of the of the first coin and allow all possible non-deterministic choice for state 0 of the of the first coin along with state 0 of the second coin.
 
    python hyperprob.py -modelPath benchmark_files/mdp/PC/synthesis0.nm -hyperString "ES sh . E s1 . E s2 . (start1(s1) & (start2(s2) & ((P(F die1(s1)) = P(F die1(s2))) & ((P(F die2(s1)) = P(F die2(s2))) & ((P(F die3(s1)) = P(F die3(s2))) & ((P(F die4(s1)) = P(F die4(s2))) & ((P(F die5(s1)) = P(F die5(s2))) & (P(F die6(s1)) = P(F die6(s2))) ) ) ) ) ) ))"
+
    python hyperprob.py -modelPath benchmark_files/mdp/PC/synthesis0_1.nm -hyperString "ES sh . E s1 . E s2 . (start1(s1) & (start2(s2) & ((P(F die1(s1)) = P(F die1(s2))) & ((P(F die2(s1)) = P(F die2(s2))) & ((P(F die3(s1)) = P(F die3(s2))) & ((P(F die4(s1)) = P(F die4(s2))) & ((P(F die5(s1)) = P(F die5(s2))) & (P(F die6(s1)) = P(F die6(s2))) ) ) ) ) ) ))"
+
    python hyperprob.py -modelPath benchmark_files/mdp/PC/synthesis0_1_2.nm -hyperString "ES sh . E s1 . E s2 . (start1(s1) & (start2(s2) & ((P(F die1(s1)) = P(F die1(s2))) & ((P(F die2(s1)) = P(F die2(s2))) & ((P(F die3(s1)) = P(F die3(s2))) & ((P(F die4(s1)) = P(F die4(s2))) & ((P(F die5(s1)) = P(F die5(s2))) & (P(F die6(s1)) = P(F die6(s2))) ) ) ) ) ) ))"
+
    python hyperprob.py -modelPath benchmark_files/mdp/PC/synthesis0_1_2_3.nm -hyperString "ES sh . E s1 . E s2 . (start1(s1) & (start2(s2) & ((P(F die1(s1)) = P(F die1(s2))) & ((P(F die2(s1)) = P(F die2(s2))) & ((P(F die3(s1)) = P(F die3(s2))) & ((P(F die4(s1)) = P(F die4(s2))) & ((P(F die5(s1)) = P(F die5(s2))) & (P(F die6(s1)) = P(F die6(s2))) ) ) ) ) ) ))"
+
    python hyperprob.py -modelPath benchmark_files/mdp/PC/synthesis0_1_2_3_4.nm -hyperString "ES sh . E s1 . E s2 . (start1(s1) & (start2(s2) & ((P(F die1(s1)) = P(F die1(s2))) & ((P(F die2(s1)) = P(F die2(s2))) & ((P(F die3(s1)) = P(F die3(s2))) & ((P(F die4(s1)) = P(F die4(s2))) & ((P(F die5(s1)) = P(F die5(s2))) & (P(F die6(s1)) = P(F die6(s2))) ) ) ) ) ) ))"
+
    python hyperprob.py -modelPath benchmark_files/mdp/PC/synthesis0_1_2_3_4_5.nm -hyperString "ES sh . E s1 . E s2 . (start1(s1) & (start2(s2) & ((P(F die1(s1)) = P(F die1(s2))) & ((P(F die2(s1)) = P(F die2(s2))) & ((P(F die3(s1)) = P(F die3(s2))) & ((P(F die4(s1)) = P(F die4(s2))) & ((P(F die5(s1)) = P(F die5(s2))) & (P(F die6(s1)) = P(F die6(s2))) ) ) ) ) ) ))"
+
    python hyperprob.py -modelPath benchmark_files/mdp/PC/synthesis0_1_2_3_4_5_6.nm -hyperString "ES sh . E s1 . E s2 . (start1(s1) & (start2(s2) & ((P(F die1(s1)) = P(F die1(s2))) & ((P(F die2(s1)) = P(F die2(s2))) & ((P(F die3(s1)) = P(F die3(s2))) & ((P(F die4(s1)) = P(F die4(s2))) & ((P(F die5(s1)) = P(F die5(s2))) & (P(F die6(s1)) = P(F die6(s2))) ) ) ) ) ) ))"
 
 
 6) PC: Probabilistic conformance with rewards operators where we limit the number of coin tosses allowed. The cases include the cases where we allow all possible non-deterministic choice for state 0 of the of the first coin and allow all possible non-deterministic choice for state 0 of the of the first coin along with state 0 of the second coin.
 
    python hyperprob.py -modelPath benchmark_files/mdp/PC/synthesis_rewards0.nm -hyperString "ES sh . E s1 . E s2 . (start1(s1) & (start2(s2) & ((P(F die1(s1)) = P(F die1(s2))) & ((P(F die2(s1)) = P(F die2(s2))) & ((P(F die3(s1)) = P(F die3(s2))) & ((P(F die4(s1)) = P(F die4(s2))) & ((P(F die5(s1)) = P(F die5(s2))) & ((P(F die6(s1)) = P(F die6(s2))) & (R s2 (F final(s2)) < 4) ) ) ) ) ) ) ) )"
+
    python hyperprob.py -modelPath benchmark_files/mdp/PC/synthesis_rewards0_1.nm -hyperString "ES sh . E s1 . E s2 . (start1(s1) & (start2(s2) & ((P(F die1(s1)) = P(F die1(s2))) & ((P(F die2(s1)) = P(F die2(s2))) & ((P(F die3(s1)) = P(F die3(s2))) & ((P(F die4(s1)) = P(F die4(s2))) & ((P(F die5(s1)) = P(F die5(s2))) & ((P(F die6(s1)) = P(F die6(s2))) & (R s2 (F final(s2)) < 4) ) ) ) ) ) ) ) )"
+
    python hyperprob.py -modelPath benchmark_files/mdp/PC/synthesis_rewards0_1_2.nm -hyperString "ES sh . E s1 . E s2 . (start1(s1) & (start2(s2) & ((P(F die1(s1)) = P(F die1(s2))) & ((P(F die2(s1)) = P(F die2(s2))) & ((P(F die3(s1)) = P(F die3(s2))) & ((P(F die4(s1)) = P(F die4(s2))) & ((P(F die5(s1)) = P(F die5(s2))) & ((P(F die6(s1)) = P(F die6(s2))) & (R s2 (F final(s2)) < 4) ) ) ) ) ) ) ) )"
+
    python hyperprob.py -modelPath benchmark_files/mdp/PC/synthesis_rewards0_1_2_3.nm -hyperString "ES sh . E s1 . E s2 . (start1(s1) & (start2(s2) & ((P(F die1(s1)) = P(F die1(s2))) & ((P(F die2(s1)) = P(F die2(s2))) & ((P(F die3(s1)) = P(F die3(s2))) & ((P(F die4(s1)) = P(F die4(s2))) & ((P(F die5(s1)) = P(F die5(s2))) & ((P(F die6(s1)) = P(F die6(s2))) & (R s2 (F final(s2)) < 4) ) ) ) ) ) ) ) )"
+
    python hyperprob.py -modelPath benchmark_files/mdp/PC/synthesis_rewards0_1_2_3_4.nm -hyperString "ES sh . E s1 . E s2 . (start1(s1) & (start2(s2) & ((P(F die1(s1)) = P(F die1(s2))) & ((P(F die2(s1)) = P(F die2(s2))) & ((P(F die3(s1)) = P(F die3(s2))) & ((P(F die4(s1)) = P(F die4(s2))) & ((P(F die5(s1)) = P(F die5(s2))) & ((P(F die6(s1)) = P(F die6(s2))) & (R s2 (F final(s2)) < 4) ) ) ) ) ) ) ) )"
+
    python hyperprob.py -modelPath benchmark_files/mdp/PC/synthesis_rewards0_1_2_3_4_5.nm -hyperString "ES sh . E s1 . E s2 . (start1(s1) & (start2(s2) & ((P(F die1(s1)) = P(F die1(s2))) & ((P(F die2(s1)) = P(F die2(s2))) & ((P(F die3(s1)) = P(F die3(s2))) & ((P(F die4(s1)) = P(F die4(s2))) & ((P(F die5(s1)) = P(F die5(s2))) & ((P(F die6(s1)) = P(F die6(s2))) & (R s2 (F final(s2)) < 4) ) ) ) ) ) ) ) )"
+
    python hyperprob.py -modelPath benchmark_files/mdp/PC/synthesis_rewards0_1_2_3_4_5_6.nm -hyperString "ES sh . E s1 . E s2 . (start1(s1) & (start2(s2) & ((P(F die1(s1)) = P(F die1(s2))) & ((P(F die2(s1)) = P(F die2(s2))) & ((P(F die3(s1)) = P(F die3(s2))) & ((P(F die4(s1)) = P(F die4(s2))) & ((P(F die5(s1)) = P(F die5(s2))) & ((P(F die6(s1)) = P(F die6(s2))) & (R s2 (F final(s2)) < 4) ) ) ) ) ) ) ) )"
 
 
+7) Robotics: Given a grid, we verify if for every scheduler of robot 1, every scheduler of robot 2 has a better reward (and both probabilities are 1). Here, more energy/higher reward is given for rougher terrain, actions represent the choice of direction, and there is a low probability to go into another direction or stay in current location.
+
+   python hyperprob.py -modelPath benchmark_files/mdp/RO/Robotics3x3_true.nm -hyperString "AS sh . A s1 . A s2 . (((start0(s1) & start1(s2)) & ((P (F end(s1)) = 1) & (P (F end(s2)) = 1))) -> (R s1 (F end(s1)) < R s2 (F end(s2))))"
+   
+   python hyperprob.py -modelPath benchmark_files/mdp/RO/Robotics3x3_false.nm -hyperString "AS sh . A s1 . A s2 . (((start0(s1) & start1(s2)) & ((P (F end(s1)) = 1) & (P (F end(s2)) = 1))) -> (R s1 (F end(s1)) < R s2 (F end(s2))))"
+
+   python hyperprob.py -modelPath benchmark_files/mdp/RO/Robotics4x4_true.nm -hyperString "AS sh . A s1 . A s2 . (((start0(s1) & start1(s2)) & ((P (F end(s1)) = 1) & (P (F end(s2)) = 1))) -> (R s1 (F end(s1)) < R s2 (F end(s2))))"
+
+   python hyperprob.py -modelPath benchmark_files/mdp/RO/Robotics4x4_false.nm -hyperString "AS sh . A s1 . A s2 . (((start0(s1) & start1(s2)) & ((P (F end(s1)) = 1) & (P (F end(s2)) = 1))) -> (R s1 (F end(s1)) < R s2 (F end(s2))))"
+
+   python hyperprob.py -modelPath benchmark_files/mdp/RO/Robotics5x5_true.nm -hyperString "AS sh . A s1 . A s2 . (((start0(s1) & start1(s2)) & ((P (F end(s1)) = 1) & (P (F end(s2)) = 1))) -> (R s1 (F end(s1)) < R s2 (F end(s2))))"
+
+   python hyperprob.py -modelPath benchmark_files/mdp/RO/Robotics5x5_false.nm -hyperString "AS sh . A s1 . A s2 . (((start0(s1) & start1(s2)) & ((P (F end(s1)) = 1) & (P (F end(s2)) = 1))) -> (R s1 (F end(s1)) < R s2 (F end(s2))))"
+
+   python hyperprob.py -modelPath benchmark_files/mdp/RO/Robotics6x6_false.nm -hyperString "AS sh . A s1 . A s2 . (((start0(s1) & start1(s2)) & ((P (F end(s1)) = 1) & (P (F end(s2)) = 1))) -> (R s1 (F end(s1)) < R s2 (F end(s2))))"
+
+   python hyperprob.py -modelPath benchmark_files/mdp/RO/Robotics7x7_true.nm -hyperString "AS sh . A s1 . A s2 . (((start0(s1) & start1(s2)) & ((P (F end(s1)) = 1) & (P (F end(s2)) = 1))) -> (R s1 (F end(s1)) < R s2 (F end(s2))))"
+
+   python hyperprob.py -modelPath benchmark_files/mdp/RO/Robotics7x7_false.nm -hyperString "AS sh . A s1 . A s2 . (((start0(s1) & start1(s2)) & ((P (F end(s1)) = 1) & (P (F end(s2)) = 1))) -> (R s1 (F end(s1)) < R s2 (F end(s2))))"
 
 
