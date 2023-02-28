@@ -13,5 +13,5 @@ Classifier: Operating System :: MacOS :: MacOS X
 Classifier: Programming Language :: Python :: 3.9
 Classifier: Topic :: Scientific/Engineering
 Classifier: Topic :: Software Development :: Libraries :: Python Modules
-Requires-Python: >=3.9
+Requires-Python: >=3.8.2
 License-File: LICENSE

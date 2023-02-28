@@ -13,7 +13,7 @@ setup(
     author_email='oyendrila.dobe@gmail.com',
     packages=find_packages(),
     install_requires=[
-        'stormpy>=1.7.0',
+        #'stormpy>=1.7.0',
         'termcolor~=2.0.1',
         'lark-parser~=0.12.0',
         'z3-solver~=4.11.2.0'

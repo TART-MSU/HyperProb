@@ -15,17 +15,14 @@ def extendWithoutDuplicates(list1, list2):
 
 
 class SemanticsEncoder:
-    def __init__(self, model, solver, list_of_subformula, list_of_bools, listOfBools, list_of_ints, listOfInts,
+    def __init__(self, model, solver, list_of_subformula, dictOfBools, dictOfInts, dictOfReals,
                  no_of_subformula, no_of_state_quantifier):
         self.model = model
         self.solver = solver
         self.list_of_subformula = list_of_subformula
-        self.list_of_reals = []
-        self.listOfReals = []
-        self.list_of_bools = list_of_bools
-        self.listOfBools = listOfBools
-        self.list_of_ints = list_of_ints
-        self.listOfInts = listOfInts
+        self.dictOfReals = dictOfReals
+        self.dictOfBools = dictOfBools
+        self.dictOfInts = dictOfInts
         self.no_of_subformula = no_of_subformula
         self.no_of_state_quantifier = no_of_state_quantifier
 
@@ -44,7 +41,7 @@ class SemanticsEncoder:
                 name += "_" + str(ind)
             name += '_' + str(index_of_phi)
             self.addToVariableList(name)
-            self.solver.add(self.listOfBools[self.list_of_bools.index(name)])
+            self.solver.add(self.dictOfBools[name])
             self.no_of_subformula += 1
             return relevant_quantifier
 
@@ -71,9 +68,9 @@ class SemanticsEncoder:
                 name += '_' + str(index_of_phi)
                 self.addToVariableList(name)
                 if r_state[proposition_relevant_quantifier - 1] in list_of_state_with_ap:
-                    and_for_yes.append(self.listOfBools[self.list_of_bools.index(name)])
+                    and_for_yes.append(self.dictOfBools[name])
                 else:
-                    and_for_no.append(Not(self.listOfBools[self.list_of_bools.index(name)]))
+                    and_for_no.append(Not(self.dictOfBools[name]))
             self.solver.add(And(And(and_for_yes), And(and_for_no)))
             self.no_of_subformula += 3
             and_for_yes.clear()
@@ -109,13 +106,11 @@ class SemanticsEncoder:
                         name3 += "_" + str(0)
                 name3 += '_' + str(index_of_phi2)
                 self.addToVariableList(name3)
-                first_and = And(self.listOfBools[self.list_of_bools.index(name1)],
-                                self.listOfBools[self.list_of_bools.index(name2)],
-                                self.listOfBools[self.list_of_bools.index(name3)])
+                first_and = And(self.dictOfBools[name1],
+                                self.dictOfBools[name2],
+                                self.dictOfBools[name3])
                 self.no_of_subformula += 1
-                second_and = And(Not(self.listOfBools[self.list_of_bools.index(name1)]),
-                                 Or(Not(self.listOfBools[self.list_of_bools.index(name2)]),
-                                    Not(self.listOfBools[self.list_of_bools.index(name3)])))
+                second_and = And(Not(self.dictOfBools[name1]), Or(Not(self.dictOfBools[name2]), Not(self.dictOfBools[name3])))
                 self.no_of_subformula += 1
                 self.solver.add(Or(first_and, second_and))
                 self.no_of_subformula += 1
@@ -150,13 +145,11 @@ class SemanticsEncoder:
                         name3 += "_" + str(0)
                 name3 += '_' + str(index_of_phi2)
                 self.addToVariableList(name3)
-                first_and = And(self.listOfBools[self.list_of_bools.index(name1)],
-                                Or(self.listOfBools[self.list_of_bools.index(name2)],
-                                   self.listOfBools[self.list_of_bools.index(name3)]))
+                first_and = And(self.dictOfBools[name1],
+                                Or(self.dictOfBools[name2], self.dictOfBools[name3]))
                 self.no_of_subformula += 1
-                second_and = And(Not(self.listOfBools[self.list_of_bools.index(name1)]),
-                                 And(Not(self.listOfBools[self.list_of_bools.index(name2)]),
-                                     Not(self.listOfBools[self.list_of_bools.index(name3)])))
+                second_and = And(Not(self.dictOfBools[name1]),
+                                 And(Not(self.dictOfBools[name2]), Not(self.dictOfBools[name3])))
                 self.no_of_subformula += 1
                 self.solver.add(Or(first_and, second_and))
                 self.no_of_subformula += 1
@@ -191,13 +184,11 @@ class SemanticsEncoder:
                         name3 += "_" + str(0)
                 name3 += '_' + str(index_of_phi2)
                 self.addToVariableList(name3)
-                first_and = And(self.listOfBools[self.list_of_bools.index(name1)],
-                                Or(Not(self.listOfBools[self.list_of_bools.index(name2)]),
-                                   self.listOfBools[self.list_of_bools.index(name3)]))
+                first_and = And(self.dictOfBools[name1],
+                                Or(Not(self.dictOfBools[name2]), self.dictOfBools[name3]))
                 self.no_of_subformula += 1
-                second_and = And(Not(self.listOfBools[self.list_of_bools.index(name1)]),
-                                 And(self.listOfBools[self.list_of_bools.index(name2)],
-                                     Not(self.listOfBools[self.list_of_bools.index(name3)])))
+                second_and = And(Not(self.dictOfBools[name1]),
+                                 And(self.dictOfBools[name2], Not(self.dictOfBools[name3])))
                 self.no_of_subformula += 1
                 self.solver.add(Or(first_and, second_and))
                 self.no_of_subformula += 1
@@ -232,19 +223,13 @@ class SemanticsEncoder:
                         name3 += "_" + str(0)
                 name3 += '_' + str(index_of_phi2)
                 self.addToVariableList(name3)
-                first_and = And(self.listOfBools[self.list_of_bools.index(name1)],
-                                Or(
-                                    And(self.listOfBools[self.list_of_bools.index(name2)],
-                                        self.listOfBools[self.list_of_bools.index(name3)]),
-                                    And(Not(self.listOfBools[self.list_of_bools.index(name2)]),
-                                        Not(self.listOfBools[self.list_of_bools.index(name3)]))))
+                first_and = And(self.dictOfBools[name1],
+                                Or(And(self.dictOfBools[name2], self.dictOfBools[name3]),
+                                   And(Not(self.dictOfBools[name2]), Not(self.dictOfBools[name3]))))
                 self.no_of_subformula += 1
-                second_and = And(Not(self.listOfBools[self.list_of_bools.index(name1)]),
-                                 Or(
-                                     And(Not(self.listOfBools[self.list_of_bools.index(name2)]),
-                                         self.listOfBools[self.list_of_bools.index(name3)]),
-                                     And(self.listOfBools[self.list_of_bools.index(name2)],
-                                         Not(self.listOfBools[self.list_of_bools.index(name3)]))))
+                second_and = And(Not(self.dictOfBools[name1]),
+                                 Or(And(Not(self.dictOfBools[name2]), self.dictOfBools[name3]),
+                                    And(self.dictOfBools[name2], Not(self.dictOfBools[name3]))))
                 self.no_of_subformula += 1
                 self.solver.add(Or(first_and, second_and))
                 self.no_of_subformula += 1
@@ -254,21 +239,18 @@ class SemanticsEncoder:
                                                           self.encodeSemantics(hyperproperty.children[0]))
             index_of_phi = self.list_of_subformula.index(hyperproperty)
             index_of_phi1 = self.list_of_subformula.index(hyperproperty.children[0])
-
             combined_state_list = self.generateComposedStates(relevant_quantifier)
             for r_state in combined_state_list:
                 name1 = 'holds'
-                for ind in r_state:
-                    name1 += "_" + str(ind)
-                name1 += '_' + str(index_of_phi)
-                self.addToVariableList(name1)
                 name2 = 'holds'
                 for ind in r_state:
+                    name1 += "_" + str(ind)
                     name2 += "_" + str(ind)
+                name1 += '_' + str(index_of_phi)
                 name2 += '_' + str(index_of_phi1)
+                self.addToVariableList(name1)
                 self.addToVariableList(name2)
-                self.solver.add(Xor(self.listOfBools[self.list_of_bools.index(name1)],
-                                    self.listOfBools[self.list_of_bools.index(name2)]))
+                self.solver.add(Xor(self.dictOfBools[name1], self.dictOfBools[name2]))
                 self.no_of_subformula += 1
             return relevant_quantifier
         elif hyperproperty.data == 'probability':
@@ -291,9 +273,9 @@ class SemanticsEncoder:
                                                                                          relevant_quantifier))
             elif child.data == 'global':
                 pass
-                #relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
-                                                              #self.encodeGlobalSemantics(hyperproperty,
-                                                                                         #relevant_quantifier))
+                # relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
+                # self.encodeGlobalSemantics(hyperproperty,
+                # relevant_quantifier))
             return relevant_quantifier
         elif hyperproperty.data == 'reward':
             child = hyperproperty.children[1]
@@ -314,9 +296,10 @@ class SemanticsEncoder:
                                                               self.encodeRewFutureSemantics(hyperproperty,
                                                                                             relevant_quantifier))
             elif child.data == 'global':
-                relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
-                                                              self.encodeRewGlobalSemantics(hyperproperty,
-                                                                                            relevant_quantifier))
+                pass
+                #relevant_quantifier = extendWithoutDuplicates(relevant_quantifier,
+                #                                              self.encodeRewGlobalSemantics(hyperproperty,
+                #                                                                            relevant_quantifier))
             return relevant_quantifier
         elif hyperproperty.data == 'less_probability':
             rel_quant1 = self.encodeSemantics(hyperproperty.children[0])
@@ -348,13 +331,11 @@ class SemanticsEncoder:
                         name3 += "_" + str(0)
                 name3 += '_' + str(index_of_phi2)
                 self.addToVariableList(name3)
-                and_eq = And(self.listOfBools[self.list_of_bools.index(name1)],
-                             self.listOfReals[self.list_of_reals.index(name2)] < self.listOfReals[
-                                 self.list_of_reals.index(name3)])
+                and_eq = And(self.dictOfBools[name1],
+                             self.dictOfReals[name2] < self.dictOfReals[name3])
                 self.no_of_subformula += 1
-                and_not_eq = And(Not(self.listOfBools[self.list_of_bools.index(name1)]),
-                                 self.listOfReals[self.list_of_reals.index(name2)] >= self.listOfReals[
-                                     self.list_of_reals.index(name3)])
+                and_not_eq = And(Not(self.dictOfBools[name1]),
+                                 self.dictOfReals[name2] >= self.dictOfReals[name3])
                 self.no_of_subformula += 1
                 self.solver.add(Or(and_eq, and_not_eq))
                 self.no_of_subformula += 1
@@ -389,13 +370,11 @@ class SemanticsEncoder:
                         name3 += "_" + str(0)
                 name3 += '_' + str(index_of_phi2)
                 self.addToVariableList(name3)
-                and_eq = And(self.listOfBools[self.list_of_bools.index(name1)],
-                             self.listOfReals[self.list_of_reals.index(name2)] == self.listOfReals[
-                                 self.list_of_reals.index(name3)])
+                and_eq = And(self.dictOfBools[name1],
+                             self.dictOfReals[name2] == self.dictOfReals[name3])
                 self.no_of_subformula += 1
-                and_not_eq = And(Not(self.listOfBools[self.list_of_bools.index(name1)]),
-                                 self.listOfReals[self.list_of_reals.index(name2)] != self.listOfReals[
-                                     self.list_of_reals.index(name3)])
+                and_not_eq = And(Not(self.dictOfBools[name1]),
+                                 self.dictOfReals[name2] != self.dictOfReals[name3])
                 self.no_of_subformula += 1
                 self.solver.add(Or(and_eq, and_not_eq))
                 self.no_of_subformula += 1
@@ -430,13 +409,11 @@ class SemanticsEncoder:
                         name3 += "_" + str(0)
                 name3 += '_' + str(index_of_phi2)
                 self.addToVariableList(name3)
-                and_eq = And(self.listOfBools[self.list_of_bools.index(name1)],
-                             self.listOfReals[self.list_of_reals.index(name2)] > self.listOfReals[
-                                 self.list_of_reals.index(name3)])
+                and_eq = And(self.dictOfBools[name1],
+                             self.dictOfReals[name2] > self.dictOfReals[name3])
                 self.no_of_subformula += 1
-                and_not_eq = And(Not(self.listOfBools[self.list_of_bools.index(name1)]),
-                                 self.listOfReals[self.list_of_reals.index(name2)] <= self.listOfReals[
-                                     self.list_of_reals.index(name3)])
+                and_not_eq = And(Not(self.dictOfBools[name1]),
+                                 self.dictOfReals[name2] <= self.dictOfReals[name3])
                 self.no_of_subformula += 1
                 self.solver.add(Or(and_eq, and_not_eq))
                 self.no_of_subformula += 1
@@ -471,13 +448,11 @@ class SemanticsEncoder:
                         name3 += "_" + str(0)
                 name3 += '_' + str(index_of_phi2)
                 self.addToVariableList(name3)
-                and_eq = And(self.listOfBools[self.list_of_bools.index(name1)],
-                             self.listOfReals[self.list_of_reals.index(name2)] >= self.listOfReals[
-                                 self.list_of_reals.index(name3)])
+                and_eq = And(self.dictOfBools[name1],
+                             self.dictOfReals[name2] >= self.dictOfReals[name3])
                 self.no_of_subformula += 1
-                and_not_eq = And(Not(self.listOfBools[self.list_of_bools.index(name1)]),
-                                 self.listOfReals[self.list_of_reals.index(name2)] < self.listOfReals[
-                                     self.list_of_reals.index(name3)])
+                and_not_eq = And(Not(self.dictOfBools[name1]),
+                                 self.dictOfReals[name2] < self.dictOfReals[name3])
                 self.no_of_subformula += 1
                 self.solver.add(Or(and_eq, and_not_eq))
                 self.no_of_subformula += 1
@@ -512,13 +487,11 @@ class SemanticsEncoder:
                         name3 += "_" + str(0)
                 name3 += '_' + str(index_of_phi2)
                 self.addToVariableList(name3)
-                and_eq = And(self.listOfBools[self.list_of_bools.index(name1)],
-                             self.listOfReals[self.list_of_reals.index(name2)] <= self.listOfReals[
-                                 self.list_of_reals.index(name3)])
+                and_eq = And(self.dictOfBools[name1],
+                             self.dictOfReals[name2] <= self.dictOfReals[name3])
                 self.no_of_subformula += 1
-                and_not_eq = And(Not(self.listOfBools[self.list_of_bools.index(name1)]),
-                                 self.listOfReals[self.list_of_reals.index(name2)] > self.listOfReals[
-                                     self.list_of_reals.index(name3)])
+                and_not_eq = And(Not(self.dictOfBools[name1]),
+                                 self.dictOfReals[name2] > self.dictOfReals[name3])
                 self.no_of_subformula += 1
                 self.solver.add(Or(and_eq, and_not_eq))
                 self.no_of_subformula += 1
@@ -553,13 +526,11 @@ class SemanticsEncoder:
                         name3 += "_" + str(0)
                 name3 += '_' + str(index_of_phi2)
                 self.addToVariableList(name3)
-                and_eq = And(self.listOfBools[self.list_of_bools.index(name1)],
-                             self.listOfReals[self.list_of_reals.index(name2)] < self.listOfReals[
-                                 self.list_of_reals.index(name3)])
+                and_eq = And(self.dictOfBools[name1],
+                             self.dictOfReals[name2] < self.dictOfReals[name3])
                 self.no_of_subformula += 1
-                and_not_eq = And(Not(self.listOfBools[self.list_of_bools.index(name1)]),
-                                 self.listOfReals[self.list_of_reals.index(name2)] >= self.listOfReals[
-                                     self.list_of_reals.index(name3)])
+                and_not_eq = And(Not(self.dictOfBools[name1]),
+                                 self.dictOfReals[name2] >= self.dictOfReals[name3])
                 self.no_of_subformula += 1
                 self.solver.add(Or(and_eq, and_not_eq))
                 self.no_of_subformula += 1
@@ -594,13 +565,11 @@ class SemanticsEncoder:
                         name3 += "_" + str(0)
                 name3 += '_' + str(index_of_phi2)
                 self.addToVariableList(name3)
-                and_eq = And(self.listOfBools[self.list_of_bools.index(name1)],
-                             self.listOfReals[self.list_of_reals.index(name2)] == self.listOfReals[
-                                 self.list_of_reals.index(name3)])
+                and_eq = And(self.dictOfBools[name1],
+                             self.dictOfReals[name2] == self.dictOfReals[name3])
                 self.no_of_subformula += 1
-                and_not_eq = And(Not(self.listOfBools[self.list_of_bools.index(name1)]),
-                                 self.listOfReals[self.list_of_reals.index(name2)] != self.listOfReals[
-                                     self.list_of_reals.index(name3)])
+                and_not_eq = And(Not(self.dictOfBools[name1]),
+                                 self.dictOfReals[name2] != self.dictOfReals[name3])
                 self.no_of_subformula += 1
                 self.solver.add(Or(and_eq, and_not_eq))
                 self.no_of_subformula += 1
@@ -635,13 +604,11 @@ class SemanticsEncoder:
                         name3 += "_" + str(0)
                 name3 += '_' + str(index_of_phi2)
                 self.addToVariableList(name3)
-                and_eq = And(self.listOfBools[self.list_of_bools.index(name1)],
-                             self.listOfReals[self.list_of_reals.index(name2)] > self.listOfReals[
-                                 self.list_of_reals.index(name3)])
+                and_eq = And(self.dictOfBools[name1],
+                             self.dictOfReals[name2] > self.dictOfReals[name3])
                 self.no_of_subformula += 1
-                and_not_eq = And(Not(self.listOfBools[self.list_of_bools.index(name1)]),
-                                 self.listOfReals[self.list_of_reals.index(name2)] <= self.listOfReals[
-                                     self.list_of_reals.index(name3)])
+                and_not_eq = And(Not(self.dictOfBools[name1]),
+                                 self.dictOfReals[name2] <= self.dictOfReals[name3])
                 self.no_of_subformula += 1
                 self.solver.add(Or(and_eq, and_not_eq))
                 self.no_of_subformula += 1
@@ -676,13 +643,11 @@ class SemanticsEncoder:
                         name3 += "_" + str(0)
                 name3 += '_' + str(index_of_phi2)
                 self.addToVariableList(name3)
-                and_eq = And(self.listOfBools[self.list_of_bools.index(name1)],
-                             self.listOfReals[self.list_of_reals.index(name2)] >= self.listOfReals[
-                                 self.list_of_reals.index(name3)])
+                and_eq = And(self.dictOfBools[name1],
+                             self.dictOfReals[name2] >= self.dictOfReals[name3])
                 self.no_of_subformula += 1
-                and_not_eq = And(Not(self.listOfBools[self.list_of_bools.index(name1)]),
-                                 self.listOfReals[self.list_of_reals.index(name2)] < self.listOfReals[
-                                     self.list_of_reals.index(name3)])
+                and_not_eq = And(Not(self.dictOfBools[name1]),
+                                 self.dictOfReals[name2] < self.dictOfReals[name3])
                 self.no_of_subformula += 1
                 self.solver.add(Or(and_eq, and_not_eq))
                 self.no_of_subformula += 1
@@ -717,13 +682,11 @@ class SemanticsEncoder:
                         name3 += "_" + str(0)
                 name3 += '_' + str(index_of_phi2)
                 self.addToVariableList(name3)
-                and_eq = And(self.listOfBools[self.list_of_bools.index(name1)],
-                             self.listOfReals[self.list_of_reals.index(name2)] <= self.listOfReals[
-                                 self.list_of_reals.index(name3)])
+                and_eq = And(self.dictOfBools[name1],
+                             self.dictOfReals[name2] <= self.dictOfReals[name3])
                 self.no_of_subformula += 1
-                and_not_eq = And(Not(self.listOfBools[self.list_of_bools.index(name1)]),
-                                 self.listOfReals[self.list_of_reals.index(name2)] > self.listOfReals[
-                                     self.list_of_reals.index(name3)])
+                and_not_eq = And(Not(self.dictOfBools[name1]),
+                                 self.dictOfReals[name2] > self.dictOfReals[name3])
                 self.no_of_subformula += 1
                 self.solver.add(Or(and_eq, and_not_eq))
                 self.no_of_subformula += 1
@@ -732,24 +695,24 @@ class SemanticsEncoder:
             constant = RealVal(hyperproperty.children[0].value).as_fraction().limit_denominator(10000)
             index_of_phi = self.list_of_subformula.index(hyperproperty)
             name = "prob"
-            r_state = [0 for ind in range(self.no_of_state_quantifier)]
+            r_state = [0 for _ in range(self.no_of_state_quantifier)]
             for ind in r_state:
                 name += "_" + str(ind)
             name += '_' + str(index_of_phi)
             self.addToVariableList(name)
-            self.solver.add(self.listOfReals[self.list_of_reals.index(name)] == constant)
+            self.solver.add(self.dictOfReals[name] == constant)
             self.no_of_subformula += 1
             return relevant_quantifier
         elif hyperproperty.data == 'constant_reward':
             constant = hyperproperty.children[0].value
             index_of_phi = self.list_of_subformula.index(hyperproperty)
             name = "rew"
-            r_state = [range(self.no_of_state_quantifier)]
+            r_state = [0 for _ in range(self.no_of_state_quantifier)]
             for ind in r_state:
                 name += "_" + str(ind)
             name += '_' + str(index_of_phi)
             self.addToVariableList(name)
-            self.solver.add(self.listOfReals[self.list_of_reals.index(name)] == constant)
+            self.solver.add(self.dictOfReals[name] == constant)
             self.no_of_subformula += 1
             return relevant_quantifier
 
@@ -784,19 +747,13 @@ class SemanticsEncoder:
                 name3 += '_' + str(index_right)
                 self.addToVariableList(name3)
                 if hyperproperty.data == 'add_probability':
-                    self.solver.add(self.listOfReals[self.list_of_reals.index(name1)] == (
-                            self.listOfReals[self.list_of_reals.index(name2)] + self.listOfReals[
-                        self.list_of_reals.index(name3)]))
+                    self.solver.add(self.dictOfReals[name1] == (self.dictOfReals[name2] + self.dictOfReals[name3]))
                     self.no_of_subformula += 2
                 elif hyperproperty.data == 'subtract_probability':
-                    self.solver.add(self.listOfReals[self.list_of_reals.index(name1)] == (
-                            self.listOfReals[self.list_of_reals.index(name2)] - self.listOfReals[
-                        self.list_of_reals.index(name3)]))
+                    self.solver.add(self.dictOfReals[name1] == (self.dictOfReals[name2] - self.dictOfReals[name3]))
                     self.no_of_subformula += 2
                 elif hyperproperty.data == 'multiply_probability':
-                    self.solver.add(self.listOfReals[self.list_of_reals.index(name1)] == (
-                            self.listOfReals[self.list_of_reals.index(name2)] * self.listOfReals[
-                        self.list_of_reals.index(name3)]))
+                    self.solver.add(self.dictOfReals[name1] == (self.dictOfReals[name2] * self.dictOfReals[name3]))
                     self.no_of_subformula += 2
                 else:
                     print("Unexpected operator. Exiting")
@@ -834,19 +791,13 @@ class SemanticsEncoder:
                 name3 += '_' + str(index_right)
                 self.addToVariableList(name3)
                 if hyperproperty.data == 'add_reward':
-                    self.solver.add(self.listOfReals[self.list_of_reals.index(name1)] == (
-                            self.listOfReals[self.list_of_reals.index(name2)] + self.listOfReals[
-                        self.list_of_reals.index(name3)]))
+                    self.solver.add(self.dictOfReals[name1] == (self.dictOfReals[name2] + self.dictOfReals[name3]))
                     self.no_of_subformula += 2
                 elif hyperproperty.data == 'subtract_reward':
-                    self.solver.add(self.listOfReals[self.list_of_reals.index(name1)] == (
-                            self.listOfReals[self.list_of_reals.index(name2)] - self.listOfReals[
-                        self.list_of_reals.index(name3)]))
+                    self.solver.add(self.dictOfReals[name1] == (self.dictOfReals[name2] - self.dictOfReals[name3]))
                     self.no_of_subformula += 2
                 elif hyperproperty.data == 'multiply_reward':
-                    self.solver.add(self.listOfReals[self.list_of_reals.index(name1)] == (
-                            self.listOfReals[self.list_of_reals.index(name2)] * self.listOfReals[
-                        self.list_of_reals.index(name3)]))
+                    self.solver.add(self.dictOfReals[name1] == (self.dictOfReals[name2] * self.dictOfReals[name3]))
                     self.no_of_subformula += 2
                 else:
                     print("Unexpected operator. Exiting")
@@ -856,15 +807,12 @@ class SemanticsEncoder:
             self.encodeSemantics(hyperproperty.children[0])
 
     def addToVariableList(self, name):
-        if name[0] == 'h' and not name.startswith('holdsToInt') and name not in self.list_of_bools:
-            self.list_of_bools.append(name)
-            self.listOfBools.append(Bool(name))
-        elif (name[0] in ['p', 'd', 'r'] or name.startswith('holdsToInt')) and name not in self.list_of_reals:
-            self.list_of_reals.append(name)
-            self.listOfReals.append(Real(name))
-        elif name[0] == 'a' and name not in self.list_of_ints:
-            self.list_of_ints.append(name)
-            self.listOfInts.append(Int(name))
+        if name[0] == 'h' and not name.startswith('holdsToInt') and name not in self.dictOfBools.keys():
+            self.dictOfBools[name] = Bool(name)
+        elif name[0] in ['p', 'd', 'r'] and name not in self.dictOfReals.keys():
+            self.dictOfReals[name] = Real(name)
+        elif name[0] == 'a' or name.startswith('holdsToInt') and name not in self.dictOfInts.keys():
+            self.dictOfInts[name] = Int(name)
 
     def generateComposedStates(self, list_of_relevant_quantifier):
         """
@@ -901,10 +849,8 @@ class SemanticsEncoder:
             prob_phi = 'prob' + str_r_state + "_" + str(index_of_phi)
             self.addToVariableList(prob_phi)
             first_and = Or(
-                And(self.listOfReals[self.list_of_reals.index(holdsToInt1)] == float(1),
-                    self.listOfBools[self.list_of_bools.index(holds1)]),
-                And(self.listOfReals[self.list_of_reals.index(holdsToInt1)] == float(0),
-                    Not(self.listOfBools[self.list_of_bools.index(holds1)])))
+                And(self.dictOfInts[holdsToInt1] == float(1), self.dictOfBools[holds1]),
+                And(self.dictOfInts[holdsToInt1] == float(0), Not(self.dictOfBools[holds1])))
             self.no_of_subformula += 3
             self.solver.add(first_and)
             dicts_act = []
@@ -917,7 +863,7 @@ class SemanticsEncoder:
                 for l in range(len(relevant_quantifier)):
                     name = 'a_' + str(r_state[relevant_quantifier[l] - 1])
                     self.addToVariableList(name)
-                    act_str.append(self.listOfInts[self.list_of_ints.index(name)] == int(ca[l]))
+                    act_str.append(self.dictOfInts[name] == int(ca[l]))
                 implies_precedent = And(act_str)
                 self.no_of_subformula += 1
 
@@ -937,12 +883,12 @@ class SemanticsEncoder:
 
                     holdsToInt_succ += '_' + str(index_of_phi1)
                     self.addToVariableList(holdsToInt_succ)
-                    prod_left_part *= self.listOfReals[self.list_of_reals.index(holdsToInt_succ)]
+                    prod_left_part *= self.dictOfInts[holdsToInt_succ]
 
                     sum_left += prod_left_part
                     self.no_of_subformula += 1
 
-                implies_antecedent_and = self.listOfReals[self.list_of_reals.index(prob_phi)] == sum_left
+                implies_antecedent_and = self.dictOfReals[prob_phi] == sum_left
                 self.no_of_subformula += 1
                 self.solver.add(Implies(implies_precedent, implies_antecedent_and))
                 self.no_of_subformula += 1
@@ -996,12 +942,12 @@ class SemanticsEncoder:
                 prob_phi += "_" + str(ind)
             prob_phi += '_' + str(index_of_phi)
             self.addToVariableList(prob_phi)
-            new_prob_const = self.listOfReals[self.list_of_reals.index(prob_phi)] >= float(0)
-            first_implies = And(Implies(self.listOfBools[self.list_of_bools.index(holds2)],
-                                        (self.listOfReals[self.list_of_reals.index(prob_phi)] == float(1))),
-                                Implies(And(Not(self.listOfBools[self.list_of_bools.index(holds1)]),
-                                            Not(self.listOfBools[self.list_of_bools.index(holds2)])),
-                                        (self.listOfReals[self.list_of_reals.index(prob_phi)] == float(0))),
+            new_prob_const = self.dictOfReals[prob_phi] >= float(0)
+            first_implies = And(Implies(self.dictOfBools[holds2],
+                                        (self.dictOfReals[prob_phi] == float(1))),
+                                Implies(And(Not(self.dictOfBools[holds1]),
+                                            Not(self.dictOfBools[holds2])),
+                                        (self.dictOfReals[prob_phi] == float(0))),
                                 new_prob_const)
             self.no_of_subformula += 3
 
@@ -1015,9 +961,9 @@ class SemanticsEncoder:
                 for l in range(len(relevant_quantifier)):
                     name = 'a_' + str(r_state[relevant_quantifier[l] - 1])
                     self.addToVariableList(name)
-                    act_str.append(self.listOfInts[self.list_of_ints.index(name)] == int(ca[l]))
-                implies_precedent = And(self.listOfBools[self.list_of_bools.index(holds1)],
-                                        Not(self.listOfBools[self.list_of_bools.index(holds2)]), And(act_str))
+                    act_str.append(self.dictOfInts[name] == int(ca[l]))
+                implies_precedent = And(self.dictOfBools[holds1],
+                                        Not(self.dictOfBools[holds2]), And(act_str))
                 self.no_of_subformula += 2
 
                 combined_succ = self.genSuccessors(r_state, ca, relevant_quantifier)
@@ -1052,22 +998,21 @@ class SemanticsEncoder:
                     self.addToVariableList(d_current)
                     d_succ += '_' + str(index_of_phi2)
                     self.addToVariableList(d_succ)
-                    prod_left_part *= self.listOfReals[self.list_of_reals.index(prob_succ)]
+                    prod_left_part *= self.dictOfReals[prob_succ]
 
                     sum_left = prod_left_part
                     self.no_of_subformula += 1
 
-                    list_of_ors.append(Or(self.listOfBools[self.list_of_bools.index(holds_succ)],
-                                          self.listOfReals[self.list_of_reals.index(d_current)] > self.listOfReals[
-                                              self.list_of_reals.index(d_succ)]))
+                    list_of_ors.append(Or(self.dictOfBools[holds_succ],
+                                          self.dictOfReals[d_current] > self.dictOfReals[d_succ]))
 
                     self.no_of_subformula += 2
 
-                implies_antecedent_and1 = self.listOfReals[self.list_of_reals.index(prob_phi)] == sum_left
+                implies_antecedent_and1 = self.dictOfReals[prob_phi] == sum_left
                 self.no_of_subformula += 1
                 prod_right_or = Or(list_of_ors)
                 self.no_of_subformula += 1
-                implies_antecedent_and2 = Implies(self.listOfReals[self.list_of_reals.index(prob_phi)] > 0,
+                implies_antecedent_and2 = Implies(self.dictOfReals[prob_phi] > 0,
                                                   prod_right_or)
                 self.no_of_subformula += 1
                 implies_antecedent = And(implies_antecedent_and1, implies_antecedent_and2)
@@ -1112,10 +1057,10 @@ class SemanticsEncoder:
                 name2 += '_' + str(index_of_phi2)
                 self.addToVariableList(name2)
 
-                eq1 = Implies(self.listOfBools[self.list_of_bools.index(name2)],
-                              self.listOfReals[self.list_of_reals.index(name1)] == float(1))
-                eq2 = Implies(Not(self.listOfBools[self.list_of_bools.index(name2)]),
-                              self.listOfReals[self.list_of_reals.index(name1)] == float(0))
+                eq1 = Implies(self.dictOfBools[name2],
+                              self.dictOfReals[name1] == float(1))
+                eq2 = Implies(Not(self.dictOfBools[name2]),
+                              self.dictOfReals[name1] == float(0))
                 self.no_of_subformula += 2
                 self.solver.add(And(eq1, eq2))
                 self.no_of_subformula += 1
@@ -1159,12 +1104,10 @@ class SemanticsEncoder:
                 prob_phi += '_' + str(index_of_phi)
                 self.addToVariableList(prob_phi)
 
-                new_prob_const = self.listOfReals[self.list_of_reals.index(prob_phi)] >= float(0)
-                first_implies = And(Implies(self.listOfBools[self.list_of_bools.index(holds2)],
-                                            (self.listOfReals[self.list_of_reals.index(prob_phi)] == float(1))),
-                                    Implies(And(Not(self.listOfBools[self.list_of_bools.index(holds1)]),
-                                                Not(self.listOfBools[self.list_of_bools.index(holds2)])),
-                                            (self.listOfReals[self.list_of_reals.index(prob_phi)] == float(0))),
+                new_prob_const = self.dictOfReals[prob_phi] >= float(0)
+                first_implies = And(Implies(self.dictOfBools[holds2], (self.dictOfReals[prob_phi] == float(1))),
+                                    Implies(And(Not(self.dictOfBools[holds1]), Not(self.dictOfBools[holds2])),
+                                            (self.dictOfReals[prob_phi] == float(0))),
                                     new_prob_const)
                 self.no_of_subformula += 3
                 self.solver.add(first_implies)
@@ -1179,9 +1122,9 @@ class SemanticsEncoder:
                     for l in range(len(relevant_quantifier)):
                         name = 'a_' + str(r_state[relevant_quantifier[l] - 1])
                         self.addToVariableList(name)
-                        act_str.append(self.listOfInts[self.list_of_ints.index(name)] == int(ca[l]))
-                    implies_precedent = And(self.listOfBools[self.list_of_bools.index(holds1)],
-                                            Not(self.listOfBools[self.list_of_bools.index(holds2)]), And(act_str))
+                        act_str.append(self.dictOfInts[name] == int(ca[l]))
+                    implies_precedent = And(self.dictOfBools[holds1],
+                                            Not(self.dictOfBools[holds2]), And(act_str))
                     self.no_of_subformula += 2
 
                     combined_succ = self.genSuccessors(r_state, ca, relevant_quantifier)
@@ -1200,12 +1143,12 @@ class SemanticsEncoder:
 
                         prob_succ += '_' + str(index_of_replaced)
                         self.addToVariableList(prob_succ)
-                        prod_left_part *= self.listOfReals[self.list_of_reals.index(prob_succ)]
+                        prod_left_part *= self.dictOfReals[prob_succ]
 
                         sum_left += prod_left_part
                         self.no_of_subformula += 1
 
-                    implies_antecedent_and = self.listOfReals[self.list_of_reals.index(prob_phi)] == sum_left
+                    implies_antecedent_and = self.dictOfReals[prob_phi] == sum_left
                     self.no_of_subformula += 1
                     self.solver.add(Implies(implies_precedent, implies_antecedent_and))
                     self.no_of_subformula += 1
@@ -1242,8 +1185,8 @@ class SemanticsEncoder:
                 prob_phi += '_' + str(index_of_phi)
                 self.addToVariableList(prob_phi)
 
-                first_implies = Implies(Not(self.listOfBools[self.list_of_bools.index(holds1)]),
-                                        (self.listOfReals[self.list_of_reals.index(prob_phi)] == float(0)))
+                first_implies = Implies(Not(self.dictOfBools[holds1]),
+                                        (self.dictOfReals[prob_phi] == float(0)))
                 self.no_of_subformula += 1
                 self.solver.add(first_implies)
 
@@ -1257,8 +1200,8 @@ class SemanticsEncoder:
                     for l in range(len(relevant_quantifier)):
                         name = 'a_' + str(r_state[relevant_quantifier[l] - 1])
                         self.addToVariableList(name)
-                        act_str.append(self.listOfInts[self.list_of_ints.index(name)] == int(ca[l]))
-                    implies_precedent = And(self.listOfBools[self.list_of_bools.index(holds1)],
+                        act_str.append(self.dictOfInts[name] == int(ca[l]))
+                    implies_precedent = And(self.dictOfBools[holds1],
                                             And(act_str))
                     self.no_of_subformula += 2
 
@@ -1278,13 +1221,13 @@ class SemanticsEncoder:
 
                         prob_succ += '_' + str(index_of_replaced)
                         self.addToVariableList(prob_succ)
-                        prod_left_part *= self.listOfReals[self.list_of_reals.index(prob_succ)]
+                        prod_left_part *= self.dictOfReals[prob_succ]
 
-                        prod_left_part *= self.listOfReals[self.list_of_reals.index(prob_succ)]
+                        prod_left_part *= self.dictOfReals[prob_succ]
                         sum_left += prod_left_part
                         self.no_of_subformula += 1
 
-                    implies_antecedent_and = self.listOfReals[self.list_of_reals.index(prob_phi)] == sum_left
+                    implies_antecedent_and = self.dictOfReals[prob_phi] == sum_left
                     self.no_of_subformula += 1
                     self.solver.add(Implies(implies_precedent, implies_antecedent_and))
                     self.no_of_subformula += 1
@@ -1310,10 +1253,9 @@ class SemanticsEncoder:
             prob_phi = 'prob'
             prob_phi += str_r_state + '_' + str(index_of_phi)
             self.addToVariableList(prob_phi)
-            new_prob_const_0 = self.listOfReals[self.list_of_reals.index(prob_phi)] >= float(0)
-            new_prob_const_1 = self.listOfReals[self.list_of_reals.index(prob_phi)] <= float(1)
-            first_implies = And(Implies(self.listOfBools[self.list_of_bools.index(holds1)],
-                                        (self.listOfReals[self.list_of_reals.index(prob_phi)] == float(1))),
+            new_prob_const_0 = self.dictOfReals[prob_phi] >= float(0)
+            first_implies = And(Implies(self.dictOfBools[holds1],
+                                        (self.dictOfReals[prob_phi] == float(1))),
                                 new_prob_const_0)
             self.no_of_subformula += 1
 
@@ -1327,9 +1269,8 @@ class SemanticsEncoder:
                 for l in range(len(relevant_quantifier)):
                     name = 'a_' + str(r_state[relevant_quantifier[l] - 1])
                     self.addToVariableList(name)
-                    act_str.append(self.listOfInts[self.list_of_ints.index(name)] == int(ca[l]))
-                implies_precedent = And(Not(self.listOfBools[self.list_of_bools.index(holds1)]),
-                                        And(act_str))
+                    act_str.append(self.dictOfInts[name] == int(ca[l]))
+                implies_precedent = And(Not(self.dictOfBools[holds1]), And(act_str))
                 self.no_of_subformula += 2
 
                 combined_succ = self.genSuccessors(r_state, ca, relevant_quantifier)
@@ -1363,23 +1304,20 @@ class SemanticsEncoder:
                     self.addToVariableList(d_current)
                     d_succ += '_' + str(index_of_phi1)
                     self.addToVariableList(d_succ)
-                    prod_left_part *= self.listOfReals[self.list_of_reals.index(prob_succ)]
+                    prod_left_part *= self.dictOfReals[prob_succ]
 
                     sum_left += prod_left_part
                     self.no_of_subformula += 1
-
-                    list_of_ors.append(Or(self.listOfBools[self.list_of_bools.index(holds_succ)],
-                                          self.listOfReals[self.list_of_reals.index(d_current)] > self.listOfReals[
-                                              self.list_of_reals.index(d_succ)]))
+                    list_of_ors.append(Or(self.dictOfBools[holds_succ],
+                                          self.dictOfReals[d_current] > self.dictOfReals[d_succ]))
 
                     self.no_of_subformula += 2
 
-                implies_antecedent_and1 = self.listOfReals[self.list_of_reals.index(prob_phi)] == sum_left
+                implies_antecedent_and1 = self.dictOfReals[prob_phi] == sum_left
                 self.no_of_subformula += 1
                 prod_right_or = Or(list_of_ors)
                 self.no_of_subformula += 1
-                implies_antecedent_and2 = Implies(self.listOfReals[self.list_of_reals.index(prob_phi)] > 0,
-                                                  prod_right_or)
+                implies_antecedent_and2 = Implies(self.dictOfReals[prob_phi] > 0, prod_right_or)
                 self.no_of_subformula += 1
                 implies_antecedent = And(implies_antecedent_and1, implies_antecedent_and2)
                 self.no_of_subformula += 1
@@ -1511,8 +1449,8 @@ class SemanticsEncoder:
             self.addToVariableList(prob_phi)
             rew_phi = 'rew' + str_r_state + "_" + str(index_of_phi)
             self.addToVariableList(rew_phi)
-            first_implies = Implies(Not(self.listOfReals[self.list_of_reals.index(prob_phi)] == float(1)),
-                                    self.listOfReals[self.list_of_reals.index(rew_phi)] == float(-9999999))
+            first_implies = Implies(Not(self.dictOfReals[prob_phi] == float(1)),
+                                    self.dictOfReals[rew_phi] == float(-9999999))
             self.no_of_subformula += 3
             self.solver.add(first_implies)
             dicts = []
@@ -1525,9 +1463,8 @@ class SemanticsEncoder:
                 for l in range(len(relevant_quantifier)):
                     name = 'a_' + str(r_state[relevant_quantifier[l] - 1])
                     self.addToVariableList(name)
-                    act_str.append(self.listOfInts[self.list_of_ints.index(name)] == int(ca[l]))
-
-                implies_precedent = And(self.listOfReals[self.list_of_reals.index(prob_phi)] == float(1), act_str)
+                    act_str.append(self.dictOfInts[name] == int(ca[l]))
+                implies_precedent = And(self.dictOfReals[prob_phi] == float(1), act_str)
                 self.no_of_subformula += 1
 
                 combined_succ = self.genSuccessors(r_state, ca, relevant_quantifier)
@@ -1546,12 +1483,11 @@ class SemanticsEncoder:
 
                     rew_succ += '_' + str(index_of_phi1)
                     self.addToVariableList(rew_succ)
-                    prod_left_part *= self.listOfReals[self.list_of_reals.index(rew_succ)]
-
+                    prod_left_part *= self.dictOfReals[rew_succ]
                     sum_left += prod_left_part
                     self.no_of_subformula += 1
 
-                implies_antecedent_and = self.listOfReals[self.list_of_reals.index(rew_phi)] == (
+                implies_antecedent_and = self.dictOfReals[rew_phi] == (
                         float(reward_model[r_state[rel_quant - 1]]) + sum_left)
                 self.no_of_subformula += 1
                 self.solver.add(Implies(implies_precedent, implies_antecedent_and))
@@ -1572,8 +1508,9 @@ class SemanticsEncoder:
         index_of_phi2 = self.list_of_subformula.index(phi2)
         rel_quant1 = self.encodeUnboundedUntilSemantics(prob_formula, [rel_quant])
         rel_quant2 = self.encodeSemantics(phi2)
-        relevant_quantifier = extendWithoutDuplicates(extendWithoutDuplicates(extendWithoutDuplicates(rel_quant2, [rel_quant]),
-                                                      rel_quant1), prev_relevant_quantifier)
+        relevant_quantifier = extendWithoutDuplicates(
+            extendWithoutDuplicates(extendWithoutDuplicates(rel_quant2, [rel_quant]),
+                                    rel_quant1), prev_relevant_quantifier)
         combined_state_list = self.generateComposedStates(relevant_quantifier)
 
         for r_state in combined_state_list:
@@ -1595,11 +1532,9 @@ class SemanticsEncoder:
                 rew_phi += "_" + str(ind)
             rew_phi += '_' + str(index_of_phi)
             self.addToVariableList(rew_phi)
-            first_implies = And(Implies(self.listOfBools[self.list_of_bools.index(holds2)],
-                                        (self.listOfReals[self.list_of_reals.index(rew_phi)] == float(
-                                            reward_model.get_state_reward(r_state[rel_quant - 1])))),
-                                Implies(Not(self.listOfReals[self.list_of_reals.index(prob_phi)] == float(1)),
-                                        self.listOfReals[self.list_of_reals.index(rew_phi)] == float(-999999)))
+            first_implies = And(Implies(self.dictOfBools[holds2],
+                                        (self.dictOfReals[rew_phi] == float(reward_model.get_state_reward(r_state[rel_quant - 1])))),
+                                Implies(Not(self.dictOfReals[prob_phi] == float(1)), self.dictOfReals[rew_phi] == float(-999999)))
             self.no_of_subformula += 3
 
             dicts = []
@@ -1612,9 +1547,9 @@ class SemanticsEncoder:
                 for l in range(len(relevant_quantifier)):
                     name = 'a_' + str(r_state[relevant_quantifier[l] - 1])
                     self.addToVariableList(name)
-                    act_str.append(self.listOfInts[self.list_of_ints.index(name)] == int(ca[l]))
-                implies_precedent = And(self.listOfReals[self.list_of_reals.index(prob_phi)] == float(1),
-                                        Not(self.listOfBools[self.list_of_bools.index(holds2)]), And(act_str))
+                    act_str.append(self.dictOfInts[name] == int(ca[l]))
+                implies_precedent = And(self.dictOfReals[prob_phi] == float(1),
+                                        Not(self.dictOfBools[holds2]), And(act_str))
                 self.no_of_subformula += 2
 
                 combined_succ = self.genSuccessors(r_state, ca, relevant_quantifier)
@@ -1631,13 +1566,12 @@ class SemanticsEncoder:
 
                     rew_succ += '_' + str(index_of_phi)
                     self.addToVariableList(rew_succ)
-                    prod_left_part *= self.listOfReals[self.list_of_reals.index(rew_succ)]
+                    prod_left_part *= self.dictOfReals[rew_succ]
 
                     sum_left = prod_left_part
                     self.no_of_subformula += 1
 
-                implies_antecedent = self.listOfReals[self.list_of_reals.index(rew_phi)] == (
-                        float(reward_model.get_state_reward(r_state[
+                implies_antecedent = self.dictOfReals[rew_phi] == (float(reward_model.get_state_reward(r_state[
                                                                 rel_quant - 1])) + sum_left)
                 self.no_of_subformula += 1
                 self.solver.add(And(first_implies, Implies(implies_precedent, implies_antecedent)))
@@ -1666,7 +1600,8 @@ class SemanticsEncoder:
 
         if k2 == 0:
             rel_quant2 = self.encodeSemantics(phi2)
-            relevant_quantifier = extendWithoutDuplicates(extendWithoutDuplicates([rel_quant], rel_quant2), prev_relevant_quantifier)
+            relevant_quantifier = extendWithoutDuplicates(extendWithoutDuplicates([rel_quant], rel_quant2),
+                                                          prev_relevant_quantifier)
             combined_state_list = self.generateComposedStates(relevant_quantifier)
 
             for r_state in combined_state_list:
@@ -1684,11 +1619,9 @@ class SemanticsEncoder:
                 name2 += '_' + str(index_of_phi2)
                 self.addToVariableList(name2)
                 # TODO: fix the relevant quantifier for get_state_reward
-                eq1 = Implies(self.listOfBools[self.list_of_bools.index(name2)],
-                              self.listOfReals[self.list_of_reals.index(name1)] == float(
-                                  reward_model.get_state_reward(r_state[rel_quant - 1])))
-                eq2 = Implies(Not(self.listOfBools[self.list_of_bools.index(name2)]),
-                              self.listOfReals[self.list_of_reals.index(name1)] == float(-9999))
+                eq1 = Implies(self.dictOfBools[name2],
+                              self.dictOfReals[name1] == float(reward_model.get_state_reward(r_state[rel_quant - 1])))
+                eq2 = Implies(Not(self.dictOfBools[name2]), self.dictOfReals[name1] == float(-9999))
                 self.no_of_subformula += 2
                 self.solver.add(And(eq1, eq2))
                 self.no_of_subformula += 1
@@ -1729,11 +1662,11 @@ class SemanticsEncoder:
                 rew_phi += '_' + str(index_of_phi)
                 self.addToVariableList(rew_phi)
 
-                first_implies = And(Implies(self.listOfBools[self.list_of_bools.index(holds2)],
-                                            (self.listOfReals[self.list_of_reals.index(rew_phi)] == float(
+                first_implies = And(Implies(self.dictOfBools[holds2],
+                                            (self.dictOfReals[rew_phi] == float(
                                                 reward_model.get_state_reward(r_state[rel_quant - 1])))),
-                                    Implies(Not(self.listOfReals[self.list_of_reals.index(prob_phi)] == float(1)),
-                                            (self.listOfReals[self.list_of_reals.index(rew_phi)] == float(
+                                    Implies(Not(self.dictOfReals[prob_phi] == float(1)),
+                                            (self.dictOfReals[rew_phi] == float(
                                                 reward_model.get_state_reward(r_state[rel_quant - 1])))))
                 self.no_of_subformula += 3
                 self.solver.add(first_implies)
@@ -1748,9 +1681,9 @@ class SemanticsEncoder:
                     for l in range(len(relevant_quantifier)):
                         name = 'a_' + str(r_state[relevant_quantifier[l] - 1])
                         self.addToVariableList(name)
-                        act_str.append(self.listOfInts[self.list_of_ints.index(name)] == int(ca[l]))
-                    implies_precedent = And(self.listOfReals[self.list_of_reals.index(prob_phi)] == float(1),
-                                            Not(self.listOfBools[self.list_of_bools.index(holds2)]), And(act_str))
+                        act_str.append(self.dictOfInts[name] == int(ca[l]))
+                    implies_precedent = And(self.dictOfReals[prob_phi] == float(1),
+                                            Not(self.dictOfBools[holds2]), And(act_str))
                     self.no_of_subformula += 2
 
                     combined_succ = self.genSuccessors(r_state, ca, relevant_quantifier)
@@ -1769,13 +1702,12 @@ class SemanticsEncoder:
 
                         rew_succ += '_' + str(index_of_replaced)
                         self.addToVariableList(rew_succ)
-                        prod_left_part *= self.listOfReals[self.list_of_reals.index(rew_succ)]
+                        prod_left_part *= self.dictOfReals[rew_succ]
 
                         sum_left += prod_left_part
                         self.no_of_subformula += 1
 
-                    implies_antecedent_and = self.listOfReals[self.list_of_reals.index(rew_phi)] == (
-                            float(reward_model.get_state_reward(r_state[
+                    implies_antecedent_and = self.dictOfReals[rew_phi] == (float(reward_model.get_state_reward(r_state[
                                                                     rel_quant - 1])) + sum_left)
                     self.no_of_subformula += 1
                     self.solver.add(Implies(implies_precedent, implies_antecedent_and))
@@ -1810,8 +1742,7 @@ class SemanticsEncoder:
                 rew_phi += '_' + str(index_of_phi)
                 self.addToVariableList(rew_phi)
 
-                first_implies = Implies(Not(self.listOfReals[self.list_of_reals.index(prob_phi)] == float(1)),
-                                        (self.listOfReals[self.list_of_reals.index(rew_phi)] == float(-999999)))
+                first_implies = Implies(Not(self.dictOfReals[prob_phi] == float(1)), (self.dictOfReals[rew_phi] == float(-999999)))
                 self.no_of_subformula += 1
                 self.solver.add(first_implies)
 
@@ -1825,9 +1756,8 @@ class SemanticsEncoder:
                     for l in range(len(relevant_quantifier)):
                         name = 'a_' + str(r_state[relevant_quantifier[l] - 1])
                         self.addToVariableList(name)
-                        act_str.append(self.listOfInts[self.list_of_ints.index(name)] == int(ca[l]))
-                    implies_precedent = And(self.listOfReals[self.list_of_reals.index(prob_phi)] == float(1),
-                                            And(act_str))
+                        act_str.append(self.dictOfInts[name] == int(ca[l]))
+                    implies_precedent = And(self.dictOfReals[prob_phi] == float(1), And(act_str))
                     self.no_of_subformula += 2
 
                     combined_succ = self.genSuccessors(r_state, ca, relevant_quantifier)
@@ -1846,14 +1776,13 @@ class SemanticsEncoder:
 
                         rew_succ += '_' + str(index_of_replaced)
                         self.addToVariableList(rew_succ)
-                        prod_left_part *= self.listOfReals[self.list_of_reals.index(rew_succ)]
+                        prod_left_part *= self.dictOfReals[rew_succ]
 
-                        prod_left_part *= self.listOfReals[self.list_of_reals.index(rew_succ)]
+                        prod_left_part *= self.dictOfReals[rew_succ]
                         sum_left += prod_left_part
                         self.no_of_subformula += 1
 
-                    implies_antecedent_and = self.listOfReals[self.list_of_reals.index(rew_phi)] == (
-                            float(reward_model.get_state_reward(r_state[
+                    implies_antecedent_and = self.dictOfReals[rew_phi] == (float(reward_model.get_state_reward(r_state[
                                                                     rel_quant - 1])) + sum_left)
                     self.no_of_subformula += 1
                     self.solver.add(Implies(implies_precedent, implies_antecedent_and))
@@ -1890,11 +1819,10 @@ class SemanticsEncoder:
             rew_phi += str_r_state + '_' + str(index_of_phi)
             self.addToVariableList(rew_phi)
 
-            first_implies = And(Implies(self.listOfBools[self.list_of_bools.index(holds1)],
-                                        (self.listOfReals[self.list_of_reals.index(rew_phi)] == float(
-                                            reward_model[r_state[rel_quant - 1]]))),
-                                Implies(Not(self.listOfReals[self.list_of_reals.index(prob_phi)] == float(1)),
-                                        self.listOfReals[self.list_of_reals.index(rew_phi)] == float(-9999999)))
+            first_implies = And(Implies(self.dictOfBools[holds1],
+                                        (self.dictOfReals[rew_phi] == float(reward_model[r_state[rel_quant - 1]]))),
+                                Implies(Not(self.dictOfReals[prob_phi] == float(1)),
+                                        self.dictOfReals[rew_phi] == float(-9999999)))
             # float(fpPlusInfinity()  # How do we handle the case where prob != 1? TBD
             self.no_of_subformula += 2
 
@@ -1908,10 +1836,9 @@ class SemanticsEncoder:
                 for l in range(len(relevant_quantifier)):
                     name = 'a_' + str(r_state[relevant_quantifier[l] - 1])
                     self.addToVariableList(name)
-                    act_str.append(self.listOfInts[self.list_of_ints.index(name)] == int(ca[l]))
+                    act_str.append(self.dictOfInts[name] == int(ca[l]))
 
-                implies_precedent = And(self.listOfReals[self.list_of_reals.index(prob_phi)] == float(1),
-                                        Not(self.listOfBools[self.list_of_bools.index(holds1)]), And(act_str))
+                implies_precedent = And(self.dictOfReals[prob_phi] == float(1), Not(self.dictOfBools[holds1]), And(act_str))
                 self.no_of_subformula += 2
 
                 combined_succ = self.genSuccessors(r_state, ca, relevant_quantifier)
@@ -1930,12 +1857,11 @@ class SemanticsEncoder:
 
                     rew_succ += '_' + str(index_of_phi)
                     self.addToVariableList(rew_succ)
-                    prod_left_part *= self.listOfReals[self.list_of_reals.index(rew_succ)]
-
+                    prod_left_part *= self.dictOfReals[rew_succ]
                     sum_left += prod_left_part
                     self.no_of_subformula += 1
 
-                implies_antecedent = self.listOfReals[self.list_of_reals.index(rew_phi)] == (
+                implies_antecedent = self.dictOfReals[rew_phi] == (
                         float(reward_model[r_state[rel_quant - 1]]) + sum_left)
                 self.no_of_subformula += 1
                 sav = And(first_implies, Implies(implies_precedent, implies_antecedent))
