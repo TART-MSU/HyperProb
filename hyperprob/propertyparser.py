@@ -10,11 +10,12 @@ class Property:
 
     def parseGrammar(self):
         turtle_grammar = """
-                        start:    "AS" NAME "." quantifiedformulastate -> forall_scheduler
-                            | "ES" NAME "." quantifiedformulastate -> exist_scheduler
-                            
-                        quantifiedformulastate:  "A" NAME "." quantifiedformulastate -> forall_state  
-                            | "E" NAME "." quantifiedformulastate -> exist_state
+                        quantifiedscheduler:   "AS" NAME "." quantifiedscheduler -> forall_scheduler
+                            | "ES" NAME "." quantifiedscheduler -> exist_scheduler 
+                            | quantifiedstate
+                             
+                        quantifiedstate:  "A" NAME "(" with ")" "." quantifiedstate -> forall_state  
+                            | "E" NAME "(" with ")" "." quantifiedstate -> exist_state
                             | formula
                         
                         formula: proposition "(" with ")"  -> atomic_proposition
@@ -61,7 +62,7 @@ class Property:
                         %import common.WS_INLINE
                         %ignore WS_INLINE
                     """
-        self.parsed_grammar = Lark(turtle_grammar)
+        self.parsed_grammar = Lark(turtle_grammar, start="quantifiedscheduler")
 
     def parseProperty(self, print_property):
         try:
@@ -84,7 +85,9 @@ def findNumberOfStateQuantifier(hyperproperty):
             formula_duplicate = formula_duplicate.children[1]
         elif formula_duplicate.data in ['exist_state', 'forall_state']:
             no_of_quantifier += 1
-            formula_duplicate = formula_duplicate.children[1]
+            formula_duplicate = formula_duplicate.children[2]
+        elif formula_duplicate.data == 'quantifiedscheduler':
+            formula_duplicate = formula_duplicate.children[0]
         else:
             break
     return formula_duplicate, no_of_quantifier

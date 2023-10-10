@@ -71,6 +71,8 @@ class ModelChecker:
         if formula_phi.data in ['exist_scheduler', 'forall_scheduler', 'exist_state', 'forall_state']:
             formula_phi = formula_phi.children[1]
             self.addToSubformulaList(formula_phi)
+        elif formula_phi.data == 'quantifiedscheduler':
+            formula_phi = formula_phi.children[0]
         elif formula_phi.data in ['and', 'or', 'implies', 'biconditional',
                                   'less_probability', 'equal_probability', 'greater_probability',
                                   'greater_and_equal_probability', 'less_and_equal_probability',
@@ -119,12 +121,14 @@ class ModelChecker:
                 changed_hyperproperty = changed_hyperproperty.children[1]
             elif changed_hyperproperty.data == 'exist_state':
                 list_of_AV.append('V')
-                changed_hyperproperty = changed_hyperproperty.children[1]
+                changed_hyperproperty = changed_hyperproperty.children[2]
             elif changed_hyperproperty.data == 'forall_state':
                 list_of_AV.append('A')
-                changed_hyperproperty = changed_hyperproperty.children[1]
-            elif changed_hyperproperty.data == 'quantifiedformulastate':
+                changed_hyperproperty = changed_hyperproperty.children[2]
+            elif changed_hyperproperty.data == 'quantifiedstate':
                 break
+            elif changed_hyperproperty.data == 'quantifiedscheduler':
+                changed_hyperproperty = changed_hyperproperty.children[0]
         index_of_phi = self.list_of_subformula.index(changed_hyperproperty.children[0])
         list_of_holds = []
 
