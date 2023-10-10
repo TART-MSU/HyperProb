@@ -44,6 +44,7 @@ class ModelChecker:
             self.printResult(smt_end_time, 'exists')
 
         elif self.initial_hyperproperty.parsed_property.data == 'forall_scheduler':
+            self.addToSubformulaList(non_quantified_property)
             negated_non_quantified_property = propertyparser.negateForallProperty(self.initial_hyperproperty.parsed_property)
             self.addToSubformulaList(negated_non_quantified_property)
             self.encodeStateQuantifiers(combined_list_of_states)

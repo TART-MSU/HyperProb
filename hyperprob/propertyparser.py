@@ -1,3 +1,5 @@
+import copy
+
 from lark import Lark, Token, Tree
 from hyperprob.utility import common
 
@@ -95,15 +97,19 @@ def findNumberOfStateQuantifier(hyperproperty):
 
 def negateForallProperty(parsed_property):
     temp_traversed_property = parsed_property
-    while len(temp_traversed_property.children) > 0 and type(temp_traversed_property.children[0]) == Token:
+    while len(temp_traversed_property.children) > 0:  # and type(temp_traversed_property.children[0]) == Token:
         if temp_traversed_property.data == 'forall_scheduler':
             temp_traversed_property.data = 'exist_scheduler'
+            temp_traversed_property = temp_traversed_property.children[1]
         elif temp_traversed_property.data == 'exist_state':
             temp_traversed_property.data = 'forall_state'
+            temp_traversed_property = temp_traversed_property.children[2]
         elif temp_traversed_property.data == 'forall_state':
             temp_traversed_property.data = 'exist_state'
-        temp_traversed_property = temp_traversed_property.children[1]
-        if temp_traversed_property.data == 'quantifiedformulastate':
+            temp_traversed_property = temp_traversed_property.children[2]
+        elif temp_traversed_property.data == 'quantifiedscheduler':
+            temp_traversed_property = temp_traversed_property.children[0]
+        elif temp_traversed_property.data == 'quantifiedstate':
             break
     if temp_traversed_property.children[0].data == 'not':
         temp_traversed_property.children[0] = temp_traversed_property.children[0].children[0]
