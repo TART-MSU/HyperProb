@@ -52,8 +52,7 @@ class ModelChecker:
             self.printResult(smt_end_time, 'exists')
 
         elif self.initial_hyperproperty.parsed_property.data == 'forall_scheduler':
-            self.addToSubformulaList(non_quantified_property)
-            negated_non_quantified_property = propertyparser.negateForallProperty(
+            negated_non_quantified_property, self.initial_hyperproperty.scheduler_quantifiers, self.initial_hyperproperty.state_quantifiers = propertyparser.convertToInitialExistentialProperty(
                 self.initial_hyperproperty.parsed_property)
             self.encodeActions()
             self.addToSubformulaList(negated_non_quantified_property)
@@ -88,26 +87,20 @@ class ModelChecker:
                     self.solver.add_assertion(Or(actions_in_state))
         common.colourinfo("Encoded actions in the MDP...")
 
-    def addToSubformulaList(self, formula_phi):  # add as you go any new subformula part as needed
-        if formula_phi.data in ['exist_scheduler', 'forall_scheduler', 'exist_state', 'forall_state']:
-            formula_phi = formula_phi.children[1]
-            self.addToSubformulaList(formula_phi)
-        elif formula_phi.data == 'quantifiedscheduler':
-            formula_phi = formula_phi.children[0]
-        elif formula_phi.data in ['and', 'or', 'implies', 'biconditional',
-                                  'less_probability', 'equal_probability', 'greater_probability',
-                                  'greater_and_equal_probability', 'less_and_equal_probability',
-                                  'less_reward', 'equal_reward', 'greater_reward', 'greater_and_equal_reward',
-                                  'less_and_equal_reward',
-                                  'add_probability', 'subtract_probability', 'multiply_probability',
-                                  'add_reward', 'subtract_reward', 'multiply_reward',
-                                  'until_unbounded']:
+    def addToSubformulaList(self, formula_phi):  # add any new subformula part as needed
+
+        if formula_phi.data in ['and', 'or', 'implies', 'biconditional',
+                                'less_probability', 'equal_probability', 'greater_probability',
+                                'greater_and_equal_probability', 'less_and_equal_probability',
+                                'less_reward', 'equal_reward', 'greater_reward', 'greater_and_equal_reward',
+                                'less_and_equal_reward',
+                                'add_probability', 'subtract_probability', 'multiply_probability',
+                                'add_reward', 'subtract_reward', 'multiply_reward',
+                                'until_unbounded']:
             if formula_phi not in self.list_of_subformula:
                 self.list_of_subformula.append(formula_phi)
-            left_child = formula_phi.children[0]
-            self.addToSubformulaList(left_child)
-            right_child = formula_phi.children[1]
-            self.addToSubformulaList(right_child)
+            self.addToSubformulaList(formula_phi.children[0])
+            self.addToSubformulaList(formula_phi.children[1])
         elif formula_phi.data in ['atomic_proposition', 'true', 'constant_probability', 'constant_reward']:
             if formula_phi not in self.list_of_subformula:
                 self.list_of_subformula.append(formula_phi)
@@ -122,70 +115,49 @@ class ModelChecker:
         elif formula_phi.data in ['reward']:
             if formula_phi not in self.list_of_subformula:
                 self.list_of_subformula.append(formula_phi)
-                prob_formula = Tree('probability', [formula_phi.children[1]])
-                self.list_of_subformula.append(prob_formula)
+                self.list_of_subformula.append(Tree('probability', [formula_phi.children[1]]))
             self.addToSubformulaList(formula_phi.children[1])
         elif formula_phi.data in ['until_bounded']:
             if formula_phi not in self.list_of_subformula:
                 self.list_of_subformula.append(formula_phi)
-            left_child = formula_phi.children[0]
-            self.addToSubformulaList(left_child)
-            right_child = formula_phi.children[3]
-            self.addToSubformulaList(right_child)
+            self.addToSubformulaList(formula_phi.children[0])
+            self.addToSubformulaList(formula_phi.children[3])
 
-    def encodeStateQuantifiers(self, combined_list_of_states):
-        list_of_AV = []  # will have the OR, AND according to the quantifier in that index in the formula
-        changed_hyperproperty = self.initial_hyperproperty.parsed_property
-        while len(changed_hyperproperty.children) > 0:
-            if changed_hyperproperty.data in ['exist_scheduler', 'forall_scheduler']:
-                changed_hyperproperty = changed_hyperproperty.children[1]
-            elif changed_hyperproperty.data == 'exist_state':
-                list_of_AV.append('V')
-                changed_hyperproperty = changed_hyperproperty.children[2]
-            elif changed_hyperproperty.data == 'forall_state':
-                list_of_AV.append('A')
-                changed_hyperproperty = changed_hyperproperty.children[2]
-            elif changed_hyperproperty.data == 'quantifiedstate':
-                break
-            elif changed_hyperproperty.data == 'quantifiedscheduler':
-                changed_hyperproperty = changed_hyperproperty.children[0]
-        index_of_phi = self.list_of_subformula.index(changed_hyperproperty.children[0])
+    def encodeStateQuantifiers(self, list_of_state_ranges):
         list_of_holds = []
-
-        for i in range(len(combined_list_of_states)):
+        combined_list_of_states = list(itertools.product(*list(range(li) for li in list_of_state_ranges)))
+        for tup in combined_list_of_states:
             name = "holds_"
-            for j in range(self.no_of_state_quantifier):
-                name += str(combined_list_of_states[i][j]) + "_"
-            name += str(index_of_phi)
-            self.dictOfBools[name] = Bool(name)
+            for j in tup:
+                name += str(j) + "_"
+            name += str(0)  # we are encoding for the outermost non-quantified formula, so assuming this is safe
+            self.dictOfBools[name] = Symbol(name)
             list_of_holds.append(self.dictOfBools[name])
 
         list_of_holds_replace = []
-        for i in range(self.no_of_state_quantifier - 1, -1, -1):
+        for i in range(len(self.initial_hyperproperty.state_quantifiers) - 1, -1, -1):
             count = -1
             limit = len(list_of_holds)
             quo = 0
             for j in range(limit):
                 count += 1
-                if count == len(self.model.getListOfStates()) - 1:
-                    index = quo * len(self.model.getListOfStates())
-                    if list_of_AV[i] == 'V':
+                if count == list_of_state_ranges[i] - 1:
+                    index = quo * list_of_state_ranges[i]
+                    if not self.initial_hyperproperty.state_quantifiers[i]:
                         list_of_holds_replace.append(Or([par for par in list_of_holds[index:index + count + 1]]))
-                        self.no_of_subformula += 1
-                    elif list_of_AV[i] == 'A':
+                    elif self.initial_hyperproperty.state_quantifiers[i]:
                         list_of_holds_replace.append(And([par for par in list_of_holds[index:index + count + 1]]))
-                        self.no_of_subformula += 1
                     count = -1
                     quo += 1
             list_of_holds = copy.deepcopy(list_of_holds_replace)
             list_of_holds_replace.clear()
-        self.solver.add(list_of_holds[0])
-        list_of_holds.clear()
-        list_of_holds_replace.clear()
+        self.solver.add_assertion(list_of_holds[0])
+        del list_of_holds
+        del list_of_holds_replace
 
     def checkResult(self):
         starting_time = time.perf_counter()
-        truth = self.solver.check()
+        truth = self.solver.solve()
         z3_time = time.perf_counter() - starting_time
         list_of_actions = None
         if truth == sat:

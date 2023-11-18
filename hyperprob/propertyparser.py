@@ -91,7 +91,7 @@ def parseQuantifiersToDictionary(hyperproperty):
     tokenDictionary["schedq"] = []
     tokenDictionary["stateq"] = dict()
     list_of_sched_quantifier = [] # store true for AS false for ES
-    list_of_state_quantifier = []  # store true for AS false for ES
+    list_of_state_quantifier = []  # store true for A false for E
     formula_duplicate = hyperproperty
     while len(formula_duplicate.children) > 0:
         if formula_duplicate.data in ['exist_scheduler', 'forall_scheduler']:
@@ -135,6 +135,7 @@ def convertToInitialExistentialProperty(parsed_property):
     :return: hyperproperty starting with existential quantifier and negated as necessary
     """
     list_of_sched_quantifier = []  # store true for AS false for ES
+    list_of_state_quantifier = []  # store true for A false for E
     temp_traversed_property = parsed_property
     while len(temp_traversed_property.children) > 0:
         if temp_traversed_property.data == 'forall_scheduler':
@@ -147,9 +148,11 @@ def convertToInitialExistentialProperty(parsed_property):
             temp_traversed_property = temp_traversed_property.children[1]
         elif temp_traversed_property.data == 'exist_state':
             temp_traversed_property.data = 'forall_state'
+            list_of_state_quantifier.append(True)
             temp_traversed_property = temp_traversed_property.children[2]
         elif temp_traversed_property.data == 'forall_state':
             temp_traversed_property.data = 'exist_state'
+            list_of_state_quantifier.append(False)
             temp_traversed_property = temp_traversed_property.children[2]
         elif temp_traversed_property.data == 'quantifiedscheduler':
             temp_traversed_property = temp_traversed_property.children[0]
@@ -160,4 +163,4 @@ def convertToInitialExistentialProperty(parsed_property):
     else:
         temp_traversed_property.children[0] = Tree('not', [temp_traversed_property.children[0]])
 
-    return temp_traversed_property.children[0]
+    return temp_traversed_property.children[0], list_of_sched_quantifier, list_of_state_quantifier
