@@ -2,9 +2,11 @@ import os
 import stormpy
 from z3 import RealVal
 from hyperprob.utility import common
+import traceback
 
 
 def rebuildExactValueModel(initial_model):
+    action_per_state = [int] * len(initial_model.states)
     file_str = ""
     file_str += "builder = stormpy.ExactSparseMatrixBuilder(rows=0, columns=0, entries=0, force_dimensions=False, has_custom_row_grouping=True, row_groups=0)\n"
     count_action = 0
@@ -18,6 +20,7 @@ def rebuildExactValueModel(initial_model):
                     va.numerator) + ")/ stormpy.Rational(" + str(
                     va.denominator) + "))\n"
             count_action += 1
+        action_per_state[state.id] = len(state.actions)
     file_str += "\ntransition_matrix = builder.build()\n"
     loc = {}
     exec(file_str, {"stormpy": stormpy}, loc)
@@ -46,65 +49,52 @@ def rebuildExactValueModel(initial_model):
         components = stormpy.SparseExactModelComponents(transition_matrix=transition_matrix,
                                                         state_labeling=state_labeling)
     mdp = stormpy.storage.SparseExactMdp(components)
-    return mdp
+    return mdp, action_per_state
 
 
 class Model:
     def __init__(self, model_path):
-        self.list_of_states = []
-        self.dict_of_acts = {}
-        self.dict_of_acts_tran = {}
+        self.number_of_actions_at_state = list()
         self.has_rewards = False
         self.model_path = model_path
         self.parsed_model = None
 
-    def parseModel(self, extra_processing):
+    def parseModel(self):
+        common.colourinfo("Parsing model at: " + self.model_path, False)
         try:
             if os.path.exists(self.model_path):
                 initial_prism_program = stormpy.parse_prism_program(self.model_path)
                 initial_model = stormpy.build_model(initial_prism_program)
-                self.parsed_model = rebuildExactValueModel(initial_model)
-                common.colourinfo("Total number of states: " + str(len(self.parsed_model.states)))
+                self.parsed_model, self.number_of_actions_at_state = rebuildExactValueModel(initial_model)
                 if len(list(self.parsed_model.reward_models.keys())) != 0:
                     self.has_rewards = True
-                number_of_action = 0
-                number_of_transition = 0
-                if not extra_processing:
-                    for state in self.parsed_model.states:
-                        for action in state.actions:
-                            number_of_action += 1
-                            number_of_transition += len(action.transitions)
-                else:
-                    for state in self.parsed_model.states:
-                        self.list_of_states.append(state.id)
-                        list_of_act = []
-                        for action in state.actions:
-                            number_of_action += 1
-                            list_of_tran = []
-                            list_of_act.append(action.id)
-                            number_of_transition += len(action.transitions)
-                            for tran in action.transitions:
-                                list_of_tran.append(str(tran.column) + ' ' + str(tran.value()))
-                            self.dict_of_acts_tran[str(state.id) + ' ' + str(action.id)] = list_of_tran
-                        self.dict_of_acts[state.id] = list_of_act
 
-                common.colourinfo("Total number of actions: " + str(number_of_action), False)
-                common.colourinfo("Total number of transitions: " + str(number_of_transition), False)
+                common.colourinfo("Total number of states: " + str(self.parsed_model.nr_states), False)
+                common.colourinfo("Total number of actions: " + str(self.parsed_model.nr_choices), False)
+                common.colourinfo("Total number of transitions: " + str(self.parsed_model.nr_transitions), False)
             else:
                 common.colourother("Model file does not exist!")
+                raise SystemExit(1)
         except IOError as e:
-            common.colourerror("I/O error({0}): {1}".format(e.errno, e.strerror))
+            raise SystemExit("I/O error({0}): {1}".format(e.errno, e.strerror))
         except Exception as err:  # handle other exceptions such as attribute errors
-            common.colourerror("Unexpected error in file {0} is {1}".format(self.model_path, err))
+            raise SystemExit("Unexpected error in file {0} is {1}".format(self.model_path, traceback.print_exc()))
 
     def getListOfStates(self):
-        return self.list_of_states
+        return list(self.parsed_model.states)
 
-    def getDictOfActionsWithTransition(self):
-        return self.dict_of_acts_tran
-
-    def getDictOfActions(self):
-        return self.dict_of_acts
+    def getNumberOfActions(self):
+        return self.getNumberOfActions()
 
     def hasRewards(self):
         return self.has_rewards
+
+
+def parseListOfModels(model_list):
+    list_of_models = []
+    for i in range(len(model_list)):
+        list_of_models.append(Model(model_list[i]))
+        list_of_models[i].parseModel()
+
+    return list_of_models
+

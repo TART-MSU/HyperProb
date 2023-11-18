@@ -38,7 +38,7 @@ endmodule
 
 //module secret_thread2 = secret_thread1 [h1=h2, pc1=pc2, c1=c2, e1=e2 ] endmodule
 
-init  (e1=0)&(h1=n)&(pc1=0)&(c1=0)  endinit
+init  (e1=0)&(h1=n)&(pc1=0)&(c1=0)&(a1=0)  endinit
 
 label "start0" = (e1=0)&(h1=n)&(pc1=0)&(c1=0)&(a1=0);
 label "start1" = (e1=0)&(h1=n)&(pc1=0)&(c1=0)&(a1=1);

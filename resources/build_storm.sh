@@ -1,34 +1,12 @@
 #!/bin/bash
+#
 NO_THREADS=6
+# have only one carl version installed, else if there is a carl in local/lib, storm will fail to read the local installation of carl
+# use ccmake .. to
 
-# Get arguments
-if [ $# -ne 3 ]; then
-    echo "Usage: ./build_storm.sh master|<tag> release|debug target"
-    exit 1
-fi
-if [ "$1" == "master" ]; then
-    MASTER=true
-else
-    MASTER=false
-    LATEST_TAG="$1"
-fi
-if [ "$2" == "release" ]; then
-    RELEASE=true
-elif [ "$2" == "debug" ]; then
-    RELEASE=false
-else
-    echo "Build mode must be 'release' or 'debug'."
-    exit 3
-fi
-TARGET=$3
-
-echo "Building Storm ($1) target $3 in $2 configuration..."
 # Checkout
 git clone https://github.com/moves-rwth/storm.git
 cd storm
-if [ "$MASTER" = false ]; then
-    git checkout tags/$LATEST_TAG
-fi
 mkdir build
 cd build
 

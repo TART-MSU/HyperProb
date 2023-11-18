@@ -1,7 +1,7 @@
 from hyperprob.inputparser import parseArguments
 from hyperprob.utility import common
-from hyperprob.propertyparser import Property
-from hyperprob.modelparser import Model
+from hyperprob.propertyparser import Hyperproperty
+from hyperprob.modelparser import Model, parseListOfModels
 from hyperprob.modelchecker import ModelChecker
 import traceback
 
@@ -10,17 +10,15 @@ def main():
     try:
         input_args = parseArguments()
         if input_args.checkProperty:
-            hyperproperty = Property(input_args.hyperString)
+            hyperproperty = Hyperproperty(input_args.hyperString)
             hyperproperty.parseProperty(True)
         if input_args.checkModel:
-            model = Model(input_args.modelPath)
-            model.parseModel(False)
+            parseListOfModels(input_args.modelPaths)
         if not input_args.checkModel and not input_args.checkProperty:
-            hyperproperty = Property(input_args.hyperString)
+            hyperproperty = Hyperproperty(input_args.hyperString)
             hyperproperty.parseProperty(False)
-            model = Model(input_args.modelPath)
-            model.parseModel(True)
-            modelchecker = ModelChecker(model, hyperproperty)
+            list_of_models = parseListOfModels(input_args.modelPaths)
+            modelchecker = ModelChecker(list_of_models, hyperproperty)
             modelchecker.modelCheck()
         print("\n")
     except Exception as err:

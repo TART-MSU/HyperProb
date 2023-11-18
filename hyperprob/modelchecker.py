@@ -1,42 +1,50 @@
 import copy
-import time
 import itertools
+import time
 
 from lark import Tree
-from z3 import Solver, Bool, Int, Or, sat, And
+# from z3 import Solver, Bool, Int, Or, sat, And
+from pysmt.shortcuts import Symbol, Int, Real, Bool, LE, GE, Equals, And, Or, Not, Implies, Plus, Minus, Times, Div, \
+    Solver
+from pysmt.typing import REAL
 
-from hyperprob.utility import common
 from hyperprob import propertyparser
 from hyperprob.sementicencoder import SemanticsEncoder
+from hyperprob.utility import common
 
 
 class ModelChecker:
-    def __init__(self, model, hyperproperty):
-        self.model = model
-        self.initial_hyperproperty = hyperproperty  # object of property class
-        self.solver = Solver()
+    def __init__(self, list_of_model, hyperproperty):
+        self.list_of_model = list_of_model  # list of models of Model class
+        self.initial_hyperproperty = hyperproperty  # object of Property class
+
         self.list_of_subformula = []
         self.dictOfBools = dict()
         self.dictOfInts = dict()
         self.dictOfReals = dict()
-        self.no_of_subformula = 0
-        self.no_of_state_quantifier = 0
+        self.solver = Solver()
 
     def modelCheck(self):
-        non_quantified_property, self.no_of_state_quantifier = propertyparser.findNumberOfStateQuantifier(
+        non_quantified_property, self.initial_hyperproperty.quantifierDictionary, self.initial_hyperproperty.scheduler_quantifiers, self.initial_hyperproperty.state_quantifiers = propertyparser.parseQuantifiersToDictionary(
             copy.deepcopy(self.initial_hyperproperty.parsed_property))
-        non_quantified_property = non_quantified_property.children[0]
         start_time = time.perf_counter()
-        self.encodeActions()
-        combined_list_of_states = list(
-            itertools.product(self.model.getListOfStates(), repeat=self.no_of_state_quantifier))
+        list_of_state_ranges = []
+        for st in self.initial_hyperproperty.quantifierDictionary["stateq"].keys():
+            list_of_state_ranges.append(self.list_of_model[
+                                            self.initial_hyperproperty.quantifierDictionary["schedq"].index(
+                                                self.initial_hyperproperty.quantifierDictionary["stateq"][
+                                                    st])].parsed_model.nr_states)
+
+        # combined_list_of_states = list(itertools.product(*list(range(li) for li in list_of_state_set)))
 
         if self.initial_hyperproperty.parsed_property.data == 'exist_scheduler':
+            self.encodeActions()
             self.addToSubformulaList(non_quantified_property)
-            self.encodeStateQuantifiers(combined_list_of_states)
+            self.encodeStateQuantifiers(list_of_state_ranges)
             common.colourinfo("Encoded state quantifiers", False)
             semanticEncoder = SemanticsEncoder(self.model, self.solver,
-                                               self.list_of_subformula, self.dictOfBools, self.dictOfInts, self.dictOfReals,
+                                               self.list_of_subformula, self.dictOfBools, self.dictOfInts,
+                                               self.dictOfReals,
                                                self.no_of_subformula, self.no_of_state_quantifier)
             semanticEncoder.encodeSemantics(non_quantified_property)
             common.colourinfo("Encoded non-quantified formula...", False)
@@ -45,12 +53,15 @@ class ModelChecker:
 
         elif self.initial_hyperproperty.parsed_property.data == 'forall_scheduler':
             self.addToSubformulaList(non_quantified_property)
-            negated_non_quantified_property = propertyparser.negateForallProperty(self.initial_hyperproperty.parsed_property)
+            negated_non_quantified_property = propertyparser.negateForallProperty(
+                self.initial_hyperproperty.parsed_property)
+            self.encodeActions()
             self.addToSubformulaList(negated_non_quantified_property)
-            self.encodeStateQuantifiers(combined_list_of_states)
+            self.encodeStateQuantifiers(list_of_state_ranges)
             common.colourinfo("Encoded state quantifiers", False)
             semanticEncoder = SemanticsEncoder(self.model, self.solver,
-                                               self.list_of_subformula, self.dictOfBools, self.dictOfInts, self.dictOfReals,
+                                               self.list_of_subformula, self.dictOfBools, self.dictOfInts,
+                                               self.dictOfReals,
                                                self.no_of_subformula, self.no_of_state_quantifier)
             semanticEncoder.encodeSemantics(negated_non_quantified_property)
             common.colourinfo("Encoded non-quantified formula...", False)
@@ -58,14 +69,23 @@ class ModelChecker:
             self.printResult(smt_end_time, 'forall')
 
     def encodeActions(self):
-        for state in self.model.parsed_model.states:
-            list_of_eqns = []
-            name = "a_" + str(state.id)  # a_1 means action for state 1
-            self.dictOfInts[name] = Int(name)
-            for action in state.actions:
-                list_of_eqns.append(self.dictOfInts[name] == int(action.id))
-            self.solver.add(Or(list_of_eqns))
-            self.no_of_subformula += 1
+        """
+        We encode the action choices allowed in every model
+        a_sh_s_act: action for model associated with scheduler sh (as in the list of schedulers in
+        the token dictionary), state s, and action act.
+        """
+        for loop in range(len(self.list_of_model)):
+            flag = self.initial_hyperproperty.scheduler_quantifiers[loop]
+            for state in self.list_of_model[loop].parsed_model.states:
+                actions_in_state = []
+                for action in state.actions:
+                    name = "a_" + str(loop) + "_" + str(state.id) + "_" + str(action.id)
+                    self.dictOfBools[name] = Symbol(name)
+                    actions_in_state.append(self.dictOfBools[name])
+                if flag:
+                    self.solver.add_assertion(And(actions_in_state))
+                else:
+                    self.solver.add_assertion(Or(actions_in_state))
         common.colourinfo("Encoded actions in the MDP...")
 
     def addToSubformulaList(self, formula_phi):  # add as you go any new subformula part as needed
@@ -81,8 +101,7 @@ class ModelChecker:
                                   'less_and_equal_reward',
                                   'add_probability', 'subtract_probability', 'multiply_probability',
                                   'add_reward', 'subtract_reward', 'multiply_reward',
-                                  'until_unbounded'
-                                  ]:
+                                  'until_unbounded']:
             if formula_phi not in self.list_of_subformula:
                 self.list_of_subformula.append(formula_phi)
             left_child = formula_phi.children[0]
@@ -201,7 +220,8 @@ class ModelChecker:
                 common.colouroutput("The property HOLDS!")
         common.colourinfo("\nTime to encode in seconds: " + str(round(smt_end_time, 2)), False)
         common.colourinfo("Time required by z3 in seconds: " + str(round(z3_time, 2)), False)
-        common.colourinfo("Number of variables: " + str(len(self.dictOfInts.keys()) + len(self.dictOfReals.keys()) + len(self.dictOfBools.keys())), False)
+        common.colourinfo("Number of variables: " + str(
+            len(self.dictOfInts.keys()) + len(self.dictOfReals.keys()) + len(self.dictOfBools.keys())), False)
         common.colourinfo("Number of formula checked: " + str(self.no_of_subformula), False)
         common.colourinfo("z3 statistics:", False)
         common.colourinfo(str(statistics), False)

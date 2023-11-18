@@ -6,19 +6,19 @@ if sys.version_info[0] == 2:
 
 setup(
     name='hyperprob',
-    version='0.1.0',
+    version='1.0.0',
     description='Model checker for Probabilistic Hyperproperties',
     url='https://github.com/TART-MSU/HyperProb',
     author='Oyendrila Dobe',
     author_email='oyendrila.dobe@gmail.com',
     packages=find_packages(),
     install_requires=[
-        #'stormpy>=1.7.0',
+        'stormpy>=1.7.0',
         'termcolor~=2.0.1',
         'lark-parser~=0.12.0',
-        'z3-solver~=4.11.2.0'
+        'pysmt~=0.9.5'
     ],
-    python_requires='>=3.8.2',
+    python_requires='>=3.11',
 
     classifiers=[
         'Environment :: MacOS X',
