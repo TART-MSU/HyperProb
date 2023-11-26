@@ -20,9 +20,8 @@ class ModelChecker:
 
         self.list_of_subformula = []
         self.dictOfBools = dict()
-        self.dictOfInts = dict()
         self.dictOfReals = dict()
-        self.solver = Solver()
+        self.solver = Solver()  # (name='z3')
 
     def modelCheck(self):
         non_quantified_property, self.initial_hyperproperty.quantifierDictionary, self.initial_hyperproperty.scheduler_quantifiers, self.initial_hyperproperty.state_quantifiers = propertyparser.parseQuantifiersToDictionary(
@@ -35,17 +34,14 @@ class ModelChecker:
                                                 self.initial_hyperproperty.quantifierDictionary["stateq"][
                                                     st])].parsed_model.nr_states)
 
-        # combined_list_of_states = list(itertools.product(*list(range(li) for li in list_of_state_set)))
-
         if self.initial_hyperproperty.parsed_property.data == 'exist_scheduler':
             self.encodeActions()
             self.addToSubformulaList(non_quantified_property)
             self.encodeStateQuantifiers(list_of_state_ranges)
             common.colourinfo("Encoded state quantifiers", False)
-            semanticEncoder = SemanticsEncoder(self.model, self.solver,
-                                               self.list_of_subformula, self.dictOfBools, self.dictOfInts,
-                                               self.dictOfReals,
-                                               self.no_of_subformula, self.no_of_state_quantifier)
+            semanticEncoder = SemanticsEncoder(self.list_of_model, self.solver,
+                                               self.list_of_subformula, self.dictOfBools,
+                                               self.dictOfReals, self.initial_hyperproperty)
             semanticEncoder.encodeSemantics(non_quantified_property)
             common.colourinfo("Encoded non-quantified formula...", False)
             smt_end_time = time.perf_counter() - start_time
@@ -58,10 +54,9 @@ class ModelChecker:
             self.addToSubformulaList(negated_non_quantified_property)
             self.encodeStateQuantifiers(list_of_state_ranges)
             common.colourinfo("Encoded state quantifiers", False)
-            semanticEncoder = SemanticsEncoder(self.model, self.solver,
-                                               self.list_of_subformula, self.dictOfBools, self.dictOfInts,
-                                               self.dictOfReals,
-                                               self.no_of_subformula, self.no_of_state_quantifier)
+            semanticEncoder = SemanticsEncoder(self.list_of_model, self.solver,
+                                               self.list_of_subformula, self.dictOfBools,
+                                               self.dictOfReals, self.initial_hyperproperty)
             semanticEncoder.encodeSemantics(negated_non_quantified_property)
             common.colourinfo("Encoded non-quantified formula...", False)
             smt_end_time = time.perf_counter() - start_time
@@ -160,16 +155,19 @@ class ModelChecker:
         truth = self.solver.solve()
         z3_time = time.perf_counter() - starting_time
         list_of_actions = None
-        if truth == sat:
-            z3model = self.solver.model()
-            list_of_actions = [None] * len(self.model.getListOfStates())
-            for li in z3model:
-                if li.name()[0] == 'a':
-                    list_of_actions[int(li.name()[2:])] = z3model[li]
-        if truth.r == 1:
+        for x in self.dictOfBools.keys():
+            print("%s = %s" % (x, self.solver.get_value(self.dictOfBools[x])))
+        """
+        # if model:
+            #list_of_actions = [None] * len(self.model.getListOfStates())
+            #for li in z3model:
+            #    if li.name()[0] == 'a':
+            #        list_of_actions[int(li.name()[2:])] = z3model[li]
+        if model == 1:
             return True, list_of_actions, self.solver.statistics(), z3_time
-        elif truth.r == -1:
+        elif model == -1:
             return False, list_of_actions, self.solver.statistics(), z3_time
+        """
 
     def printResult(self, smt_end_time, scheduler_quantifier):
         common.colourinfo("Checking...", False)

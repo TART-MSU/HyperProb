@@ -90,7 +90,7 @@ def parseQuantifiersToDictionary(hyperproperty):
     tokenDictionary = dict()
     tokenDictionary["schedq"] = []
     tokenDictionary["stateq"] = dict()
-    list_of_sched_quantifier = [] # store true for AS false for ES
+    list_of_sched_quantifier = []  # store true for AS false for ES
     list_of_state_quantifier = []  # store true for A false for E
     formula_duplicate = hyperproperty
     while len(formula_duplicate.children) > 0:
